@@ -8,13 +8,17 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>Pigrange&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="Android的消息机制1、相关的类 Handler ：消息的处理者 MessageQueue：消息队列，单链表结构。主要用于对消息的插入和获取 Looper：消息队列的驱动者。即Looper驱动消息队列，在Looper的loop方法里面。 TheadLocal：全局唯一的一个静态的实力sThreadLoacl，用于在每一个线程中存储数据。这里主要是用来让线程和Looper进行绑定，这样就可以通过">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Pigrange&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/07/15/Android的消息机制/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
+<meta property="og:description" content="Android的消息机制1、相关的类 Handler ：消息的处理者 MessageQueue：消息队列，单链表结构。主要用于对消息的插入和获取 Looper：消息队列的驱动者。即Looper驱动消息队列，在Looper的loop方法里面。 TheadLocal：全局唯一的一个静态的实力sThreadLoacl，用于在每一个线程中存储数据。这里主要是用来让线程和Looper进行绑定，这样就可以通过">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-15T13:31:11.278Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Pigrange&#39;s Blog">
+<meta name="twitter:description" content="Android的消息机制1、相关的类 Handler ：消息的处理者 MessageQueue：消息队列，单链表结构。主要用于对消息的插入和获取 Looper：消息队列的驱动者。即Looper驱动消息队列，在Looper的loop方法里面。 TheadLocal：全局唯一的一个静态的实力sThreadLoacl，用于在每一个线程中存储数据。这里主要是用来让线程和Looper进行绑定，这样就可以通过">
   
     <link rel="alternative" href="/atom.xml" title="Pigrange&#39;s Blog" type="application/atom+xml">
   
@@ -138,9 +142,7 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-Android的消息机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Android的消息机制" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
     <div class="article-entry" itemprop="articleBody">
@@ -187,16 +189,65 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/15/Android的消息机制/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/07/15/Android的消息机制/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -216,8 +267,14 @@
 
 
 
+  
+  
+  
 
   
+
+  
+
   
 
 
@@ -240,8 +297,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: true,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

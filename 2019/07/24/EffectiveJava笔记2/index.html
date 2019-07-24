@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>EffectiveJava笔记[二] - Pigrange&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="EffectiveJAVA的读书笔记(:з)∠)">
+<meta name="keywords" content="JAVA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EffectiveJava笔记[二]">
+<meta property="og:url" content="http://yoursite.com/2019/07/24/EffectiveJava笔记2/index.html">
+<meta property="og:site_name" content="Pigrange&#39;s Blog">
+<meta property="og:description" content="EffectiveJAVA的读书笔记(:з)∠)">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/assets/gallery/thumbnails/EffectiveJava2.jpg">
+<meta property="og:updated_time" content="2019-07-24T08:49:58.112Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EffectiveJava笔记[二]">
+<meta name="twitter:description" content="EffectiveJAVA的读书笔记(:з)∠)">
+<meta name="twitter:image" content="http://yoursite.com/assets/gallery/thumbnails/EffectiveJava2.jpg">
+
+
+
+
+
+
+
+<link rel="icon" href="/images/favicon.svg">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/assets/img/logo.jpg" alt="EffectiveJava笔记[二]" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-10-tablet is-8-desktop is-8-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span class="image is-7by1">
+        <img class="thumbnail" src="/assets/gallery/thumbnails/EffectiveJava2.jpg" alt="EffectiveJava笔记[二]">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+            
+        </h1>
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-07-24T03:55:00.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-07-24</time>
+                
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-07-24T08:49:58.112Z"><i class="far fa-calendar-check">&nbsp;</i>2019-07-24</time>
+                
+                
+                <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/读书笔记/">读书笔记</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    16 分钟 读完 (大约 2458 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+
+        <div class="content">
+            <p>EffectiveJAVA的读书笔记<em>(:з)∠)</em></p>
+<a id="more"></a>
+
+<h3 id="6、避免创建不必要的对象"><a href="#6、避免创建不必要的对象" class="headerlink" title="6、避免创建不必要的对象"></a>6、避免创建不必要的对象</h3><p>此条目下作者有这个观点：<strong>当你应该重用现有对象的时候，请不要创建新的对象</strong></p>
+<p>最突出的就是字符串常量创建的例子：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="hljs-keyword">new</span> String(<span class="hljs-string">"hello"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如上所述，本来在字符串常量池中就存在字符串”hello”，但是我们又创建了一个新的字符串”hello”的实例，显然，这个新的str实例是并不需要的。</p>
+<p><strong>使用静态工厂方法：</strong></p>
+<p>构造方法一定会创建一个新的对象，但是其实很多时候并没有这个必要。对于一些可以重用现有对象的情况，我们可以使用静态的工厂方法来获取实例（因为静态工厂方法是九二一对实例进行严格控制的）。</p>
+<p><strong>缓存创建昂贵的对象：</strong></p>
+<p>对于那些可以复用的但是创建昂贵的对象，我们可以将其设置为公共静态的，这样既可以避免重复创建带来的性能开销，也可以避免持有这个对象的容器对象在失去引用后被GC清理掉。</p>
+<p><strong>注意，这里很容易进入一个误区，就是对那些(可能)会重用的对象都进行缓存。</strong></p>
+<p>这个条目并不代表对象的创建是昂贵的。<strong>其实通过构造方法创建和回收对象的性能开销并不高。</strong></p>
+<p>作者在此条目的下面提到：</p>
+<p><strong>除非池(对象缓存)中的对象非常重量级，否则通过维护自己的对象池来避免创建对象其实并不太好，因为者会显著的加大内存的占用。</strong></p>
+<p>回到条目的开始，我们应该将重点放在<code>重用</code>和<code>不要创建新的对象</code>上面。也就是说，我们更多应该考虑的是在重用某个对象的时候，尽可能的去避免创建新(没有必要)的对象。</p>
+<hr>
+<h3 id="7、消除过期的对象引用："><a href="#7、消除过期的对象引用：" class="headerlink" title="7、消除过期的对象引用："></a>7、消除过期的对象引用：</h3><p>这里有一个误区，就是JAVA拥有垃圾收集机制，所以我们就不需要手动对内存进行管理了。</p>
+<p>但是，其实这个是不一定正确的，内存泄漏在JAVA里面太频繁了。</p>
+<p>作者在书中提到<strong>当一个类自己管理内存时，程序员应当警惕内存泄漏</strong>，书中举了一个栈弹出的例子：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> elements[--size];</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这种实现实际上仅仅是将size的-1了。但是elements任然保留着对size外的元素的引用，也就是说那一部分的元素的内存并不会被GC释放掉。</p>
+<p>解决方案：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    Object result = elements[--size];</span><br><span class="line">    elements[size] = <span class="hljs-keyword">null</span>;</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="8、避免使用Finalizer和Cleaner机制"><a href="#8、避免使用Finalizer和Cleaner机制" class="headerlink" title="8、避免使用Finalizer和Cleaner机制"></a>8、避免使用Finalizer和Cleaner机制</h3><p>这可能对JAVA新手来说一脸懵逼(没错，我就是这种。因为压根就不知道什么是Finalizer，这里就不谈Cleaner机制了，因为我现在还是不会，不过功能应该和finalizer差不多)</p>
+<p>对于C++程序员，我们知道有一个析构函数用于回收资源。</p>
+<p><strong>Finalizer机制：</strong></p>
+<p>GC在回收对象之前调用其finalize方法，但是这并不说明finalize就等于C++的析构函数。finalize方法的调用存在很大的不确定性，也就是说它的调用在不同设备上面的行为具有很大的差异。</p>
+<ul>
+<li><p>当一个对象变得不可达一直到finalize方法的调用这一段时间是任意长的。所以我们千万不要在这个方法里面做一些关闭文件流这种释放非内存资源的操作。因为很有可能出现文件流没有被及时的关闭从而导致后面的文件流打开失败。</p>
+</li>
+<li><p>finalize机制已经被弃用了。</p>
+</li>
+<li><p><strong>Java并不能保证Finalizer和Cleaner机制的及时运行，甚至不能够确保他们是否能够运行</strong></p>
+</li>
+<li><p>System.gc和System.runFinalization 可能会增加finalize被执行的几率，但是不保证其一定被执行</p>
+</li>
+<li><p><strong>在Finalizer机制中，未被捕获的异常会被忽略，cleaner机制不会有这个问题</strong></p>
+</li>
+<li><p><strong>Finalizer机制会严重影响垃圾收集的效率和性能</strong></p>
+</li>
+</ul>
+<p><strong>Finalizer机制的作用：</strong></p>
+<ul>
+<li>作为安全网，防止资源拥有者忽略了他的close方法。这个很好理解，当资源拥有者忘记close的时候，通过finalize至少可能会关闭资源，着总比不关闭好。也就是说，这个机制虽然不可信，但是聊胜于无。</li>
+<li>finalize方法适用于释放一些通过native方法释放的对象(比如说通过JNI创建的对象)</li>
+</ul>
+<hr>
+<h3 id="9、使用try-with-resources语句替代try-finally语句"><a href="#9、使用try-with-resources语句替代try-finally语句" class="headerlink" title="9、使用try-with-resources语句替代try-finally语句"></a>9、使用try-with-resources语句替代try-finally语句</h3><p>可能你刚看到这个条目的时候会和我一样对于什么叫做try-with-resources语句一脸懵逼(本人太菜，之前确实没有见过)</p>
+<p>书中举了这样一个例子：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        br.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上述的代码块中，有可能由于文件流的没有正常打开导致异常出现。同理，由于引用了空的对象，br无法正常调用close方法。那么在这次情况下第二个异常会完全覆盖掉第一个异常。如果使用了catch语句块捕获了异常，那么代码就会变成如下的样子：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            br.close();</span><br><span class="line">        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种代码，写出来简直辣眼睛。反复的异常捕捉显著的降低了代码的可读性。</p>
+<p><strong>使用try-with-resources语句：</strong></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> (BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path))) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> defaultValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>相较于之前的代码，显然可读性有所提高。</p>
+<p><strong>原理：</strong></p>
+<p>能够使用try-with-resources语句的资源类其实都自动实现了AutoCloseable接口这个接口提供了一个无参数的close方法。也就是说，使用了try-with-resources语句声明的资源只要实现了这个方法，那么都会在抛出异常之前调用close方法关闭资源。另外，用于资源对象的close方法是由其自己控制，所以我们也不需要考虑资源文件关闭所产生的异常。</p>
+<hr>
+<h3 id="10、重写euquals方法时应当遵守的通用约定"><a href="#10、重写euquals方法时应当遵守的通用约定" class="headerlink" title="10、重写euquals方法时应当遵守的通用约定"></a>10、重写euquals方法时应当遵守的通用约定</h3><p><strong>不需要重写equals方法的条件：</strong></p>
+<ul>
+<li>每一个类的实例都是一个固有且唯一的。</li>
+<li>类并不需要提供一个逻辑相等的测试功能。</li>
+<li>父类已经重写了equals方法。一个设计良好的可继承的父类应保证其子类完全实用于父类的equals方法。</li>
+<li>类是private修饰的或者default修饰的，那么这个类的equals方法应该永远不会被调用。</li>
+</ul>
+<p><strong>需要重写equals方法的条件：</strong></p>
+<ul>
+<li>一个类包含逻辑相等的概念，并且父类并没有提供equals方法。这里特指一些表示值的类，比如Ineger或者String类。</li>
+<li>使用equals方法的时候应当比较的是对象逻辑上面的相等，而并不是比较是否引用的是相同的对象。</li>
+<li>当某一个类需要作为Map的key的时候。</li>
+</ul>
+<p><strong>equals方法应当满足的属性：</strong></p>
+<ul>
+<li>自反性：一个对象必须和自身相等</li>
+<li>对称性：a.equals(b) == b.equals(a)</li>
+<li>传递性：a.equals(b)，b.equals(c)，则a.equals(c)</li>
+<li>一致性：相等的对象永远相等，不相等的对象永远不相等</li>
+<li>非空性：所有的对象都不等于null</li>
+</ul>
+<p><strong>编写高质量的equals方法：</strong></p>
+<ul>
+<li><p>首先使用<code>==</code>运算符检查参数是否为该对象的引用，如果成立直接返回true，这是一种性能优化。</p>
+</li>
+<li><p>应当使用<code>instanceof</code>检查传递参数是否有正确的类型，<strong>因为equals方法默认传递的参数是Object类型的</strong></p>
+</li>
+<li><p>将参数进行强制类型转化</p>
+</li>
+<li><p>对于参数的每一个值属性，应当验证值属性是否相等，<strong>注意，对于float或者double类型，不要用==而是使用Float.compare或者Double.compare方法比较。</strong></p>
+</li>
+<li><p>对于参数的对象属性，应当递归的对持有的对象进行equals比较，由于对象引用可能为空，所以对引用对象进行比较的时候，应当使用Object.compare方法</p>
+</li>
+<li><p>使用equals方法进行比较的时候，应当首先考虑最有可能不同的属性，这也是一种性能优化。</p>
+</li>
+<li><p>不要忘记验证自己实现的equals方法是否满足上面提到的5个属性。</p>
+</li>
+</ul>
+<p><strong>注意事项：</strong></p>
+<ul>
+<li>重写equals方法的时候，应该重写hashCode方法</li>
+<li>不要对equals方法太过于吹毛求疵，这可能会因为考虑因素太多导致实现非常困难。</li>
+<li>重写equals方法的时候，参数是Object类型的，不要将参数替换成其他的类型。</li>
+</ul>
+
+        </div>
+        
+        <ul class="post-copyright">
+            <li><strong>本文标题：</strong><a href="http://yoursite.com/2019/07/24/EffectiveJava笔记2/">EffectiveJava笔记[二]</a></li>
+            <li><strong>本文作者：</strong><a href="http://yoursite.com">John Pig</a></li>
+            <li><strong>本文链接：</strong><a href="http://yoursite.com/2019/07/24/EffectiveJava笔记2/">http://yoursite.com/2019/07/24/EffectiveJava笔记2/</a></li>
+            <li><strong>发布时间：</strong>2019-07-24</li>
+            <li><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+            </li>
+        </ul>
+        
+        
+        <hr style="height:1px;margin:1rem 0">
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
+                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/07/24/EffectiveJava笔记3/">
+                <span class="level-item">EffectiveJava笔记[三]</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered" style="flex-shrink: 1">
+                <div>
+                    
+                        <figure class="image is-128x128 has-mb-6">
+                            <img class="is-rounded" src="/assets/img/favicon.png" alt="pigrange">
+                        </figure>
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        pigrange
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        JohnPig
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>ChengDu</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        5
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        1
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        2
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/pigrange" target="_blank">
+                关注我</a>
+        </div>
+        
+        
+    </div>
+</div>
+    
+        
+<div class="card widget column-left is-sticky" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#6、避免创建不必要的对象">
+        <span class="has-mr-6">1</span>
+        <span>6、避免创建不必要的对象</span>
+        </a></li><li>
+        <a class="is-flex" href="#7、消除过期的对象引用：">
+        <span class="has-mr-6">2</span>
+        <span>7、消除过期的对象引用：</span>
+        </a></li><li>
+        <a class="is-flex" href="#8、避免使用Finalizer和Cleaner机制">
+        <span class="has-mr-6">3</span>
+        <span>8、避免使用Finalizer和Cleaner机制</span>
+        </a></li><li>
+        <a class="is-flex" href="#9、使用try-with-resources语句替代try-finally语句">
+        <span class="has-mr-6">4</span>
+        <span>9、使用try-with-resources语句替代try-finally语句</span>
+        </a></li><li>
+        <a class="is-flex" href="#10、重写euquals方法时应当遵守的通用约定">
+        <span class="has-mr-6">5</span>
+        <span>10、重写euquals方法时应当遵守的通用约定</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                    
+                    <img src="/assets/img/logo.jpg" alt="EffectiveJava笔记[二]" height="28" style="margin-left: 0.5em">
+                    
+                </a>
+                <p class="is-size-7" style="padding-bottom: 0.5em">
+                    <span id="timeDate" class="is-size-7"></span>
+                    <span id="times" class="is-size-7"></span>
+                </p>
+                <p class="is-size-7">
+                    &copy; 2019 John Pig&nbsp;
+                    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                    
+                </p>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                <script>
+                    var now = new Date();
+                    function createtime() {
+                        var grt = new Date("7/24/2019 16:00:00");//此处修改你的建站时间或者网站上线时间 
+                        now.setTime(now.getTime() + 250);
+                        days = (now - grt) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+                        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+                        if (String(hnum).length == 1) { hnum = "0" + hnum; } minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+                        mnum = Math.floor(minutes); if (String(mnum).length == 1) { mnum = "0" + mnum; }
+                        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+                        snum = Math.round(seconds); if (String(snum).length == 1) { snum = "0" + snum; }
+                        document.getElementById("timeDate").innerHTML = "&nbsp;&nbsp" + "本站已安全运行 " + dnum + " 天 ";
+                        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+                    }
+                    setInterval("createtime()", 250);
+                </script>
+            </div>
+            <div class="level-end">
+                
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":0.9,"jsonPath":"/live2dw/assets/hijiki.model.json"},"log":false});</script></body>
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>EffectiveJava笔记[三] - Pigrange&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="EffectiveJAVA的读书笔记(:з)∠)">
+<meta name="keywords" content="JAVA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EffectiveJava笔记[三]">
+<meta property="og:url" content="http://yoursite.com/2019/07/24/EffectiveJava笔记3/index.html">
+<meta property="og:site_name" content="Pigrange&#39;s Blog">
+<meta property="og:description" content="EffectiveJAVA的读书笔记(:з)∠)">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/assets/gallery/thumbnails/EffectiveJava3.jpg">
+<meta property="og:updated_time" content="2019-07-24T08:50:00.729Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EffectiveJava笔记[三]">
+<meta name="twitter:description" content="EffectiveJAVA的读书笔记(:з)∠)">
+<meta name="twitter:image" content="http://yoursite.com/assets/gallery/thumbnails/EffectiveJava3.jpg">
+
+
+
+
+
+
+
+<link rel="icon" href="/images/favicon.svg">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/assets/img/logo.jpg" alt="EffectiveJava笔记[三]" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-10-tablet is-8-desktop is-8-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span class="image is-7by1">
+        <img class="thumbnail" src="/assets/gallery/thumbnails/EffectiveJava3.jpg" alt="EffectiveJava笔记[三]">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+            
+        </h1>
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-07-24T03:55:00.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-07-24</time>
+                
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-07-24T08:50:00.729Z"><i class="far fa-calendar-check">&nbsp;</i>2019-07-24</time>
+                
+                
+                <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/读书笔记/">读书笔记</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    21 分钟 读完 (大约 3095 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+
+        <div class="content">
+            <p>EffectiveJAVA的读书笔记<em>(:з)∠)</em></p>
+<a id="more"></a>
+
+<h3 id="11、重写equals时重写hashCode方法"><a href="#11、重写equals时重写hashCode方法" class="headerlink" title="11、重写equals时重写hashCode方法"></a>11、重写<code>equals</code>时重写<code>hashCode</code>方法</h3><p>在每一个重写了equals方法的类中，应当重写这个类的<code>hashCode</code>方法。如果不这么做，那么将会违背<code>Object.hashCode</code>的通用约定，从而导致某一些基于hash散列的集合无法正常运行，比如说<code>HashSet</code>，</p>
+<p><code>HashMap</code>，<code>HashTable</code>。</p>
+<p><strong>规范：</strong></p>
+<ul>
+<li>在程序执行的这段时间，如果对象<code>equals</code>方法进行的比较信息没有被改变的话，那么这个对象的<code>hashCode</code>该返回同一个整数。</li>
+<li>如果这个应用程序多次执行，那么没有必要保证每一次的<code>hashCode</code>都是一样的。</li>
+<li>如果两个对象通过equals方法比较是相等的，那么他们的<code>hashCode</code>应该一样</li>
+<li>如果两个对象通过equals方法比较是不相等的，那么他们的<code>hashCode</code>不应该一样。</li>
+</ul>
+<p>对于基于hash散列的类来说，如果不重写<code>hashCode</code>方法的话，那么即便他们通过<code>equals</code>方法得到的结果是true，那么将他们作为<code>hashMap</code>的key也无法拿到正确的值，因为他们只是逻辑上相等，而<code>hashMap</code>是基于<code>hashCode</code>寻址的。</p>
+<p><strong><code>hashCode</code>的计算：</strong></p>
+<ol>
+<li><p>为对象中的每一个关键域f，计算其散列码c</p>
+</li>
+<li><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = <span class="hljs-number">31</span> * result + c;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回 result</p>
+</li>
+</ol>
+<p><strong>注意：</strong></p>
+<ul>
+<li>如果一个域的值是由其他域演算出来的话，那么这个域不需要用于计算<code>hashCode</code></li>
+<li>如果一个域并没有在equals方法中使用，那么这个域不应该用于计算<code>hashCode</code></li>
+<li>不要排除一些关键的属性来提高<code>hashCode</code>的性能，这可能会降低这个方法的可靠性</li>
+<li>在编写完<code>hashCode</code>之后，应当测试<code>hashCode</code>功能的正确性</li>
+<li>如果一个对象计算<code>hashCode</code>的代价比较大的话，应当缓存这个<code>hashCode</code></li>
+</ul>
+<hr>
+<h3 id="12、始终重写toString方法"><a href="#12、始终重写toString方法" class="headerlink" title="12、始终重写toString方法"></a>12、始终重写<code>toString</code>方法</h3><p>虽然<code>Object</code>类提供了<code>toString</code>方法的实现，但是在某些情况它返回的<code>toString</code>并没有什么乱用。提供一个良好的<code>toString</code>方法可以使类更易于使用和调试。</p>
+<ul>
+<li><code>toString</code>方法应当返回对象中包含的所有需要关注的信息</li>
+<li>应当在文档中指定<code>toString</code>方法返回的格式</li>
+<li>在静态工具类中，编写<code>toString</code>方法是没有任何意义的。</li>
+<li>应当在任何抽象类型中定义<code>toString方法</code>，使得子类共享一个公共字符串表示形式</li>
+<li>除非父类已经实现了<code>toString</code>方法，否则应该在每一个实例化的子类中重写<code>toString</code>方法。</li>
+</ul>
+<hr>
+<h3 id="13、谨慎地重写clone"><a href="#13、谨慎地重写clone" class="headerlink" title="13、谨慎地重写clone"></a>13、谨慎地重写<code>clone</code></h3><p>首先需要指出，这个条目是基于<code>Cloneable</code>接口或者说<code>clone</code>方法而列出的。<code>Cloneable</code>接口是一个空的接口，它仅仅用来表明这个对象是允许被克隆的。真正的<code>clone</code>方法的提供是在Object类中。这一点也被作者在书中描述为设计上面的缺陷。</p>
+<p><strong><code>Cloneable</code>接口：</strong></p>
+<p>这是一个并未包含任何方法的接口，它的唯一作用就是决定<code>Object</code>类中<code>clone</code>方法实现的行为。换句话说，如果一个类实现了<code>Cloneable</code>接口，那么它就应该在clone方法里面返回对该对象的<strong>逐域拷贝</strong>，否则就会抛出<code>CloneNotSupportedException</code>异常。</p>
+<ul>
+<li>这是一种比较极端的写法，因为它违背了定义接口的作用。</li>
+<li>这是一种可以不调用构造器就创建对象的方法。</li>
+</ul>
+<p><strong>对于<code>clone</code>方法的一些约束：</strong></p>
+<ul>
+<li><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x.clone() != x) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x.clone().getClass() == x.getClass()) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x.clone().equals(x) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><strong>解读：</strong></p>
+<p>不得不说，这本书的翻译是真的烂。<em>(:з)∠)_</em></p>
+<ol>
+<li>上面提到的不调用构造方法就可以创建对象的规定其实太过于强硬，或者享有了太大的特权，想象你好不容易实现了一个单例，并通私有构造方法并抛出异常，甚至提供了<code>readResolve</code>这个方法来保证反序列化也是单例。但是一旦你实现了<code>Cloneable</code>，接口并重写了clone方法，那么你好不容易设计的单例会因为clone而失效。作者指出<strong>行为良好的clone方法，应该是可以调用构造器来创建对象的</strong>，但是遗憾，clone并没有这么做。</li>
+<li>作者强调（通常情况下）<code>(x.clone().getClass() == x.getClass()) == true</code>这个规定太过于软弱。这里我理解了半天。为什么叫过于软弱，因为它不是强制要求的，因为clone指出了不通过构造器就创建对象，但是却允许了<code>(x.clone().getClass() == x.getClass()) != true</code>。举个例子：比如我有一个child类，他继承了他的父类，但是并没有重写<code>clone</code>方法，那么这个方法将最终调用父类的<code>clone</code>。但是很遗憾，父类的设计者并未考虑到这个问题，因为他约定<code>clone</code>的一些约束，允许上面的不等条件出现，所以他使用了构造方法来clone了对象的副本。那么当子类调用<code>clone</code>方法的时候，你会惊讶的发现居然返回的是父类的对象，甚至你无法通过强制类型转化将其转化过来。</li>
+<li>为了避免上面的情况，保证子类通过调用<code>super.clone()</code>也返回自己的实例。我们的父类也应该调用自己的<code>super.clone()</code>（父类的父类的clone方法）。在这种层层传递下，所有的<code>super.clone()</code>最终都会调用<code>Object.clone()</code>方法，这样就能保证在整个类的层级结构中，所有的子类的<code>clone()</code>方法最终均会返回Object的对象，由于 <strong><code>Objcet.clone()</code>返回的是对象的逐域拷贝</strong>(也就是对整块内存的复制)，所以最终我们只需要进行强制类型转化即可。</li>
+<li>很遗憾的是，<code>Cloneable</code>接口并没有清楚的指出一个类实现这个接口应该承担什么责任。</li>
+</ol>
+<p><strong>浅克隆：</strong></p>
+<p>这里作者列举了一个<code>Stack</code>类的例子：</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Stack</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">private</span> Object[] elements;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> size = <span class="hljs-number">0</span>;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="hljs-number">16</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Stack</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.elements = <span class="hljs-keyword">new</span> Object[DEFAULT_INITIAL_CAPACITY];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">push</span><span class="hljs-params">(Object e)</span> </span>&#123;</span><br><span class="line">        ensureCapacity();</span><br><span class="line">        elements[size++] = e;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>)</span><br><span class="line">            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">        Object result = elements[--size];</span><br><span class="line">        elements[size] = <span class="hljs-keyword">null</span>; <span class="hljs-comment">// Eliminate obsolete reference</span></span><br><span class="line">        <span class="hljs-keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment">// Ensure space for at least one more element.</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ensureCapacity</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (elements.length == size)</span><br><span class="line">            elements = Arrays.copyOf(elements, <span class="hljs-number">2</span> * size + <span class="hljs-number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，Stack类持有Object数组的应用。当我们克隆这个对象的时候，理想情况下，Stack的elements也会跟随一起被克隆，然而很遗憾，克隆出来的的对象和原来的对象持有相同element对象的引用，也就是说，克隆的时候，只传递了引用。</p>
+<p><strong>深克隆：</strong></p>
+<p>其实就是针对上面问题的一个解决方案罢了。</p>
+<p>对于对象持有的对象引用，我们应当递归(或迭代)地调用这些对象的<code>clone</code>方法。</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">@Override</span> </span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> HashTable <span class="hljs-title">clone</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        HashTable result = (HashTable) <span class="hljs-keyword">super</span>.clone();</span><br><span class="line">        result.buckets = <span class="hljs-keyword">new</span> Entry[buckets.length];</span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; buckets.length; i++)</span><br><span class="line">            <span class="hljs-keyword">if</span> (buckets[i] != <span class="hljs-keyword">null</span>)</span><br><span class="line">                result.buckets[i] = buckets[i].deepCopy();</span><br><span class="line">        <span class="hljs-keyword">return</span> result;</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> AssertionError();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-function">Entry <span class="hljs-title">deepCopy</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    Entry result = <span class="hljs-keyword">new</span> Entry(key, value, next);</span><br><span class="line">    <span class="hljs-keyword">for</span> (Entry p = result; p.next != <span class="hljs-keyword">null</span>; p = p.next)</span><br><span class="line">        p.next = <span class="hljs-keyword">new</span> Entry(p.next.key, p.next.value, p.next.next);</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>克隆的替代方案：</strong></p>
+<ul>
+<li>对于那些确定是不可变的类，最好不要实现clone方法，因为这没有意义。</li>
+<li>使用拷贝构造器或者拷贝工厂</li>
+<li>使用基于接口的拷贝构造器(转换构造器)或者拷贝工厂(转换工厂)。</li>
+</ul>
+<hr>
+<h3 id="14、考虑实现Comparable接口"><a href="#14、考虑实现Comparable接口" class="headerlink" title="14、考虑实现Comparable接口"></a>14、考虑实现Comparable接口</h3><p><code>compareTo</code>方法并没有在<code>Object</code>类中声明，它是<code>Comparable</code>接口中的唯一方法，其实这个是很好理解的，因为我们并不需要每一个对象都是可以比较大小的。</p>
+<p><strong><code>compareT</code>方法</strong></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">compareTo</span><span class="hljs-params">(T t)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这个方法是泛型的，并且返回的结果是int类型。其值和比较的结果关系如下：</p>
+<ul>
+<li>负数：＜</li>
+<li>0：=</li>
+<li>正数：&gt;</li>
+</ul>
+<p><strong>好处：</strong></p>
+<p>通过实现<code>Comparable</code>接口，可以让类与所有依赖此接口的通用算法和集合实现来进行相互操作。并且几乎所有的JAVA平台类库中的所有值类都实现了这个接口。</p>
+<p><strong>要求：</strong></p>
+<ul>
+<li><code>sgn(x.compareTo(y)) == -sgn(y.compareTo(x)) == true</code></li>
+<li><code>(x.compareTo(y) &gt; 0 &amp;&amp; y.compareTo(z) &gt; 0) == (x.compareTo(z)&gt;0) == true</code></li>
+<li><code>x.compareTo(y) ==  0 —&gt;  sgn(x.compareTo(z)) == sgn(y.compareTo(z))</code></li>
+<li><code>(x.compareTo(y) == 0)  == (x.equals(y))</code>   注意，与<code>equals</code>方法不同的是，<code>equals</code>方法有可能花月不同类型的对象，而<code>compareTo</code>遇到不同类型的对象的时候，会直接抛出异常。</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li><p><strong>不要使用两个值之间的差值来返回<code>compareTo</code>的结果，</strong>这种写法可能会导致整数的最大长度溢出。 </p>
+</li>
+<li><p>使用<code>compareTo</code>方法的时候，应当避免使用 “&lt;”(小于)或”&gt;”(大于)。在具体的值进行比较的时候，应当使用静态的<code>compare</code>或者<code>Comparator</code>接口中的构建方法。</p>
+</li>
+</ul>
+<hr>
+<h3 id="15、使类和成员的可访问性最小化"><a href="#15、使类和成员的可访问性最小化" class="headerlink" title="15、使类和成员的可访问性最小化"></a>15、使类和成员的可访问性最小化</h3><p>一个良好设计的类应该隐藏它的所有实现细节，仅仅对外暴露API，这样会比较干净。其他的组件，通过API和他们进行交互，并且对他们的内部工作应当一无所知。这个概念被称为<strong>封装</strong>。</p>
+<p><strong>封装的优势：</strong></p>
+<ul>
+<li>将组成系统的组件分开，允许他们被独立的开发，测试，优化。</li>
+<li>拥有不同功能的组件可以并行开发。</li>
+</ul>
+<p><strong>可访问性最小化原则：让每一个类或成员尽可能的不可访问，即尽可能的降低访问级别。</strong></p>
+<ul>
+<li>一个顶级类(.java文件中的直接定义的类)或接口的访问级别只能是 default或者public的。如果没有必要将其设置为pubilic，那么我们就应该将其设置为default的。</li>
+<li>当我们把一个类设置为public的时候，那么它就拥有导出API的功能，在这种情况下，我们应该有义务维护这个类，让其保持着API的兼容性。当然如果是default的话就没有这个必要，因为它是包级私有的，并不拥有到处API的功能，仅仅是组件实现的一部分。</li>
+<li>如果一个default修饰的顶级类只被一个类使用的话，那么我们应该考虑将这个类作为其使用者的私有静态嵌套类。</li>
+<li>对于一个public修饰的类，我们在设计其成员的时候，应该尽可能的将其成员设置为私有的。</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>如果一个类存在一个是public且非final的实例属性，那么我们就放弃了限制这个实例的属性被修改的能力，并且当这个实例的属性被修改的时候，我们也并没有解决的方案。</li>
+<li>即便是类中的实例属性是final的，也只能保证它引用的对象无法改变而无法保证它引用的对象的属性保持不变。</li>
+<li>对所有的静态属性也是如此。我们通过public static final 来表示一个常量。但是，如果其引用的是一个对象，虽然对象的引用无法被修改，但是我们我发保证对象的属性保持不变。</li>
+<li>所有的public static final 修饰的长度不为0的数组，我们也应当注意，因为它是可变的。</li>
+</ul>
+<hr>
+<p><strong>相关链接：</strong><br><a href="https://www.jianshu.com/p/f0e618bd7022" target="_blank" rel="noopener">EffectiveJava笔记[一]</a><br><a href="https://www.jianshu.com/p/89bf716aec06" target="_blank" rel="noopener">EffectiveJava笔记[二]</a></p>
+
+        </div>
+        
+        <ul class="post-copyright">
+            <li><strong>本文标题：</strong><a href="http://yoursite.com/2019/07/24/EffectiveJava笔记3/">EffectiveJava笔记[三]</a></li>
+            <li><strong>本文作者：</strong><a href="http://yoursite.com">John Pig</a></li>
+            <li><strong>本文链接：</strong><a href="http://yoursite.com/2019/07/24/EffectiveJava笔记3/">http://yoursite.com/2019/07/24/EffectiveJava笔记3/</a></li>
+            <li><strong>发布时间：</strong>2019-07-24</li>
+            <li><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+            </li>
+        </ul>
+        
+        
+        <hr style="height:1px;margin:1rem 0">
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
+                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2019/07/24/EffectiveJava笔记2/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">EffectiveJava笔记[二]</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/07/24/EffectiveJava笔记4/">
+                <span class="level-item">EffectiveJava笔记[四]</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered" style="flex-shrink: 1">
+                <div>
+                    
+                        <figure class="image is-128x128 has-mb-6">
+                            <img class="is-rounded" src="/assets/img/favicon.png" alt="pigrange">
+                        </figure>
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        pigrange
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        JohnPig
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>ChengDu</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        5
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        1
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        2
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/pigrange" target="_blank">
+                关注我</a>
+        </div>
+        
+        
+    </div>
+</div>
+    
+        
+<div class="card widget column-left is-sticky" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#11、重写equals时重写hashCode方法">
+        <span class="has-mr-6">1</span>
+        <span>11、重写equals时重写hashCode方法</span>
+        </a></li><li>
+        <a class="is-flex" href="#12、始终重写toString方法">
+        <span class="has-mr-6">2</span>
+        <span>12、始终重写toString方法</span>
+        </a></li><li>
+        <a class="is-flex" href="#13、谨慎地重写clone">
+        <span class="has-mr-6">3</span>
+        <span>13、谨慎地重写clone</span>
+        </a></li><li>
+        <a class="is-flex" href="#14、考虑实现Comparable接口">
+        <span class="has-mr-6">4</span>
+        <span>14、考虑实现Comparable接口</span>
+        </a></li><li>
+        <a class="is-flex" href="#15、使类和成员的可访问性最小化">
+        <span class="has-mr-6">5</span>
+        <span>15、使类和成员的可访问性最小化</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                    
+                    <img src="/assets/img/logo.jpg" alt="EffectiveJava笔记[三]" height="28" style="margin-left: 0.5em">
+                    
+                </a>
+                <p class="is-size-7" style="padding-bottom: 0.5em">
+                    <span id="timeDate" class="is-size-7"></span>
+                    <span id="times" class="is-size-7"></span>
+                </p>
+                <p class="is-size-7">
+                    &copy; 2019 John Pig&nbsp;
+                    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                    
+                </p>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                <script>
+                    var now = new Date();
+                    function createtime() {
+                        var grt = new Date("7/24/2019 16:00:00");//此处修改你的建站时间或者网站上线时间 
+                        now.setTime(now.getTime() + 250);
+                        days = (now - grt) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+                        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+                        if (String(hnum).length == 1) { hnum = "0" + hnum; } minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+                        mnum = Math.floor(minutes); if (String(mnum).length == 1) { mnum = "0" + mnum; }
+                        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+                        snum = Math.round(seconds); if (String(snum).length == 1) { snum = "0" + snum; }
+                        document.getElementById("timeDate").innerHTML = "&nbsp;&nbsp" + "本站已安全运行 " + dnum + " 天 ";
+                        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+                    }
+                    setInterval("createtime()", 250);
+                </script>
+            </div>
+            <div class="level-end">
+                
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":0.9,"jsonPath":"/live2dw/assets/hijiki.model.json"},"log":false});</script></body>
+</html>

@@ -149,7 +149,7 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-16T08:31:58.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-16</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-17T09:59:06.942Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-17</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-17T11:16:05.004Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-17</time>
                 
                 
                 <div class="level-item">
@@ -160,7 +160,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    43 分钟 读完 (大约 6422 个字)
+                    1 小时 读完 (大约 6697 个字)
                 </span>
                 
                 
@@ -169,8 +169,10 @@
         
 
         <div class="content">
-            <p>这是一篇带有非常详细注释的关于View事件分发机制的源码阅读笔记（onTouchEvent的坑还没有填，无配图）</p>
-<p><em>我不管你看不看得懂，反正只要我看得懂就行了，手动斜眼</em></p>
+            <p><em>我不管你看不看得懂，反正只要我看得懂就行了  —— john pig</em> </p>
+<p>为了准备接下来的面试，这几天又在看《开发艺术探索》，老觉得View的事件流程看的不是很明白，索性干脆直接上源码刨根问底，肝了两天，终于是对View的事件流程有一个详细的了解。</p>
+<p>本来打算像其他的大佬一样把源码拆开，结合图文描述关键方法的。但是发现这样做很难弄清整个流程的具体逻辑，脑子里可能就一个大致的流程图，也就逮住几个关键方法侃侃而谈。这样做或许可以快速了解，但是由于没有深入，始终不能留下深刻的印象。并且对于我自己来说，本来就对着整个流程了解不够清晰，一口气看完来写想必会忘记不少细节；而一边看一边写又容易分心，并且很容易纠结某一个细枝末节的东西而失去整体的框架。</p>
+<p><strong>好了，废话不多说。请慢慢 read the fucking code 吧</strong></p>
         </div>
         
         

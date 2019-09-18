@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="EffectiveJAVA的读书笔记(:з)∠)">
+    <meta name="description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _">
 <meta name="keywords" content="JAVA">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EffectiveJava笔记[四]">
 <meta property="og:url" content="https://pigrange.github.io/2019/07/24/EffectiveJava笔记4/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="EffectiveJAVA的读书笔记(:з)∠)">
+<meta property="og:description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava4.jpg">
-<meta property="og:updated_time" content="2019-09-16T09:54:57.881Z">
+<meta property="og:updated_time" content="2019-09-18T00:25:22.343Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EffectiveJava笔记[四]">
-<meta name="twitter:description" content="EffectiveJAVA的读书笔记(:з)∠)">
+<meta name="twitter:description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava4.jpg">
 
 
@@ -146,18 +146,18 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-07-24T03:57:00.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-07-24</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-16T09:54:57.881Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-16</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T00:25:22.343Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
                 
                 
                 <div class="level-item">
-                    <a class="has-link-grey -link" href="/categories/读书笔记/">读书笔记</a>
+                    <a class="has-link-grey -link" href="/categories/读书笔记/">读书笔记</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/读书笔记/EffectiveJava/">EffectiveJava</a>
                 </div>
                 
                 
                 <span class="level-item has-text-grey">
                     
                     
-                    16 分钟 读完 (大约 2431 个字)
+                    14 分钟 读完 (大约 2027 个字)
                 </span>
                 
                 
@@ -166,19 +166,10 @@
         
 
         <div class="content">
-            <p>EffectiveJAVA的读书笔记<em>(:з)∠)</em></p>
+            <blockquote>
+<h3 id="EffectiveJAVA的读书笔记-四-з-∠"><a href="#EffectiveJAVA的读书笔记-四-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _"></a>EffectiveJAVA的读书笔记[四]  _ <em>(:з)∠)</em> _</h3></blockquote>
 <a id="more"></a>
 
-<p>【序】今天睡懒觉了，差点咕咕咕。(手动换行) 昨天试图分享自己的笔记，结果被吐槽只是抄书。这句话的对做为尝试写总结性质读书笔记的新手(我)的打击性其实是很大的。花了近3小时写的文章(姑且算是)，结果被别人看了一眼就说你这就是抄书，没有技术含量，也不算是原创。</p>
-<ul>
-<li><p>无能狂怒：这是本人初次尝试通过记录笔记并公开分享，也是尝试对费曼学习法的一次尝试，如果你不喜欢或者觉得没有任何价值。只能抱歉，这确实是我的问题，请自行关闭。这个系列我还是会写，可能后期渐渐改变写作风格。当前的格式很受此书的影响（这本书本来就是总结性质的），只能说前几篇确实是写得太过于仓促有一点依葫芦画瓢的感觉吧。</p>
-</li>
-<li><p>为什么做这个系列：在才开始看<code>EffectiveJava</code>的几天，我其实是并没有这个打算的，因为此书本身是总结性质的，但是由于有不少的地方比较难，在网上搜索相关的内容大多都是完整的抄书没有得到实质性的讲解。所以打算自己总结来加深理解。</p>
-</li>
-<li><p>定位：帮助自己学习和理解JAVA，当然希望对别人有用。</p>
-</li>
-</ul>
-<hr>
 <h3 id="16、在公共类中使用访问方法而不是公共属性"><a href="#16、在公共类中使用访问方法而不是公共属性" class="headerlink" title="16、在公共类中使用访问方法而不是公共属性"></a>16、在公共类中使用访问方法而不是公共属性</h3><p><strong>关键字：</strong><code>public类</code>，<code>访问方法</code>，<code>public属性</code></p>
 <p>在<code>JAVA</code>里面，对于那些需要对外提供某些属性的类。比较建议的一种写法是对外提供访问方法(<code>getter</code>和<code>setter</code>)而不直接将这些属性设置为<code>public</code>的。曾经有人问过我这个问题，为什么要这么做，我并不知道，只觉得这是封装思想的一种体现。</p>
 <p>如下（例子源于书上）:</p>
@@ -387,7 +378,7 @@
                         分类
                     </p>
                     <p class="title has-text-weight-normal">
-                        2
+                        4
                     </p>
                 </div>
             </div>
@@ -419,24 +410,28 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#16、在公共类中使用访问方法而不是公共属性">
+        <a class="is-flex" href="#EffectiveJAVA的读书笔记-四-з-∠">
         <span class="has-mr-6">1</span>
+        <span>EffectiveJAVA的读书笔记[四]  _ (:з)∠) _</span>
+        </a></li><li>
+        <a class="is-flex" href="#16、在公共类中使用访问方法而不是公共属性">
+        <span class="has-mr-6">2</span>
         <span>16、在公共类中使用访问方法而不是公共属性</span>
         </a></li><li>
         <a class="is-flex" href="#17、最小化可变性">
-        <span class="has-mr-6">2</span>
+        <span class="has-mr-6">3</span>
         <span>17、最小化可变性</span>
         </a></li><li>
         <a class="is-flex" href="#18、组合由于继承">
-        <span class="has-mr-6">3</span>
+        <span class="has-mr-6">4</span>
         <span>18、组合由于继承</span>
         </a></li><li>
         <a class="is-flex" href="#19、要么设计继承并提供文档说明，要么就禁用继承">
-        <span class="has-mr-6">4</span>
+        <span class="has-mr-6">5</span>
         <span>19、要么设计继承并提供文档说明，要么就禁用继承</span>
         </a></li><li>
         <a class="is-flex" href="#20、接口优于抽象类">
-        <span class="has-mr-6">5</span>
+        <span class="has-mr-6">6</span>
         <span>20、接口优于抽象类</span>
         </a></li></ul>
         </div>

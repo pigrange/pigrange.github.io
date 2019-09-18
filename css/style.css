@@ -209,8 +209,8 @@ img.thumbnail {
   margin-bottom: 0.5rem !important;
 }
 .article .content {
-  font-size: 1.1rem;
-  letter-spacing: 0.08rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.06rem;
 }
 .article .content blockquote.pullquote {
   float: right;
@@ -382,19 +382,21 @@ img.thumbnail {
 .content h4,
 .content h5,
 .content h6 {
-  font-weight: 400;
+  font-weight: 700;
+  margin-bottom: 1.2em;
 }
 .content h1 {
-  font-size: 1.75em;
+  font-weight: 900;
+  font-size: 1.95em;
 }
 .content h2 {
-  font-size: 1.5em;
+  font-size: 1.75em;
 }
 .content h3 {
-  font-size: 1.25em;
+  font-size: 1.45em;
 }
 .content h4 {
-  font-size: 1.125em;
+  font-size: 1.25em;
 }
 .content h5 {
   font-size: 1em;
@@ -544,4 +546,7 @@ figure.highlight:hover .copy {
 }
 .button.is-link {
   background-color: #649ab6;
+}
+.li.p {
+  margin-bottom: 0.6em;
 }

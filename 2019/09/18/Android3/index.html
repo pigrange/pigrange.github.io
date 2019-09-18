@@ -16,7 +16,7 @@
 <meta property="og:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.jpg">
-<meta property="og:updated_time" content="2019-09-18T11:02:02.196Z">
+<meta property="og:updated_time" content="2019-09-18T12:03:04.239Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View的工作原理">
 <meta name="twitter:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
@@ -139,14 +139,15 @@
     <div class="card-content article ">
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-            
+                    View的工作原理
+                    
         </h1>
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-18T00:45:57.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-18</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T11:02:02.196Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T12:03:04.239Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
                 
                 
                 <div class="level-item">
@@ -157,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    16 分钟 读完 (大约 2427 个字)
+                    16 分钟 读完 (大约 2421 个字)
                 </span>
                 
                 
@@ -169,7 +170,9 @@
             <p>前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。</p>
 <a id="more"></a>
 
-<h1 id="View的工作原理"><a href="#View的工作原理" class="headerlink" title="View的工作原理"></a>View的工作原理</h1><h3 id="两个比较重要的类："><a href="#两个比较重要的类：" class="headerlink" title="两个比较重要的类："></a>两个比较重要的类：</h3><h4 id="ViewRootImpl"><a href="#ViewRootImpl" class="headerlink" title="ViewRootImpl:"></a>ViewRootImpl:</h4><p><strong>注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是DecorView，而对DecorView的直接持有者又是PhoneWindow(这里我们不说parent，因为phoneWindow不是View的子类)。</strong></p>
+
+
+<h3 id="两个比较重要的类："><a href="#两个比较重要的类：" class="headerlink" title="两个比较重要的类："></a>两个比较重要的类：</h3><h4 id="ViewRootImpl"><a href="#ViewRootImpl" class="headerlink" title="ViewRootImpl:"></a>ViewRootImpl:</h4><p><strong>注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是DecorView，而对DecorView的直接持有者又是PhoneWindow(这里我们不说parent，因为phoneWindow不是View的子类)。</strong></p>
 <p>这里要说明一点，虽然PhoneWindow直接持有了DecorView的引用，但是由于职能的限制(如果PhoneWondow再去管理View就太臃肿了)，PhoneWindow的实例并不直接对当前Activity的DecorView进行管理(PhoneWindow更多的是和Activity进行交互)，所以Android才引入了ViewRoot这个控制层(或者说叫handler？)，来使WindowManager间接的管理Windows下的View。</p>
 <p>ViewRoot作为PhoneWindow和DecorView之间的桥梁，直接控制了DecorView以及整个ViewTree的测量、布局、绘制、以及事件分发的工作。另外，它还代理了WindowMnagerGlobal负责和WindowManagerSercvice进行直接通信来调整窗口位置的大小以及对来自于WMS的事件进行相应的处理。</p>
 <p><strong>整个View树的PerformTraversal是通过ViewRootImpl开始的</strong>，而ViewRoot的PerformTraversal内部会一次调用PerformMeasure，PerformLayout，PerformDraw三个方法，这三个方法将会对顶层的View即DecorView依次进行mesure，layout和draw，而mesure，layout，draw的内部又会调用View的onMeasure, onLayout , onDraw方法。而如果这个View是一个ViewGroup的话，其onMeasure, onLayout和Draw的dispatchDraw又会调用其子View的Measure , Layout , Draw 方法。在这个递归调用下。整个View树就完成了测量，定位，和绘制的工作。</p>
@@ -408,54 +411,50 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#View的工作原理">
-        <span class="has-mr-6">1</span>
-        <span>View的工作原理</span>
-        </a><ul class="menu-list"><li>
         <a class="is-flex" href="#两个比较重要的类：">
-        <span class="has-mr-6">1.1</span>
+        <span class="has-mr-6">1</span>
         <span>两个比较重要的类：</span>
         </a><ul class="menu-list"><li>
         <a class="is-flex" href="#ViewRootImpl">
-        <span class="has-mr-6">1.1.1</span>
+        <span class="has-mr-6">1.1</span>
         <span>ViewRootImpl:</span>
         </a></li><li>
         <a class="is-flex" href="#DecorView">
-        <span class="has-mr-6">1.1.2</span>
+        <span class="has-mr-6">1.2</span>
         <span>DecorView:</span>
         </a></li></ul></li><li>
         <a class="is-flex" href="#MesureSpec">
-        <span class="has-mr-6">1.2</span>
+        <span class="has-mr-6">2</span>
         <span>MesureSpec</span>
         </a><ul class="menu-list"><li>
         <a class="is-flex" href="#谈一谈LayoutParamas和MesureSpec：">
-        <span class="has-mr-6">1.2.1</span>
+        <span class="has-mr-6">2.1</span>
         <span>谈一谈LayoutParamas和MesureSpec：</span>
         </a></li><li>
         <a class="is-flex" href="#对MesureSpec的一些总结：">
-        <span class="has-mr-6">1.2.2</span>
+        <span class="has-mr-6">2.2</span>
         <span>对MesureSpec的一些总结：</span>
         </a></li></ul></li><li>
         <a class="is-flex" href="#真-View的工作原理">
-        <span class="has-mr-6">1.3</span>
+        <span class="has-mr-6">3</span>
         <span>(真)View的工作原理</span>
         </a><ul class="menu-list"><li>
         <a class="is-flex" href="#Msasure过程：">
-        <span class="has-mr-6">1.3.1</span>
+        <span class="has-mr-6">3.1</span>
         <span>Msasure过程：</span>
         </a></li><li>
         <a class="is-flex" href="#Layout过程：">
-        <span class="has-mr-6">1.3.2</span>
+        <span class="has-mr-6">3.2</span>
         <span>Layout过程：</span>
         </a></li><li>
         <a class="is-flex" href="#Draw过程：">
-        <span class="has-mr-6">1.3.3</span>
+        <span class="has-mr-6">3.3</span>
         <span>Draw过程：</span>
         </a></li><li>
         <a class="is-flex" href="#View宽高的获取：">
-        <span class="has-mr-6">1.3.4</span>
+        <span class="has-mr-6">3.4</span>
         <span>View宽高的获取：</span>
-        </a></li></ul></li></ul></li></ul>
+        </a></li></ul></li></ul>
         </div>
     </div>
 </div>

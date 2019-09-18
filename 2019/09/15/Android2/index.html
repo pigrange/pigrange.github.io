@@ -16,7 +16,7 @@
 <meta property="og:description" content="这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.jpg">
-<meta property="og:updated_time" content="2019-09-18T00:24:00.456Z">
+<meta property="og:updated_time" content="2019-09-18T12:03:12.411Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View的事件体系基础">
 <meta name="twitter:description" content="这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。">
@@ -139,14 +139,15 @@
     <div class="card-content article ">
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-            
+                    View的事件体系基础
+                    
         </h1>
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-14T23:24:17.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-15</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T00:24:00.456Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T12:03:12.411Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
                 
                 
                 <div class="level-item">
@@ -157,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    7 分钟 读完 (大约 977 个字)
+                    6 分钟 读完 (大约 971 个字)
                 </span>
                 
                 
@@ -169,7 +170,9 @@
             <p>这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。</p>
 <a id="more"></a>
 
-<h1 id="View的事件体系"><a href="#View的事件体系" class="headerlink" title="View的事件体系"></a>View的事件体系</h1><h3 id="1、View的基础知识"><a href="#1、View的基础知识" class="headerlink" title="1、View的基础知识"></a>1、View的基础知识</h3><h4 id="什么是View："><a href="#什么是View：" class="headerlink" title="什么是View："></a>什么是View：</h4><ul>
+
+
+<h3 id="1、View的基础知识"><a href="#1、View的基础知识" class="headerlink" title="1、View的基础知识"></a>1、View的基础知识</h3><h4 id="什么是View："><a href="#什么是View：" class="headerlink" title="什么是View："></a>什么是View：</h4><ul>
 <li>Android所有的控件的父类，是界面层的一种抽象</li>
 <li>View的结构和前端的DOM相似，View也可以有一组控件组成</li>
 </ul>
@@ -394,54 +397,50 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#View的事件体系">
-        <span class="has-mr-6">1</span>
-        <span>View的事件体系</span>
-        </a><ul class="menu-list"><li>
         <a class="is-flex" href="#1、View的基础知识">
-        <span class="has-mr-6">1.1</span>
+        <span class="has-mr-6">1</span>
         <span>1、View的基础知识</span>
         </a><ul class="menu-list"><li>
         <a class="is-flex" href="#什么是View：">
-        <span class="has-mr-6">1.1.1</span>
+        <span class="has-mr-6">1.1</span>
         <span>什么是View：</span>
         </a></li><li>
         <a class="is-flex" href="#View的位置参数：">
-        <span class="has-mr-6">1.1.2</span>
+        <span class="has-mr-6">1.2</span>
         <span>View的位置参数：</span>
         </a></li><li>
         <a class="is-flex" href="#点击的位置参数：">
-        <span class="has-mr-6">1.1.3</span>
+        <span class="has-mr-6">1.3</span>
         <span>点击的位置参数：</span>
         </a></li></ul></li><li>
         <a class="is-flex" href="#2、View交互相关的一些类">
-        <span class="has-mr-6">1.2</span>
+        <span class="has-mr-6">2</span>
         <span>2、View交互相关的一些类</span>
         </a></li><li>
         <a class="is-flex" href="#3、实现View滑动的方式">
-        <span class="has-mr-6">1.3</span>
+        <span class="has-mr-6">3</span>
         <span>3、实现View滑动的方式</span>
         </a><ul class="menu-list"><li>
         <a class="is-flex" href="#Layout：">
-        <span class="has-mr-6">1.3.1</span>
+        <span class="has-mr-6">3.1</span>
         <span>Layout：</span>
         </a></li><li>
         <a class="is-flex" href="#LayoutParamas：">
-        <span class="has-mr-6">1.3.2</span>
+        <span class="has-mr-6">3.2</span>
         <span>LayoutParamas：</span>
         </a></li><li>
         <a class="is-flex" href="#scrollTo">
-        <span class="has-mr-6">1.3.3</span>
+        <span class="has-mr-6">3.3</span>
         <span>scrollTo</span>
         </a></li><li>
         <a class="is-flex" href="#使用动画">
-        <span class="has-mr-6">1.3.4</span>
+        <span class="has-mr-6">3.4</span>
         <span>使用动画</span>
         </a></li><li>
         <a class="is-flex" href="#各种滑动方式的对比：">
-        <span class="has-mr-6">1.3.5</span>
+        <span class="has-mr-6">3.5</span>
         <span>各种滑动方式的对比：</span>
-        </a></li></ul></li></ul></li></ul>
+        </a></li></ul></li></ul>
         </div>
     </div>
 </div>

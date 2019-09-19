@@ -16,7 +16,7 @@
 <meta property="og:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.jpg">
-<meta property="og:updated_time" content="2019-09-18T12:03:04.239Z">
+<meta property="og:updated_time" content="2019-09-18T12:14:25.902Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View的工作原理">
 <meta name="twitter:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
@@ -147,7 +147,7 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-18T00:45:57.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-18</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T12:03:04.239Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T12:14:25.902Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
                 
                 
                 <div class="level-item">
@@ -169,8 +169,6 @@
         <div class="content">
             <p>前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。</p>
 <a id="more"></a>
-
-
 
 <h3 id="两个比较重要的类："><a href="#两个比较重要的类：" class="headerlink" title="两个比较重要的类："></a>两个比较重要的类：</h3><h4 id="ViewRootImpl"><a href="#ViewRootImpl" class="headerlink" title="ViewRootImpl:"></a>ViewRootImpl:</h4><p><strong>注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是DecorView，而对DecorView的直接持有者又是PhoneWindow(这里我们不说parent，因为phoneWindow不是View的子类)。</strong></p>
 <p>这里要说明一点，虽然PhoneWindow直接持有了DecorView的引用，但是由于职能的限制(如果PhoneWondow再去管理View就太臃肿了)，PhoneWindow的实例并不直接对当前Activity的DecorView进行管理(PhoneWindow更多的是和Activity进行交互)，所以Android才引入了ViewRoot这个控制层(或者说叫handler？)，来使WindowManager间接的管理Windows下的View。</p>
@@ -312,6 +310,13 @@
 <div class="card card-transparent">
     <div class="level post-navigation is-flex-wrap is-mobile">
         
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2019/09/19/View-Measure/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">View工作流程[一]：Measure测量</span>
+            </a>
+        </div>
+        
         
         <div class="level-end">
             <a class="level level-item has-link-grey  article-nav-next" href="/2019/09/16/ViewEvent/">
@@ -369,7 +374,7 @@
                         文章
                     </p>
                     <p class="title has-text-weight-normal">
-                        8
+                        9
                     </p>
                 </div>
             </div>
@@ -642,5 +647,5 @@ document.addEventListener('DOMContentLoaded', function () {
 <link rel="stylesheet" href="/css/search.css">
 <link rel="stylesheet" href="/css/insight.css">
     
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":0.8,"jsonPath":"/live2dw/assets/hijiki.model.json"},"log":false});</script></body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"mobile":{"show":false},"model":{"scale":0.7,"jsonPath":"/live2dw/assets/hijiki.model.json"},"log":false});</script></body>
 </html>

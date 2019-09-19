@@ -16,7 +16,7 @@
 <meta property="og:description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  写在前面：哭了，本来打算想先了解了解setContentView，如果内容不多的话，就放在这里和View的measure(准确的说应该是ViewRootImpl#PerformTraversals) 一起来讲的，结果debug看了一晚上，发现AppCompactActivity在DecorView和FrameContent之间">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/SourceCode.jpg">
-<meta property="og:updated_time" content="2019-09-19T13:47:18.888Z">
+<meta property="og:updated_time" content="2019-09-19T14:46:24.423Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View工作流程[一]：Measure测量">
 <meta name="twitter:description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  写在前面：哭了，本来打算想先了解了解setContentView，如果内容不多的话，就放在这里和View的measure(准确的说应该是ViewRootImpl#PerformTraversals) 一起来讲的，结果debug看了一晚上，发现AppCompactActivity在DecorView和FrameContent之间">
@@ -147,7 +147,7 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-19T10:49:53.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-19</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-19T13:47:18.888Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-19</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-19T14:46:24.423Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-19</time>
                 
                 
                 <div class="level-item">
@@ -158,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    13 分钟 读完 (大约 2014 个字)
+                    16 分钟 读完 (大约 2336 个字)
                 </span>
                 
                 
@@ -191,6 +191,9 @@
 
 <h4 id="View-java-getDefaultSize"><a href="#View-java-getDefaultSize" class="headerlink" title="View.java#getDefaultSize()"></a>View.java#getDefaultSize()</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * View最终确定自己的大小的方法，这里返回的结果就是View在本次测量的最终大小了</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> size : getSuggestedMinimumWidth返回的结果，也就是View能够接受的最小的大小</span></span><br><span class="line"><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> measureSpec : parent传递下来的值，用于通知View最终的测量模式和parent建议的值</span></span><br><span class="line"><span class="hljs-comment"> *</span></span><br><span class="line"><span class="hljs-comment"> * */</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getDefaultSize</span><span class="hljs-params">(<span class="hljs-keyword">int</span> size, <span class="hljs-keyword">int</span> measureSpec)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-comment">// size是getSuggestedMinimumWidth返回的结果</span></span><br><span class="line">    <span class="hljs-keyword">int</span> result = size;</span><br><span class="line">    <span class="hljs-keyword">int</span> specMode = MeasureSpec.getMode(measureSpec);</span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-comment">// specSize是parent的建议值</span></span><br><span class="line">    <span class="hljs-keyword">int</span> specSize = MeasureSpec.getSize(measureSpec);</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-comment">//通过这里我们可以看到，一般来说，child是很听parent的建议的</span></span><br><span class="line">    <span class="hljs-comment">//对于AT_MOST和EXACTLY都是直接设置parent建议的大小(注意这里我们不考虑ViewGroup)</span></span><br><span class="line">    <span class="hljs-comment">//只有在specMode是UNSPECIFIED的时候child才会采用自己的最小值</span></span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-comment">//补充一下：子View的specMode的UNSPECIFIED只会继承自parent</span></span><br><span class="line">    <span class="hljs-keyword">switch</span> (specMode) &#123;</span><br><span class="line">        <span class="hljs-keyword">case</span> MeasureSpec.UNSPECIFIED:</span><br><span class="line">            result = size;</span><br><span class="line">            <span class="hljs-keyword">break</span>;</span><br><span class="line">        <span class="hljs-keyword">case</span> MeasureSpec.AT_MOST:</span><br><span class="line">        <span class="hljs-keyword">case</span> MeasureSpec.EXACTLY:</span><br><span class="line">            result = specSize;</span><br><span class="line">            <span class="hljs-keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p><strong>写到最后：</strong></p>
+<p>前面有提到，这些源码的阅读其实是同步《开发艺术探索的》的阅读的。我觉得有必要指出刚哥在书里面提到的 “ViewGroup提供了一个measureChildren方法来测量它的child” 这个观点，其实看了源码我们知道，虽然确实ViewGroup有提供此方法，但是它并没有调用此方法，并且对于ViewGroup的大多实现，它们都是直接在onMeasure里面实现了自己对于Child的测量措施。所以对于ViewGroup的实现，我们不应该刻意去强调它的存在，更多的是把它当作一个通用解决方案或者一种保守策略。比如说当我们自己实现ViewGroup的时候，可以考虑在onMeasure调用measureChildren，来降低我们直接实现的成本开销。</p>
+<p>我其实有考虑补一个ViewGroup派生类的onMeasure方法，比如说LinearLayout或者ConstraintLayout，但是粗略看了一下，代码多得吓人，无奈本人时间有限外加这些特定ViewGroup的功能专一性，浪费时间在它们源码的解读上实在有点亏。(千真万确，逃<del>~</del>)</p>
 
         </div>
         

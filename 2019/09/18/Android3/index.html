@@ -16,7 +16,7 @@
 <meta property="og:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.jpg">
-<meta property="og:updated_time" content="2019-09-18T12:14:25.902Z">
+<meta property="og:updated_time" content="2019-09-19T14:18:38.301Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View的工作原理">
 <meta name="twitter:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
@@ -147,7 +147,7 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-18T00:45:57.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-18</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T12:14:25.902Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-19T14:18:38.301Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-19</time>
                 
                 
                 <div class="level-item">
@@ -180,7 +180,7 @@
 <li>TitleBar: 用于挂载Actionbar</li>
 <li>ContentPatent: 用于挂载ContentView</li>
 </ul>
-<p>​    <strong>注意：这里所说的挂载实际上是通过addView添加上去的，这里的ContentParent实际上是一个FrameLayout，这里命名为ContentParent只是为了说明其地位的特殊，而不是说这就是一个特殊的类。我们可以通过在DecorView中调用findViewById(android.R.id.content)获取到它。</strong></p>
+<p>​    <strong>注意：这里所说的挂载实际上是通过addView添加上去的，这里的ContentParent实际上是一个ContentFrameLayout，这里命名为ContentParent只是为了说明其地位的特殊，而不是说这就是一个特殊的类。我们可以通过在DecorView中调用findViewById(android.R.id.content)获取到它。</strong></p>
 <h3 id="MesureSpec"><a href="#MesureSpec" class="headerlink" title="MesureSpec"></a>MesureSpec</h3><p>MesureSpec是一个32位的Int类型，用于表示一个父View对child的约束类型和能提供的最大的空间。也就是说，这一个int值表示了两个数据。其中它的高2位，用于表示测量的类型，而低30位用于表示测量的大小。这样做有一个好处，就是省掉了为了传递一组数据创建一个对象在内存上面的开销(光是对象头就占用了8个字节了，如果是用数组的话，对象头12个字节，更大)。</p>
 <p><strong>组成：</strong></p>
 <ul>

@@ -562,33 +562,38 @@ figure.highlight:hover .copy {
   margin-bottom: 1.5em;
   margin-top: 1em;
 }
-html,
-body,
-p,
-ol,
-li,
-dl,
-dt,
-dd,
-blockquote,
-figure,
-fieldset,
-legend,
-textarea,
-pre,
-iframe,
-hr,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
+.content html,
+.content body,
+.content p,
+.content ol,
+.content li,
+.content dl,
+.content dt,
+.content dd,
+.content blockquote,
+.content figure,
+.content fieldset,
+.content legend,
+.content textarea,
+.content pre,
+.content iframe,
+.content hr,
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6,
 .content ul {
   margin-bottom: 1.5em;
   padding: 0;
 }
-ul li,
+.content ul li,
 ol li {
   margin-bottom: 0.5em;
+}
+.content ul li a,
+ol li a {
+  color: #708090;
+  text-decoration: underline;
 }

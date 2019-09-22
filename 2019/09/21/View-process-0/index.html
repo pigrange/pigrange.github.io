@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。 大量B话预警！！！">
+    <meta name="description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。 大量文字预警！！！">
 <meta name="keywords" content="Android,SourceCode">
 <meta property="og:type" content="article">
 <meta property="og:title" content="View工作流程[零]：从setContentView到measure">
-<meta property="og:url" content="https://pigrange.github.io/2019/09/21/View-Mrocess0/index.html">
+<meta property="og:url" content="https://pigrange.github.io/2019/09/21/View-process-0/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。 大量B话预警！！！">
+<meta property="og:description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。 大量文字预警！！！">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/SourceCode.jpg">
-<meta property="og:updated_time" content="2019-09-21T15:53:57.647Z">
+<meta property="og:updated_time" content="2019-09-22T01:21:17.602Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View工作流程[零]：从setContentView到measure">
-<meta name="twitter:description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。 大量B话预警！！！">
+<meta name="twitter:description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。 大量文字预警！！！">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/SourceCode.jpg">
 
 
@@ -147,7 +147,7 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-21T15:53:50.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-21</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-21T15:53:57.647Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-21</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-22T01:21:17.602Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-22</time>
                 
                 
                 <div class="level-item">
@@ -158,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    1 小时 读完 (大约 7458 个字)
+                    1 小时 读完 (大约 7476 个字)
                 </span>
                 
                 
@@ -169,34 +169,47 @@
         <div class="content">
             <p><em>我不管你看不看得懂，反正只要我看得懂就行了  —— john pig</em> </p>
 <p>这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。</p>
-<h3 id="大量B话预警！！！"><a href="#大量B话预警！！！" class="headerlink" title="大量B话预警！！！"></a>大量B话预警！！！</h3><a id="more"></a>
+<h3 id="大量文字预警！！！"><a href="#大量文字预警！！！" class="headerlink" title="大量文字预警！！！"></a>大量文字预警！！！</h3><a id="more"></a>
 
+<h3 id="目录："><a href="#目录：" class="headerlink" title="目录："></a>目录：</h3><ul>
+<li><strong><a href="#setcontentview">setContentView</a></strong><ul>
+<li><strong><a href="#initdecor">DecorView的初始化</a></strong></li>
+<li><strong><a href="#addcontent">ContentView的添加</a></strong></li>
+</ul>
+</li>
+<li><strong><a href="#resume">Activity的resume</a></strong></li>
+<li><strong><a href="#process">View的工作流程</a></strong></li>
+<li><a href>补充</a><ul>
+<li><strong><a href="#additional">Choreographer.postCallback</a></strong></li>
+<li><strong><a href="#requestlayout">ViewParent#requestLayout</a></strong></li>
+</ul>
+</li>
+</ul>
 <p>写在前面：</p>
 <p>在学习View的工作流程的时候，很多人都是直接从measure方法开始讲，或者稍微提到了从ViewRootImpl的performTraversal开始就不在详细说明了。确实Android源码是一个无底洞，深入进去往往无法自拔，很多东西抓住重点学习，可以快速熟悉整个系统的生态，不会在某些细枝末节的地方花上太多的时间。但是我始终觉得，这样学到的知识是零散的，导致我们很多时候很难将某些内容联系起来，这样显然对于Android的更加深入的理解是不利的。</p>
 <p><strong>为什么我要将setContenView和measure一起讲：</strong></p>
 <p>首先我要说明，这两者是没有关系的。setContentView方法是在Activity的onCreate中被调用的。我一直觉得Google的开发者真的是命名鬼才，对于方法的命名是非常精准的，所以我正好可以借助google的思路所作出强调：<strong>setContentView就只做了setContentView，仅此而已 (所以千万不要像我一样在那里死磕setContentView在AppcompactActivity中的实现, 它其实对于View的工作流程没有任何关联。</strong>而整个ViewTree的测量，定位，绘制是在Activity的onResume方法之后的某一个时刻被调用的，为什么是某一个时刻呢？因为这里用到了Handler，我们并不能确定handler具体处理整个message的时刻。</p>
 <p><strong>但是! ! !</strong>，我在学习的过程中发现有不少blog是误导性或者甚至是有错的。他们都过多强调了Window.addView方法的功能，导致一些没有搞清Window和WindowManager的同学很容易在这里去纠结这个方法的具体实现，因为它们会觉得只要View和Window关联起来了，那么contentView在这里就成功的添加到了屏幕上了，所以可能会和我一样，傻乎乎的在setContentView里面去找半天ViewRootImpl的performTraversal方法，然而in vain。</p>
 <p><strong>我的理解：</strong></p>
-<p>个人觉得这是口锅，并且得这么背。</p>
 <ul>
-<li>JAVA背三分之一。很大一部分原因是因为JAVA面向对象的语义太强了，导致开发者很容易沉迷于某一个封装好的类的功能中去。然而实际上对于对象来说，我们应重其成员而轻其方法，因为对于类结构，它的所有实例都是共享运行时常量池里方法的引用的。那么对于对象这个数据结构来说，其本质就是运行在堆空间的一块存放数据的内存。那么回到我之前谈的话题，setContentView做了什么事情？其实很简单，就是把ContentView这棵ViewTree挂载到了另一棵ViewTree上，组建成了我们最终需要的ViewTree（这里我们把所有的View就当作数据结构中树的最基本节点），那么核心方法是什么呢？两步：<ul>
+<li>JAVA的锅。很大一部分原因是因为JAVA面向对象的语义太强了，导致开发者很容易沉迷于某一个封装好的类的功能中去。然而实际上对于对象来说，我们应重其成员而轻其方法，因为对于类结构，它的所有实例都是共享运行时常量池里方法的引用的。那么对于对象这个数据结构来说，其本质就是运行在堆空间的一块存放数据的内存。那么回到我之前谈的话题，setContentView做了什么事情？其实很简单，就是把ContentView这棵ViewTree挂载到了另一棵ViewTree上，组建成了我们最终需要的ViewTree（这里我们把所有的View就当作数据结构中树的最基本节点），那么核心方法是什么呢？两步：<ul>
 <li><code>parentView-&gt;child = contentLayout</code></li>
 <li><code>contentLayout-&gt;parent = parentView</code></li>
 </ul>
 </li>
-<li>View背三分之一。先声明，我不是说View设计得不好哇，但是不得不吐槽，View实在是太臃肿了。一个最基本的控件居然有27753行代码，这也间接或直接得导致了许多人对其闻之色变，觉得View是一个又难又高深莫测的存在。个人觉得还是因为View的设计者太省事了，把一大堆方法都往View里面丢(虽然确实和View有关，但是个人觉得拆分成多个类的话可以更加凸显出View的职责)，这也直接导致我在学习整个Android的过程中一直认为View就是一个能够显示的控件，至于它如何被显示，因为它有draw方法，能够在canvas上面画它。其实这种解释是说的过去的，但是不严谨的，因为这会让人把屏幕上的显示的东西和View这个类(或者其实例)绑定在一起。但是，事实是View的显示或者如何做到在屏幕上显示和View的对象本身半毛钱关系的没有，View对象就是一个巨大（成员很多）的数据结构，存放了我们约定的那个逻辑上的视图的一堆信息，这些数据有也好，没有也罢，其实都不会对屏幕上的图像如何显示产生影响(这里要搞明白，我是指图像的产生的过程，也就是到底是怎么被绘制的，不是说图像的大小形状这些最终显现出来的特征)，因为View如何在屏幕上显示(绘制)是通过调用底层的Skia API实现的。</li>
+<li>Android View 设计的锅。先声明，我不是说View设计得不好哇，但是不得不吐槽，View实在是太臃肿了。一个最基本的控件居然有27753行代码，这也间接或直接得导致了许多人对其闻之色变，觉得View是一个又难又高深莫测的存在。个人觉得还是因为View的设计者太省事了，把一大堆方法都往View里面丢(虽然确实和View有关，但是个人觉得拆分成多个类的话可以更加凸显出View的职责)，这也直接导致我在学习整个Android的过程中一直认为View就是一个能够显示的控件，至于它如何被显示，因为它有draw方法，能够在canvas上面画它。其实这种解释是说的过去的，但是不严谨的，因为这会让人把屏幕上的显示的东西和View这个类(或者其实例)绑定在一起。但是，事实是View的显示或者如何做到在屏幕上显示和View的对象本身半毛钱关系的没有，View对象就是一个巨大（成员很多）的数据结构，存放了我们约定的那个逻辑上的视图的一堆信息，这些数据有也好，没有也罢，其实都不会对屏幕上的图像如何显示产生影响(这里要搞明白，我是指图像的产生的过程，也就是到底是怎么被绘制的，不是说图像的大小形状这些最终显现出来的特征)，因为View如何在屏幕上显示(绘制)是通过调用底层的Skia API实现的。</li>
 </ul>
 <p>回到最初的问题：在讲setContentView的具体实现之前，我们可以先给其一个不怎么准确但是比较好理解的定义：创建了contentView对象节点和其子View对象节点组成的一个树，(我们就把它们当作View类型的对象的数据结构)，并和PhoneWindow对象进行了关联（这里我刻意说明了对象这两个字，是想强调对象就是一块内存这个基本原则）。</p>
 <p><strong>好了，不BB了，上代码。</strong></p>
-<h2 id="AppCompactActivity-SetContentView"><a href="#AppCompactActivity-SetContentView" class="headerlink" title="AppCompactActivity.SetContentView"></a>AppCompactActivity.SetContentView</h2><p>我们先来康康AppCompactActivity的SetContentView做了什么：</p>
-<h4 id="setContentView"><a href="#setContentView" class="headerlink" title="setContentView"></a>setContentView</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//AppCompactActivity#setContentView</span></span><br><span class="line"><span class="hljs-meta">@Override</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setContentView</span><span class="hljs-params">(@LayoutRes <span class="hljs-keyword">int</span> layoutResID)</span> </span>&#123;</span><br><span class="line">    getDelegate().setContentView(layoutResID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="SetContentView"><a href="#SetContentView" class="headerlink" title="SetContentView"></a><span id="setcontentview">SetContentView</span></h2><p>我们先来康康AppCompactActivity的SetContentView做了什么：</p>
+<h4 id="setContentView-1"><a href="#setContentView-1" class="headerlink" title="setContentView (1)"></a>setContentView (1)</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//AppCompactActivity#setContentView</span></span><br><span class="line"><span class="hljs-meta">@Override</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setContentView</span><span class="hljs-params">(@LayoutRes <span class="hljs-keyword">int</span> layoutResID)</span> </span>&#123;</span><br><span class="line">    getDelegate().setContentView(layoutResID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>是不是一脸蒙蔽，这个Delegate是啥？管它是啥，咱们继续往下看。getDelegate最终返回了mDelegate，而这里的delegate的实际类型是AppCompactDelegateImpl，我们再康康它的setContentView</p>
-<h4 id="setContentView-1"><a href="#setContentView-1" class="headerlink" title="setContentView"></a>setContentView</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// AppCompactDelegateImpl#setContentView</span></span><br><span class="line"><span class="hljs-meta">@Override</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setContentView</span><span class="hljs-params">(<span class="hljs-keyword">int</span> resId)</span> </span>&#123;</span><br><span class="line">    ensureSubDecor(); #(1)</span><br><span class="line">    ViewGroup contentParent = mSubDecor.findViewById(android.R.id.content);</span><br><span class="line">    <span class="hljs-comment">//注意: 这个变量的名字为虽然叫contentParent</span></span><br><span class="line">    <span class="hljs-comment">//但是和后面提到的DecorView持有的contentParent并不是一个东西</span></span><br><span class="line">    <span class="hljs-comment">//为了防止和后面搞混，我在这里先统一规定contentParent为DecorView的child</span></span><br><span class="line">    <span class="hljs-comment">//而setContentView挂载的parent，我们将其称为ContentFrameLayout</span></span><br><span class="line">    contentParent.removeAllViews();</span><br><span class="line">    LayoutInflater.from(mContext).inflate(resId, contentParent); #(2)</span><br><span class="line">    mAppCompatWindowCallback.getWrapped().onContentChanged();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="setContentView-2"><a href="#setContentView-2" class="headerlink" title="setContentView (2)"></a>setContentView (2)</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// AppCompactDelegateImpl#setContentView</span></span><br><span class="line"><span class="hljs-meta">@Override</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setContentView</span><span class="hljs-params">(<span class="hljs-keyword">int</span> resId)</span> </span>&#123;</span><br><span class="line">    ensureSubDecor(); #(1)</span><br><span class="line">    ViewGroup contentParent = mSubDecor.findViewById(android.R.id.content);</span><br><span class="line">    <span class="hljs-comment">//注意: 这个变量的名字为虽然叫contentParent</span></span><br><span class="line">    <span class="hljs-comment">//但是和后面提到的DecorView持有的contentParent并不是一个东西</span></span><br><span class="line">    <span class="hljs-comment">//为了防止和后面搞混，我在这里先统一规定contentParent为DecorView的child</span></span><br><span class="line">    <span class="hljs-comment">//而setContentView挂载的parent，我们将其称为ContentFrameLayout</span></span><br><span class="line">    contentParent.removeAllViews();</span><br><span class="line">    LayoutInflater.from(mContext).inflate(resId, contentParent); #(2)</span><br><span class="line">    mAppCompatWindowCallback.getWrapped().onContentChanged();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>如果有看过activity的setContentView的朋友可能会觉得这里的代码似曾相识，但是我需要说明appCompactActivity远比ActivityView复杂，通过后面的分析，我们可以了解到，它其实在contentFrameLayout和DecorView之间还引入了两层ViewGroup，其分别是FrameLayout (就是我们后面会提到的subDecor)，和FitWindowsLimearLayout，也就是说，从AppComactActivity开始，我们的ContentFrameLayout并不是直接挂载到DecorView上的，而是挂载在FitWindowsLimearLayout上面的。</p>
 <p><strong>另外，为了便于读者理解上面两个比较重要的方法的具体功能，我将下面的内容分成了DecorView的初始化和ContentView的挂载两个小标题。</strong></p>
-<h3 id="DeocrView的初始化："><a href="#DeocrView的初始化：" class="headerlink" title="DeocrView的初始化："></a>DeocrView的初始化：</h3><p>扯远了，我们着重康康ensureSubDecor的实现。</p>
+<h3 id="DeocrView的初始化："><a href="#DeocrView的初始化：" class="headerlink" title="DeocrView的初始化："></a><span id="initdecor">DeocrView的初始化：</span></h3><p>扯远了，我们着重康康ensureSubDecor的实现。</p>
 <h4 id="ensureSubDecor"><a href="#ensureSubDecor" class="headerlink" title="ensureSubDecor"></a>ensureSubDecor</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//AppCompactDelegateImpl#ensureSubDecor</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ensureSubDecor</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (!mSubDecorInstalled) &#123;</span><br><span class="line">        <span class="hljs-comment">//ensureSubDecor的核心是createSubDecor这个方法</span></span><br><span class="line">        mSubDecor = createSubDecor();</span><br><span class="line">        <span class="hljs-comment">//...下面的代码都是subDecor创建好了之后才有用的</span></span><br><span class="line">        <span class="hljs-comment">//不是重点，我们这里不做研究</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>可以看到，里面调用了createSubDecor这个方法。(哈？为什么是subDecor，那我的DecorView呢？啥时候创建呢? )前面括号里的内容是我第一次看到这里时内心的感受，想必大多朋友和我一样蒙蔽，但是不要慌，咋们继续往下看。</p>
@@ -234,18 +247,18 @@
 <p><strong>补充说明：在这篇文章中我并不打算谈论ActionBar或者ToolBar的存在</strong>。所以我这里的描述是有残缺的，主要还是怕一下子信息量太多难以理解，还有就是ActionBar的工作流程也比较复杂，值得单独写一篇文章来分析它的创建。</p>
 <p>这里给一个网上找到的比较准确的View层级关系的图，图中是给出了ActionBar的位置的(黄色框框)，大家选择性忽略就好。(补充一个地方，图里FitWindowsLinearLayout外层的深色框框就是subDecorView没有标注出来，本质是一个FrameLayout)。</p>
 <p><img src="https://github.com/pigrange/pigrange.github.io/blob/master/assets/img/ViewHierarchy.png?raw=true" alt></p>
-<h3 id="ContentView的添加："><a href="#ContentView的添加：" class="headerlink" title="ContentView的添加："></a>ContentView的添加：</h3><p>再次回到AppCompactDelegateImpl的setContentView方法</p>
+<h3 id="ContentView的添加："><a href="#ContentView的添加：" class="headerlink" title="ContentView的添加："></a><span id="addcontent">ContentView的添加：</span></h3><p>再次回到AppCompactDelegateImpl的setContentView方法</p>
 <figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//AppCompactDelegateImpl#setContentView</span></span><br><span class="line"><span class="hljs-meta">@Override</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setContentView</span><span class="hljs-params">(<span class="hljs-keyword">int</span> resId)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-comment">//ensureSubDecor();已经被调用了，我们不看了</span></span><br><span class="line">    ViewGroup contentParent = mSubDecor.findViewById(android.R.id.content);</span><br><span class="line">    contentParent.removeAllViews();</span><br><span class="line">    LayoutInflater.from(mContext).inflate(resId, contentParent);</span><br><span class="line">    mAppCompatWindowCallback.getWrapped().onContentChanged();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>可以看到，这里通过调用了LayoutInflater的inflate方法构建了我们的contentView(及其子View)的对象，并且将其添加到了我们的contentParent上，而这里的contentParent就是我们前面提及到的ContentFrameLayout.(注意这里的其实是给的contentView的xml的id)。</p>
 <p><strong>由于上面就是一个很朴实的inflate方法，所以这里我就不多讲了。感兴趣的可以自己去了解一下inflate方法的具体实现。</strong></p>
 <p><strong>再多BB一句，setContentView虽然初始化了，DecorView，但是ViewRootImpl还并未被初始化，并且这个时刻AttachInfo也是null.</strong></p>
-<h2 id="View的工作流程-伪-："><a href="#View的工作流程-伪-：" class="headerlink" title="View的工作流程(伪)："></a>View的工作流程(伪)：</h2><p>这里的View工作机制就是我们所说的测量，定位，以及绘制的流程，但是这里我并不会去讲那三大方法，接下来我会单独写文章去研究它们的代码。前面的文章(View工作流程[一])以及说明了这三大方法会在ViewRootImpl的performTraversal调用，那么这里我们就继续追根溯源，康康ViewRootImpl到底是在什么时候被创建的，它的performTraversal又是在啥时候被调用的呢？这些时间点又处于Activity生命周期的哪个时刻呢？</p>
+<h2 id="View的工作流程-Activity-Resume-："><a href="#View的工作流程-Activity-Resume-：" class="headerlink" title="View的工作流程(Activity#Resume)："></a><span id="resume">View的工作流程(Activity#Resume)：</span></h2><p>这里的View工作机制就是我们所说的测量，定位，以及绘制的流程，但是这里我并不会去讲那三大方法，接下来我会单独写文章去研究它们的代码。前面的文章(View工作流程[一])以及说明了这三大方法会在ViewRootImpl的performTraversal调用，那么这里我们就继续追根溯源，康康ViewRootImpl到底是在什么时候被创建的，它的performTraversal又是在啥时候被调用的呢？这些时间点又处于Activity生命周期的哪个时刻呢？</p>
 <p><strong>首先说明，和前面刨根问底不同，接下来我们要做的是追根溯源，所以这里我们是向上层层递归，去寻找performTraversal的最初调用，这个其实很容易，debug观察内存栈帧就明白了。为了方便起见，我还是自顶向下的讲解。</strong></p>
 <h4 id="handleResumeActivity"><a href="#handleResumeActivity" class="headerlink" title="handleResumeActivity"></a>handleResumeActivity</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//ActivityThread#handleResumeActivity</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handleResumeActivity</span><span class="hljs-params">(IBinder token, <span class="hljs-keyword">boolean</span> finalStateRequest, <span class="hljs-keyword">boolean</span> isForward,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">                                 String reason)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> ActivityClientRecord r = performResumeActivity(token, finalStateRequest, reason);</span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-comment">//...删掉了大量没有用的代码</span></span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-comment">//...并且，先不要管后面的代码！！！</span></span><br><span class="line">	<span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-comment">//强调：实际上ViewRootImpl就是在这后面被创建的，但是我们先不忙看</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>如果有留意我注释的朋友一定会说：“你这不坑我吗？前面没有用的你让我看，后面有用的你告诉我现在不看？”</p>
-<p>先不要激动，没看到我上面写了个大大的伪吗？如果你不耐烦的话，可以点击<strong><a href="#anchor">这里</a></strong>跳转到和View工作流程直接相关的内容。这里，我主要还是想顺带的复习一下Activity的onResume的具体调用逻辑(因为都是在一起的，顺带一起复习了，这样也能加深印象，对View的工作流程的开始位置有一个更加深入的了解，嘿嘿嘿)。</p>
+<p>先不要激动，没看到我上面写了个大大的Activity#Resume吗？如果你不耐烦的话，可以点击<strong><a href="#process">这里</a></strong>跳转到和View工作流程直接相关的内容。这里，我主要还是想顺带的复习一下Activity的onResume的具体调用逻辑(因为都是在一起的，顺带一起复习了，这样也能加深印象，对View的工作流程的开始位置有一个更加深入的了解，嘿嘿嘿)。</p>
 <h4 id="performResumeActivity"><a href="#performResumeActivity" class="headerlink" title="performResumeActivity"></a>performResumeActivity</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//ActivityThread#performResumeActivity</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> ActivityClientRecord <span class="hljs-title">performResumeActivity</span><span class="hljs-params">(IBinder token, <span class="hljs-keyword">boolean</span> finalStateRequest,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">                                                  String reason)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> ActivityClientRecord r = mActivities.get(token);</span><br><span class="line">    <span class="hljs-comment">//...删除了大量没啥关联的代码</span></span><br><span class="line">    r.activity.performResume(r.startsNotResumed, reason);</span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-keyword">return</span> r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h4 id="performResume"><a href="#performResume" class="headerlink" title="performResume"></a>performResume</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//Activity#performResume</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title">performResume</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> followedByPause, String reason)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-comment">//这个方法我没有删，主要是觉得有必要留意一些</span></span><br><span class="line">    <span class="hljs-comment">//没错它就是第一个被调用的。。。</span></span><br><span class="line">    <span class="hljs-comment">//而在performRestart里面，又依次调用了</span></span><br><span class="line">    <span class="hljs-comment">//(1)、mInstrumentation.callActivityOnRestart() --&gt; onRestart</span></span><br><span class="line">    <span class="hljs-comment">//(2)、performStart() --&gt; onStart</span></span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    performRestart(<span class="hljs-keyword">true</span> <span class="hljs-comment">/* start */</span>, reason);</span><br><span class="line">    <span class="hljs-comment">//</span></span><br><span class="line">    mInstrumentation.callActivityOnResume(<span class="hljs-keyword">this</span>);</span><br><span class="line">	<span class="hljs-comment">//</span></span><br><span class="line">    <span class="hljs-comment">//...删掉了大量的无关的代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -253,7 +266,7 @@
 <h4 id="callActivityOnResume"><a href="#callActivityOnResume" class="headerlink" title="callActivityOnResume"></a>callActivityOnResume</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//Instrmentation#callActivityOnResume()</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">callActivityOnResume</span><span class="hljs-params">(Activity activity)</span> </span>&#123;</span><br><span class="line">    activity.mResumed = <span class="hljs-keyword">true</span>;</span><br><span class="line">    activity.onResume();</span><br><span class="line">    <span class="hljs-comment">//... 删掉大量无关代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>好了，到目前位置，Activity的onResume如何被调用的我们也了解了。那么接下来，我们正式的康康handleResumeActivity中被抹去的代码吧。</p>
-<h2 id="View的工作流程-真-："><a href="#View的工作流程-真-：" class="headerlink" title=" View的工作流程(真)："></a><span id="anchor"> View的工作流程(真)：</span></h2><h3 id="源码分析："><a href="#源码分析：" class="headerlink" title="源码分析："></a>源码分析：</h3><h4 id="handleResumeActivity-1"><a href="#handleResumeActivity-1" class="headerlink" title="handleResumeActivity"></a>handleResumeActivity</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//ActivityThread#handleResumeActivity</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handleResumeActivity</span><span class="hljs-params">(IBinder token, <span class="hljs-keyword">boolean</span> finalStateRequest, <span class="hljs-keyword">boolean</span> isForward,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">                                 String reason)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> ActivityClientRecord r = performResumeActivity(token, finalStateRequest, reason);</span><br><span class="line">    <span class="hljs-keyword">if</span> (r.window == <span class="hljs-keyword">null</span> &amp;&amp; !a.mFinished &amp;&amp; willBeVisible) &#123;</span><br><span class="line">        r.window = r.activity.getWindow();</span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//获取DecorView并设置相关属性</span></span><br><span class="line">        View decor = r.window.getDecorView();</span><br><span class="line">        decor.setVisibility(View.INVISIBLE);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//获取WindowManager</span></span><br><span class="line">        ViewManager wm = a.getWindowManager();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//准备将decorView添加到windowManger中</span></span><br><span class="line">        <span class="hljs-comment">//所以这里要创建一个WindowManager.LayoutParams</span></span><br><span class="line">        <span class="hljs-comment">//并设置相关的属性</span></span><br><span class="line">        WindowManager.LayoutParams l = r.window.getAttributes();</span><br><span class="line">        a.mDecor = decor;</span><br><span class="line">        l.type = WindowManager.LayoutParams.TYPE_BASE_APPLICATION;</span><br><span class="line">        l.softInputMode |= forwardBit;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//...删掉了大量无关的代码</span></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//将decorView添加到WindowManager中</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (a.mVisibleFromClient) &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (!a.mWindowAdded) &#123;</span><br><span class="line">                a.mWindowAdded = <span class="hljs-keyword">true</span>;</span><br><span class="line">                wm.addView(decor, l);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//...删掉了大量无关的代码</span></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="View的工作流程-真-："><a href="#View的工作流程-真-：" class="headerlink" title=" View的工作流程(真)："></a><span id="process"> View的工作流程(真)：</span></h2><h3 id="源码分析："><a href="#源码分析：" class="headerlink" title="源码分析："></a>源码分析：</h3><h4 id="handleResumeActivity-1"><a href="#handleResumeActivity-1" class="headerlink" title="handleResumeActivity"></a>handleResumeActivity</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//ActivityThread#handleResumeActivity</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handleResumeActivity</span><span class="hljs-params">(IBinder token, <span class="hljs-keyword">boolean</span> finalStateRequest, <span class="hljs-keyword">boolean</span> isForward,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">                                 String reason)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> ActivityClientRecord r = performResumeActivity(token, finalStateRequest, reason);</span><br><span class="line">    <span class="hljs-keyword">if</span> (r.window == <span class="hljs-keyword">null</span> &amp;&amp; !a.mFinished &amp;&amp; willBeVisible) &#123;</span><br><span class="line">        r.window = r.activity.getWindow();</span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//获取DecorView并设置相关属性</span></span><br><span class="line">        View decor = r.window.getDecorView();</span><br><span class="line">        decor.setVisibility(View.INVISIBLE);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//获取WindowManager</span></span><br><span class="line">        ViewManager wm = a.getWindowManager();</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//准备将decorView添加到windowManger中</span></span><br><span class="line">        <span class="hljs-comment">//所以这里要创建一个WindowManager.LayoutParams</span></span><br><span class="line">        <span class="hljs-comment">//并设置相关的属性</span></span><br><span class="line">        WindowManager.LayoutParams l = r.window.getAttributes();</span><br><span class="line">        a.mDecor = decor;</span><br><span class="line">        l.type = WindowManager.LayoutParams.TYPE_BASE_APPLICATION;</span><br><span class="line">        l.softInputMode |= forwardBit;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//...删掉了大量无关的代码</span></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//将decorView添加到WindowManager中</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (a.mVisibleFromClient) &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (!a.mWindowAdded) &#123;</span><br><span class="line">                a.mWindowAdded = <span class="hljs-keyword">true</span>;</span><br><span class="line">                wm.addView(decor, l);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">        <span class="hljs-comment">//...删掉了大量无关的代码</span></span><br><span class="line">        <span class="hljs-comment">//</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
 <p>在上述的代码块中出现了WindowManager，并且将我们的decorView添加到了WindowManager里，那你肯定想问: “妈的，那我的phoneWindow就这样不管了吗？“ 我只能这么回答，是的，因为后面真的就没有它什么事情了。View层级结构的PhoneWindow是一个很抽象的概念它始终给我们一种可有可无的感觉。</p>
 <p>如果你要问PhoneWindow有什么作用，我可以这么回答：给整个ViewTree(注意这里不指某个节点，研究对象是整个ViewTree)提供了一个对外统一的API(再次注意，这里是面向用户对ViewTree的操作，) ，换句话说就是PhoneWindow是对整个View的层级结构的一层封装(隐藏了内部实现)，它本身不可见，也不是View层级结构中的一员。</p>
@@ -294,7 +307,7 @@
 
 <p>ok，总算是找到了。 这样一来，我们的整个逻辑就被打通了，也就是说从这里开始，就进入了View真正的工作流程。</p>
 <p>(累死了，这里我就先不忙画流程图了，真的是没时间哇，挖个坑，以后填。)</p>
-<h3 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h3><h4 id="Choreographer-postCallback"><a href="#Choreographer-postCallback" class="headerlink" title="Choreographer.postCallback"></a>Choreographer.postCallback</h4><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//Choreographer#postCallBack</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">postCallback</span><span class="hljs-params">(<span class="hljs-keyword">int</span> callbackType, Runnable action, Object token)</span> </span>&#123;</span><br><span class="line">    postCallbackDelayed(callbackType, action, token, <span class="hljs-number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="补充："><a href="#补充：" class="headerlink" title="补充："></a><span id="additional">补充：</span></h2><h3 id="Choreographer-postCallback"><a href="#Choreographer-postCallback" class="headerlink" title="Choreographer.postCallback"></a>Choreographer.postCallback</h3><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//Choreographer#postCallBack</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">postCallback</span><span class="hljs-params">(<span class="hljs-keyword">int</span> callbackType, Runnable action, Object token)</span> </span>&#123;</span><br><span class="line">    postCallbackDelayed(callbackType, action, token, <span class="hljs-number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>我们可以看到postCallback内部调用了postCallbackDelayed() , 是不是感觉似曾相识？没错我就是说的Handler！我们继续来康康postCallbackDelayed的实现。</p>
 <figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//Choreographer#postCallbackDelayed</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">postCallbackDelayed</span><span class="hljs-params">(<span class="hljs-keyword">int</span> callbackType,Runnable action, Object token, <span class="hljs-keyword">long</span> delayMillis)</span> </span>&#123;</span><br><span class="line">	<span class="hljs-comment">//...删掉部分没啥用的代码</span></span><br><span class="line">    postCallbackDelayedInternal(callbackType, action, token, delayMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -305,7 +318,7 @@
 <p>是不是觉得柳暗花明了，如果你还没有明白的话，请注意上面代码的下部分，那可是handler呀！！</p>
 <p>好了，我也不多BB了，这段代码其实很简单，虽然Choreographer这个类做了很好的封装，但是其实本质上还是通过Handler实现的，只不过这里并没有直接把runnable封装到msg中，而是单独搞了一个mCallbackQueue，将runnable缓存在里面，然后让handler获取到<code>MSG_DO_SCHEDULE_CALLBACK</code>这个消息的时候，就去队列里面取出来运行…</p>
 <p>至于为什么要这么做，我们这里就不多做研究了(坑是填不完的 _ <em>(:з)∠)</em> _   )…</p>
-<h4 id="requestLayout-1"><a href="#requestLayout-1" class="headerlink" title="requestLayout"></a>requestLayout</h4><p>我觉得很有必要把requestLayout拿出来讲一讲，因为看书学习的时候，我们会被灌输requestLayout将会导致整个ViewTree重新绘制的观点，而由于我们并不是很了解其实现，所以往往会对其功能产生固化的观点，甚至会情不自禁将其和View的三大工作流程联系起来。虽然事实是这样没错，但是在某一些场景下，这种惯性思维将会使我们误入歧途。</p>
+<h3 id="ViewParent-requestLayout"><a href="#ViewParent-requestLayout" class="headerlink" title="ViewParent#requestLayout"></a><span id="requestlayout">ViewParent#requestLayout</span></h3><p>我觉得很有必要把requestLayout拿出来讲一讲，因为看书学习的时候，我们会被灌输requestLayout将会导致整个ViewTree重新绘制的观点，而由于我们并不是很了解其实现，所以往往会对其功能产生固化的观点，甚至会情不自禁将其和View的三大工作流程联系起来。虽然事实是这样没错，但是在某一些场景下，这种惯性思维将会使我们误入歧途。</p>
 <p><strong>比如：</strong>在setContentView中，我们其实是可以发现内部实现是由多次调用requestLayout这个方法的，如果你对这个方法了解不够具体，仅仅知道它会导致ViewTree的重新绘制，那么你可能就会像我一样拼命的去寻找它是在哪里让View重绘的，或者去思考它到底在哪里调用ViewRootImpl的方法。诚然，这种思路是一点问题的都没有的，但是我们犯了一个原则性的错误，就是在Activity的onCreate方法里面ViewRootImpl其实是还并未被初始化的(惊不惊喜，意不意外！)。所以在这里调用的requestLayout方法根本就不会导致整个ViewTree的重绘！！！</p>
 <p><strong>所以：</strong>requestLayout导致ViewTree重绘一定是建立在DecorView被添加到WindowManagerGlobal之后这个前提条件的。</p>
 <p>最后，我们再来分析一些下requestLayout的实现：</p>
@@ -315,9 +328,9 @@
         </div>
         
         <ul class="post-copyright">
-            <li><strong>本文标题：</strong><a href="https://pigrange.github.io/2019/09/21/View-Mrocess0/">View工作流程[零]：从setContentView到measure</a></li>
+            <li><strong>本文标题：</strong><a href="https://pigrange.github.io/2019/09/21/View-process-0/">View工作流程[零]：从setContentView到measure</a></li>
             <li><strong>本文作者：</strong><a href="https://pigrange.github.io">John Pig</a></li>
-            <li><strong>本文链接：</strong><a href="https://pigrange.github.io/2019/09/21/View-Mrocess0/">https://pigrange.github.io/2019/09/21/View-Mrocess0/</a></li>
+            <li><strong>本文链接：</strong><a href="https://pigrange.github.io/2019/09/21/View-process-0/">https://pigrange.github.io/2019/09/21/View-process-0/</a></li>
             <li><strong>发布时间：</strong>2019-09-21</li>
             <li><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
             </li>
@@ -348,7 +361,7 @@
         
         
         <div class="level-end">
-            <a class="level level-item has-link-grey  article-nav-next" href="/2019/09/19/View-Mrocess1/">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/09/19/View-process-1/">
                 <span class="level-item">View工作流程[一]：Measure测量</span>
                 <i class="level-item fas fa-chevron-right"></i>
             </a>
@@ -445,21 +458,25 @@
                 目录
             </h3>
             <ul class="menu-list"><ul class="menu-list"><li>
-        <a class="is-flex" href="#大量B话预警！！！">
+        <a class="is-flex" href="#大量文字预警！！！">
         <span class="has-mr-6">1.1</span>
-        <span>大量B话预警！！！</span>
-        </a></li></ul><li>
-        <a class="is-flex" href="#AppCompactActivity-SetContentView">
-        <span class="has-mr-6">2</span>
-        <span>AppCompactActivity.SetContentView</span>
-        </a><ul class="menu-list"><ul class="menu-list"><li>
-        <a class="is-flex" href="#setContentView">
-        <span class="has-mr-6">2.1.1</span>
-        <span>setContentView</span>
+        <span>大量文字预警！！！</span>
         </a></li><li>
+        <a class="is-flex" href="#目录：">
+        <span class="has-mr-6">1.2</span>
+        <span>目录：</span>
+        </a></li></ul><li>
+        <a class="is-flex" href="#SetContentView">
+        <span class="has-mr-6">2</span>
+        <span>SetContentView</span>
+        </a><ul class="menu-list"><ul class="menu-list"><li>
         <a class="is-flex" href="#setContentView-1">
+        <span class="has-mr-6">2.1.1</span>
+        <span>setContentView (1)</span>
+        </a></li><li>
+        <a class="is-flex" href="#setContentView-2">
         <span class="has-mr-6">2.1.2</span>
-        <span>setContentView</span>
+        <span>setContentView (2)</span>
         </a></li></ul><li>
         <a class="is-flex" href="#DeocrView的初始化：">
         <span class="has-mr-6">2.2</span>
@@ -497,9 +514,9 @@
         <span class="has-mr-6">2.3</span>
         <span>ContentView的添加：</span>
         </a></li></ul></li><li>
-        <a class="is-flex" href="#View的工作流程-伪-：">
+        <a class="is-flex" href="#View的工作流程-Activity-Resume-：">
         <span class="has-mr-6">3</span>
-        <span>View的工作流程(伪)：</span>
+        <span>View的工作流程(Activity#Resume)：</span>
         </a><ul class="menu-list"><ul class="menu-list"><li>
         <a class="is-flex" href="#handleResumeActivity">
         <span class="has-mr-6">3.1.1</span>
@@ -556,19 +573,19 @@
         <a class="is-flex" href="#doTraversal">
         <span class="has-mr-6">4.1.8</span>
         <span>doTraversal</span>
-        </a></li></ul></li><li>
+        </a></li></ul></li></ul></li><li>
         <a class="is-flex" href="#补充：">
-        <span class="has-mr-6">4.2</span>
+        <span class="has-mr-6">5</span>
         <span>补充：</span>
         </a><ul class="menu-list"><li>
         <a class="is-flex" href="#Choreographer-postCallback">
-        <span class="has-mr-6">4.2.1</span>
+        <span class="has-mr-6">5.1</span>
         <span>Choreographer.postCallback</span>
         </a></li><li>
-        <a class="is-flex" href="#requestLayout-1">
-        <span class="has-mr-6">4.2.2</span>
-        <span>requestLayout</span>
-        </a></li></ul></li></ul></li></ul>
+        <a class="is-flex" href="#ViewParent-requestLayout">
+        <span class="has-mr-6">5.2</span>
+        <span>ViewParent#requestLayout</span>
+        </a></li></ul></li></ul>
         </div>
     </div>
 </div>

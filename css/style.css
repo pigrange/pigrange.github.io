@@ -211,6 +211,7 @@ img.thumbnail {
 .article .content {
   font-size: 1.1rem;
   letter-spacing: 0.08rem;
+  line-height: 1.6em;
 }
 .article .content blockquote.pullquote {
   float: right;
@@ -383,7 +384,7 @@ img.thumbnail {
 .content h5,
 .content h6 {
   font-weight: 700;
-  margin-bottom: 1.2em;
+  margin-bottom: 1em;
 }
 .content h1 {
   font-weight: 900;
@@ -578,12 +579,6 @@ figure.highlight:hover .copy {
 .content pre,
 .content iframe,
 .content hr,
-.content h1,
-.content h2,
-.content h3,
-.content h4,
-.content h5,
-.content h6,
 .content ul {
   margin-bottom: 1.5em;
   padding: 0;

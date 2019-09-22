@@ -16,7 +16,7 @@
 <meta property="og:description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。 大量文字预警！！！">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/SourceCode.jpg">
-<meta property="og:updated_time" content="2019-09-22T01:21:17.602Z">
+<meta property="og:updated_time" content="2019-09-22T02:00:25.605Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View工作流程[零]：从setContentView到measure">
 <meta name="twitter:description" content="我不管你看不看得懂，反正只要我看得懂就行了  —— john pig  这篇文章按道理来说是不应该存在于这里的，但是出于总总原因，我不得不在这里插入这篇文章以作为后面需要了解内容的预备知识。 大量文字预警！！！">
@@ -147,7 +147,7 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-21T15:53:50.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-21</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-22T01:21:17.602Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-22</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-22T02:00:25.605Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-22</time>
                 
                 
                 <div class="level-item">
@@ -158,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    1 小时 读完 (大约 7476 个字)
+                    1 小时 读完 (大约 7477 个字)
                 </span>
                 
                 
@@ -179,13 +179,13 @@
 </li>
 <li><strong><a href="#resume">Activity的resume</a></strong></li>
 <li><strong><a href="#process">View的工作流程</a></strong></li>
-<li><a href>补充</a><ul>
+<li><strong><a href="#additional">补充</a></strong><ul>
 <li><strong><a href="#additional">Choreographer.postCallback</a></strong></li>
 <li><strong><a href="#requestlayout">ViewParent#requestLayout</a></strong></li>
 </ul>
 </li>
 </ul>
-<p>写在前面：</p>
+<p><strong>写在前面：</strong></p>
 <p>在学习View的工作流程的时候，很多人都是直接从measure方法开始讲，或者稍微提到了从ViewRootImpl的performTraversal开始就不在详细说明了。确实Android源码是一个无底洞，深入进去往往无法自拔，很多东西抓住重点学习，可以快速熟悉整个系统的生态，不会在某些细枝末节的地方花上太多的时间。但是我始终觉得，这样学到的知识是零散的，导致我们很多时候很难将某些内容联系起来，这样显然对于Android的更加深入的理解是不利的。</p>
 <p><strong>为什么我要将setContenView和measure一起讲：</strong></p>
 <p>首先我要说明，这两者是没有关系的。setContentView方法是在Activity的onCreate中被调用的。我一直觉得Google的开发者真的是命名鬼才，对于方法的命名是非常精准的，所以我正好可以借助google的思路所作出强调：<strong>setContentView就只做了setContentView，仅此而已 (所以千万不要像我一样在那里死磕setContentView在AppcompactActivity中的实现, 它其实对于View的工作流程没有任何关联。</strong>而整个ViewTree的测量，定位，绘制是在Activity的onResume方法之后的某一个时刻被调用的，为什么是某一个时刻呢？因为这里用到了Handler，我们并不能确定handler具体处理整个message的时刻。</p>

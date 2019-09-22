@@ -205,13 +205,18 @@ img.thumbnail {
 .timeline .media:first-child:last-child:after {
   top: calc(0.3rem + 9px);
 }
+.article {
+  padding-left: 3rem;
+  padding-right: 3rem;
+  padding-top: 2rem;
+}
 .article .article-meta {
   margin-bottom: 0.5rem !important;
 }
 .article .content {
   font-size: 1.1rem;
   letter-spacing: 0.08rem;
-  line-height: 1.6em;
+  line-height: 1.7em;
 }
 .article .content blockquote.pullquote {
   float: right;
@@ -548,7 +553,10 @@ figure.highlight:hover .copy {
   margin-right: 3em;
 }
 .button.is-link {
-  background-color: #649ab6;
+  background-color: #375764;
+}
+.button.is-link:hover {
+  background-color: #64aac6;
 }
 .li.p {
   margin-bottom: 0.6em;

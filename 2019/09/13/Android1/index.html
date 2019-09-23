@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="这是这个系列的开篇，主要内容是Android相关知识点的整理。其内容内容来自于《Android开发艺术探索》的整理，故我也把它当作是复习开发艺术探索的读书笔记。 &amp;lt;!-- more --&amp;gt; 一、Activity的生命周期 1、正常情况下Activity的什么周期: 正常情况下，Activity经历的生命周期如下：  onCreate()  表示Activity正在启动，这里编写用户的逻">
+    <meta name="description" content="这是这个系列的开篇，主要内容是Android相关知识点的整理。其内容内容来自于《Android开发艺术探索》的整理，故我也把它当作是复习开发艺术探索的读书笔记。">
 <meta name="keywords" content="Android,Review">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Activity的生命周期与启动模式">
 <meta property="og:url" content="https://pigrange.github.io/2019/09/13/Android1/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="这是这个系列的开篇，主要内容是Android相关知识点的整理。其内容内容来自于《Android开发艺术探索》的整理，故我也把它当作是复习开发艺术探索的读书笔记。 &amp;lt;!-- more --&amp;gt; 一、Activity的生命周期 1、正常情况下Activity的什么周期: 正常情况下，Activity经历的生命周期如下：  onCreate()  表示Activity正在启动，这里编写用户的逻">
+<meta property="og:description" content="这是这个系列的开篇，主要内容是Android相关知识点的整理。其内容内容来自于《Android开发艺术探索》的整理，故我也把它当作是复习开发艺术探索的读书笔记。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.jpg">
 <meta property="og:updated_time" content="2019-09-18T12:15:36.877Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Activity的生命周期与启动模式">
-<meta name="twitter:description" content="这是这个系列的开篇，主要内容是Android相关知识点的整理。其内容内容来自于《Android开发艺术探索》的整理，故我也把它当作是复习开发艺术探索的读书笔记。 &amp;lt;!-- more --&amp;gt; 一、Activity的生命周期 1、正常情况下Activity的什么周期: 正常情况下，Activity经历的生命周期如下：  onCreate()  表示Activity正在启动，这里编写用户的逻">
+<meta name="twitter:description" content="这是这个系列的开篇，主要内容是Android相关知识点的整理。其内容内容来自于《Android开发艺术探索》的整理，故我也把它当作是复习开发艺术探索的读书笔记。">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.jpg">
 
 
@@ -168,56 +168,48 @@
 
         <div class="content">
             <p>这是这个系列的开篇，主要内容是Android相关知识点的整理。其内容内容来自于《Android开发艺术探索》的整理，故我也把它当作是复习开发艺术探索的读书笔记。</p>
-<p>&lt;!-- more --&gt;</p>
-<h3>一、Activity的生命周期</h3>
-<h4>1、正常情况下Activity的什么周期:</h4>
-<p><strong>正常情况下，Activity经历的生命周期如下：</strong></p>
+<a id="more"></a>
+
+<h3 id="一、Activity的生命周期"><a href="#一、Activity的生命周期" class="headerlink" title="一、Activity的生命周期"></a>一、Activity的生命周期</h3><h4 id="1、正常情况下Activity的什么周期"><a href="#1、正常情况下Activity的什么周期" class="headerlink" title="1、正常情况下Activity的什么周期:"></a>1、正常情况下Activity的什么周期:</h4><p><strong>正常情况下，Activity经历的生命周期如下：</strong></p>
 <ol>
-<li>onCreate()
-<ul>
+<li>onCreate()<ul>
 <li>表示Activity正在启动，这里编写用户的逻辑，比如数据的准备，视图的创建，Listener的注册。</li>
 <li>这个方法调用的时候，Activity还未被创建好，也不可见。</li>
 </ul>
 </li>
-<li>onStart()
-<ul>
-<li>在perfromStart中调用 callActivityOnstart方法 &lt;---  final 方法</li>
+<li>onStart()<ul>
+<li>在perfromStart中调用 callActivityOnstart方法 &lt;—  final 方法</li>
 <li>表示当前的Activity正在被启动，on starting的意思。</li>
 <li>在这个状态下，Activity已经可见了，但是由于没有出现在前台，所以不可见。</li>
 <li>这个方法会在onCreate之后执行，所以这个时候Activity已经被创建好了</li>
 <li>这个方法会将onStart指令分发给所有的子Fragment。(fragmentActivity中)</li>
 </ul>
 </li>
-<li>onRestart
-<ul>
+<li>onRestart<ul>
 <li>Activity没有被完全销毁，重启的过程。</li>
 <li>这种情况下，一般是用户的Activity离开前台退回到后台所导致的。</li>
 <li>这个方法是在onStart()之前调用的。</li>
-<li>**补充：**这个方法实际上是在performResume中调用的，performResume会首先调用perfromRestart，由于才创建的Activity的mStoped是false，所以perfromRestart直接return了，而performRestart里面会调用perfromStart来间接调用onStart方法。</li>
+<li><strong>补充：</strong>这个方法实际上是在performResume中调用的，performResume会首先调用perfromRestart，由于才创建的Activity的mStoped是false，所以perfromRestart直接return了，而performRestart里面会调用perfromStart来间接调用onStart方法。</li>
 <li>performStart方法最终会将View变得可见(目前还不清楚具体的实现在哪里)</li>
 </ul>
 </li>
-<li>onResume()
-<ul>
+<li>onResume()<ul>
 <li>Activity在onStart之后就已经创建完成。onResume是将其添加到window上，让其可见。</li>
 <li>也就说onResume的时候Activity才正式显示到前台。</li>
 </ul>
 </li>
-<li>onPause()
-<ul>
+<li>onPause()<ul>
 <li>表示Activity正在停止，这个方法是在onStop之前被调用的。</li>
 <li>这个方法里面应该做一些停止动画的操作，但是不能太耗时。</li>
 <li>这个方法会在新的Activity的onCreate方法调用之前被执行，所以如果这个方法耗时的话，新的Activity会被强制等待。</li>
 </ul>
 </li>
-<li>onStop()
-<ul>
+<li>onStop()<ul>
 <li>表示Activity即将被停止，这个方法也同样不能太耗时。但是这个方法会在新的Activity的onResume之后才被调用。所以在调用这个方法的时候Activity已经变得不可见了。</li>
-<li>**说明：**因为这个方法是在performStop里面调用的，而performStop里面会WindowManager将View从Window中移除了，onStop是在移除RootView之后被调用的。</li>
+<li><strong>说明：</strong>因为这个方法是在performStop里面调用的，而performStop里面会WindowManager将View从Window中移除了，onStop是在移除RootView之后被调用的。</li>
 </ul>
 </li>
-<li>onDestory()
-<ul>
+<li>onDestory()<ul>
 <li>表示Activity即将被销毁。用于做一些资源的释放。</li>
 <li>注意：在内存不足的情况下从而导致Activity的非正常结束，这个方法是不会被回调的。</li>
 </ul>
@@ -229,9 +221,8 @@
 <li>onStart -&gt; onStop</li>
 <li>onResume -&gt; onPause</li>
 </ul>
-<p>**注：**对应关系并不是完全对应的，只是说宏观的流程下，这几个方法有如下的对应关系。</p>
-<h4>2、异常情况下Activity的生命周期</h4>
-<p><strong>异常情况下Activity的生命周期如下：</strong></p>
+<p><strong>注：</strong>对应关系并不是完全对应的，只是说宏观的流程下，这几个方法有如下的对应关系。</p>
+<h4 id="2、异常情况下Activity的生命周期"><a href="#2、异常情况下Activity的生命周期" class="headerlink" title="2、异常情况下Activity的生命周期"></a>2、异常情况下Activity的生命周期</h4><p><strong>异常情况下Activity的生命周期如下：</strong></p>
 <ol>
 <li>资源相关的系统配置发生改变导致Activity被杀死并重新创建</li>
 <li>资源内存不足导致低优先级的Activity被杀死</li>
@@ -239,18 +230,15 @@
 <p><strong>（1）配置改变的情况(注意，这种情况activity算异常终止)：</strong></p>
 <p>Activity会依赖于系统资源，如果系统的状态发生了改变会导致Activity所依赖的系统资源发生改变，因此Activity会进行重建。</p>
 <ul>
-<li>手机的屏幕进行了旋转，Activity会进行重建(完全的重建)。
-<ul>
+<li>手机的屏幕进行了旋转，Activity会进行重建(完全的重建)。<ul>
 <li>这种情况下Activity会被销毁，其onPause , onStop , onDestory均会被调用。</li>
-<li>这种情况会调用activity的onSaveInstanceState方法
-<ul>
-<li>此方法会保存window的层级状态(通过调用window的saveHierarchyState方法) ---&gt; Activity的视图结构</li>
-<li>此方法会保存所有的fragment状态</li>
+<li>这种情况会调用activity的onSaveInstanceState方法<ul>
+<li>此方法会保存window的层级状态(通过调用window的saveHierarchyState方法) —&gt; Activity的视图结构</li>
+<li>此方法会保存所有的fragment状态 </li>
 <li>此方法会保存所有的outfill状态（这个是什么东西？</li>
 </ul>
 </li>
-<li>当系统重建的时候Activity会调用onSaveInstanceState方法。
-<ul>
+<li>当系统重建的时候Activity会调用onSaveInstanceState方法。<ul>
 <li>因此，也可以在这个方法里面对保存的状态进行恢复</li>
 </ul>
 </li>
@@ -261,24 +249,20 @@
 <p><strong>（2）内存资源不足导致的Activity被重建的情况：</strong></p>
 <ul>
 <li><strong>注意：在这种情况下，Activity的onSaveInstanceState方法也是会被调用的</strong></li>
-<li><strong>Activity的优先级：</strong>
-<ul>
+<li><strong>Activity的优先级：</strong><ul>
 <li>前台</li>
 <li>可见但是并非前台：onStop没有被调用</li>
 <li>后台：onStop方法被调用了</li>
 </ul>
 </li>
 <li><strong>Avtivity脱离了四大组件很容易被杀死</strong></li>
-<li>对于Activity的配置发生了改变的情况，可以强制指定onConfigChange来拒绝系统重建Activity
-<ul>
+<li>对于Activity的配置发生了改变的情况，可以强制指定onConfigChange来拒绝系统重建Activity<ul>
 <li>在Manifast中指定configChange这个属性即可</li>
-<li>**注意：**对于屏幕发生改变的情况，还需要指定screenSize属性</li>
+<li><strong>注意：</strong>对于屏幕发生改变的情况，还需要指定screenSize属性</li>
 </ul>
 </li>
 </ul>
-<h3>二、Avtivity的启动模式：</h3>
-<h4>任务栈：</h4>
-<p><strong>(1)任务栈是和App(包名)相绑定的</strong></p>
+<h3 id="二、Avtivity的启动模式："><a href="#二、Avtivity的启动模式：" class="headerlink" title="二、Avtivity的启动模式："></a>二、Avtivity的启动模式：</h3><h4 id="任务栈："><a href="#任务栈：" class="headerlink" title="任务栈："></a>任务栈：</h4><p><strong>(1)任务栈是和App(包名)相绑定的</strong></p>
 <p><strong>(2)注意任务栈是有前台和后台之分的</strong>。</p>
 <p><strong>(3)Activity不可见并不等于Activity就在后台的任务栈中。</strong></p>
 <ul>
@@ -289,27 +273,22 @@
 <ol>
 <li>App1启动，打开了Activity A和Activity B</li>
 <li>用户点击了Home，返回了主界面，此时App的所有任务栈回归后台。</li>
-<li>用户启动了App2，并且通过App2的Activity启动了App1的Activity C
-<ul>
+<li>用户启动了App2，并且通过App2的Activity启动了App1的Activity C<ul>
 <li>Acitivity C是 singleTask，并且没有指定taskAffinity(即默认的)</li>
 </ul>
 </li>
 <li>Activity C在前台任务栈，Activity A B 在后台任务栈。</li>
 </ol>
-<h4>四种启动模式：</h4>
-<ul>
+<h4 id="四种启动模式："><a href="#四种启动模式：" class="headerlink" title="四种启动模式："></a>四种启动模式：</h4><ul>
 <li>Standard: 标准模式，谁启动这个Activity，就压进启动者的任务栈，无复用机制，不绑定taskAffinity，始终创建新的实例。</li>
 <li>SingleTop: 栈顶复用模式，有栈顶复用机制，其他的和Standard一样，不绑定taskAffinity</li>
-<li>SingleTask：栈内复用模式，绑定taskAffinity，三个强调点，如下：
-<ul>
-<li>系统会在指定的Task栈中创建新的Activity，并且在这个Task栈中实现单例，如果不指定Task栈的话，那就是默认的任务栈 (taskAffinity为包名)
-<ul>
+<li>SingleTask：栈内复用模式，绑定taskAffinity，三个强调点，如下：<ul>
+<li>系统会在指定的Task栈中创建新的Activity，并且在这个Task栈中实现单例，如果不指定Task栈的话，那就是默认的任务栈 (taskAffinity为包名)<ul>
 <li>尽管可能会在新的任务栈中创建Activity，但是点击返回会将焦点转移至原来的Activity，而不是这个Activity栈的下一个(当然也可能是，这个得看启动它的Activity所在的栈)。</li>
 </ul>
 </li>
 <li>这个Activity会在这个任务栈中实现单例，并且被赋予焦点的时候会将上面的所有Activity全部出栈。</li>
-<li><strong>如果前台任务栈启动了后台任务栈的方法，会把整个后台任务栈搬到前台来</strong>
-<ul>
+<li><strong>如果前台任务栈启动了后台任务栈的方法，会把整个后台任务栈搬到前台来</strong><ul>
 <li>这种情况，点击返回就会将此栈一一退出，因为后台栈已经和前台栈合并了</li>
 </ul>
 </li>
@@ -317,25 +296,21 @@
 </li>
 <li>SingleInstance：全局单例的模式，Activity会维护一个自己的栈，并且这个栈中就只有这一个Activity。</li>
 </ul>
-<h4>android:taskAffinity属性：</h4>
-<p><strong>用于标记Activity所属的Task，默认的情况下值为应用的包名。</strong></p>
+<h4 id="android-taskAffinity属性："><a href="#android-taskAffinity属性：" class="headerlink" title="android:taskAffinity属性："></a>android:taskAffinity属性：</h4><p><strong>用于标记Activity所属的Task，默认的情况下值为应用的包名。</strong></p>
 <ul>
 <li>LaunchMode 为 singleTask的Activity</li>
 <li>LaunchMode为singleInstance的Activity</li>
 <li>使用flag＝Intent.FLAG_ACTIVITY_NEW_TASK启动的Activity</li>
 </ul>
-<h4>LaunchMode和Intent Flag的对应关系：</h4>
-<ul>
+<h4 id="LaunchMode和Intent-Flag的对应关系："><a href="#LaunchMode和Intent-Flag的对应关系：" class="headerlink" title="LaunchMode和Intent Flag的对应关系："></a>LaunchMode和Intent Flag的对应关系：</h4><ul>
 <li>FLAG_ACTIVITY_NEW_TASK   &lt;==&gt;  SingleTask</li>
 <li>FLAG_ACTIVITY_SINGLE_TOP  &lt;==&gt; SingleTop</li>
 </ul>
-<h4>FLAG_ACTIVITY_CLEAR_TOP：</h4>
-<ul>
+<h4 id="FLAG-ACTIVITY-CLEAR-TOP："><a href="#FLAG-ACTIVITY-CLEAR-TOP：" class="headerlink" title="FLAG_ACTIVITY_CLEAR_TOP："></a>FLAG_ACTIVITY_CLEAR_TOP：</h4><ul>
 <li>SingleTask默认带有ClearTop标志</li>
 <li>如果Standard/或者SingleTop设置了FLAG_ACTIVITY_CLEAR_TOP的话，如果栈内有，会将当前栈的上面的全部去掉(包括原有的Activity)，再创建一个新的实例。</li>
 </ul>
-<h4>启动模式的指定：</h4>
-<ol>
+<h4 id="启动模式的指定："><a href="#启动模式的指定：" class="headerlink" title="启动模式的指定："></a>启动模式的指定：</h4><ol>
 <li>通过配置AndroidMenifest实现</li>
 <li>通过在Intent中设立标志位来实现</li>
 </ol>
@@ -345,33 +320,27 @@
 <li>第一种无法为Standard设置ClearTop</li>
 <li>第二种无法实现SingleInstance</li>
 </ul>
-<h3>三、IntentFilter的匹配规则：</h3>
-<p><strong>IntentFiler 用于匹配隐式的Intent</strong></p>
-<h4>三个匹配规则：</h4>
-<p><strong>注意：三个匹配规则需均满足才能匹配成功。</strong></p>
+<h3 id="三、IntentFilter的匹配规则："><a href="#三、IntentFilter的匹配规则：" class="headerlink" title="三、IntentFilter的匹配规则："></a>三、IntentFilter的匹配规则：</h3><p><strong>IntentFiler 用于匹配隐式的Intent</strong></p>
+<h4 id="三个匹配规则："><a href="#三个匹配规则：" class="headerlink" title="三个匹配规则："></a>三个匹配规则：</h4><p><strong>注意：三个匹配规则需均满足才能匹配成功。</strong></p>
 <ul>
 <li>action 匹配规则</li>
 <li>category 匹配规则</li>
 <li>data 匹配规则</li>
 </ul>
-<h5>Action：</h5>
-<ul>
+<h5 id="Action："><a href="#Action：" class="headerlink" title="Action："></a>Action：</h5><ul>
 <li>Activity可以设置多个</li>
 <li>Intent只有能够匹配让其中的一个即可</li>
 <li>如果不设置的话，就永远匹配不上</li>
 <li><strong>对于Intent来说，Intent只能设置一个Action属性</strong></li>
 </ul>
-<h5>category：</h5>
-<ul>
+<h5 id="category："><a href="#category：" class="headerlink" title="category："></a>category：</h5><ul>
 <li>Intent和Activity均能够设置多个</li>
 <li>intent设置的categoriy需要均匹配上</li>
 <li>如果intent不设置，则其会设置默认的DEFAUT</li>
 <li><strong>对于Activity，需要设置DEFAULT来接受Intent中DEAFULT的匹配条件</strong></li>
 </ul>
-<h5>Data</h5>
-<ul>
-<li><strong>实际上只需要匹配两个内容：</strong>
-<ul>
+<h5 id="Data"><a href="#Data" class="headerlink" title="Data"></a>Data</h5><ul>
+<li><strong>实际上只需要匹配两个内容：</strong>    <ul>
 <li>URI</li>
 <li>MimeType</li>
 </ul>
@@ -383,8 +352,7 @@
 <li><strong>setData 和 setType有冲突，如果都要匹配，需要调用setDataAndType方法</strong></li>
 <li>URI的schema必须指定此URI才有效(才能够接受匹配)</li>
 </ul>
-<h4>判断是否有Activity能够匹配Intent：</h4>
-<ul>
+<h4 id="判断是否有Activity能够匹配Intent："><a href="#判断是否有Activity能够匹配Intent：" class="headerlink" title="判断是否有Activity能够匹配Intent："></a>判断是否有Activity能够匹配Intent：</h4><ul>
 <li>PackgeManager.resolveActivity方法</li>
 <li>Intent.resolveActivity方法(其实就是调用的PM的resolveActivity方法，只是做了封装)</li>
 </ul>
@@ -529,67 +497,67 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#一、Activity的生命周期">
         <span class="has-mr-6">1</span>
         <span>一、Activity的生命周期</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#1、正常情况下Activity的什么周期">
         <span class="has-mr-6">1.1</span>
         <span>1、正常情况下Activity的什么周期:</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#2、异常情况下Activity的生命周期">
         <span class="has-mr-6">1.2</span>
         <span>2、异常情况下Activity的生命周期</span>
         </a></li></ul></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#二、Avtivity的启动模式：">
         <span class="has-mr-6">2</span>
         <span>二、Avtivity的启动模式：</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#任务栈：">
         <span class="has-mr-6">2.1</span>
         <span>任务栈：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#四种启动模式：">
         <span class="has-mr-6">2.2</span>
         <span>四种启动模式：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#android-taskAffinity属性：">
         <span class="has-mr-6">2.3</span>
         <span>android:taskAffinity属性：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#LaunchMode和Intent-Flag的对应关系：">
         <span class="has-mr-6">2.4</span>
         <span>LaunchMode和Intent Flag的对应关系：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#FLAG-ACTIVITY-CLEAR-TOP：">
         <span class="has-mr-6">2.5</span>
         <span>FLAG_ACTIVITY_CLEAR_TOP：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#启动模式的指定：">
         <span class="has-mr-6">2.6</span>
         <span>启动模式的指定：</span>
         </a></li></ul></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#三、IntentFilter的匹配规则：">
         <span class="has-mr-6">3</span>
         <span>三、IntentFilter的匹配规则：</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#三个匹配规则：">
         <span class="has-mr-6">3.1</span>
         <span>三个匹配规则：</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#Action：">
         <span class="has-mr-6">3.1.1</span>
         <span>Action：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#category：">
         <span class="has-mr-6">3.1.2</span>
         <span>category：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#Data">
         <span class="has-mr-6">3.1.3</span>
         <span>Data</span>
         </a></li></ul></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#判断是否有Activity能够匹配Intent：">
         <span class="has-mr-6">3.2</span>
         <span>判断是否有Activity能够匹配Intent：</span>
         </a></li></ul></li></ul>

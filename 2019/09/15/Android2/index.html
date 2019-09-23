@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。">
+    <meta name="description" content="这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。 &amp;lt;!-- more --&amp;gt; 1、View的基础知识 什么是View：  Android所有的控件的父类，是界面层的一种抽象 View的结构和前端的DOM相似，View也可以有一组控件组成  View的位置参数：   四个顶点：">
 <meta name="keywords" content="Android,Review">
 <meta property="og:type" content="article">
 <meta property="og:title" content="View的事件体系基础">
 <meta property="og:url" content="https://pigrange.github.io/2019/09/15/Android2/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。">
+<meta property="og:description" content="这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。 &amp;lt;!-- more --&amp;gt; 1、View的基础知识 什么是View：  Android所有的控件的父类，是界面层的一种抽象 View的结构和前端的DOM相似，View也可以有一组控件组成  View的位置参数：   四个顶点：">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.jpg">
 <meta property="og:updated_time" content="2019-09-18T12:14:13.535Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View的事件体系基础">
-<meta name="twitter:description" content="这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。">
+<meta name="twitter:description" content="这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。 &amp;lt;!-- more --&amp;gt; 1、View的基础知识 什么是View：  Android所有的控件的父类，是界面层的一种抽象 View的结构和前端的DOM相似，View也可以有一组控件组成  View的位置参数：   四个顶点：">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.jpg">
 
 
@@ -168,14 +168,17 @@
 
         <div class="content">
             <p>这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。</p>
-<a id="more"></a>
-
-<h3 id="1、View的基础知识"><a href="#1、View的基础知识" class="headerlink" title="1、View的基础知识"></a>1、View的基础知识</h3><h4 id="什么是View："><a href="#什么是View：" class="headerlink" title="什么是View："></a>什么是View：</h4><ul>
+<p>&lt;!-- more --&gt;</p>
+<h3>1、View的基础知识</h3>
+<h4>什么是View：</h4>
+<ul>
 <li>Android所有的控件的父类，是界面层的一种抽象</li>
 <li>View的结构和前端的DOM相似，View也可以有一组控件组成</li>
 </ul>
-<h4 id="View的位置参数："><a href="#View的位置参数：" class="headerlink" title="View的位置参数："></a>View的位置参数：</h4><ul>
-<li><p><strong>四个顶点：</strong></p>
+<h4>View的位置参数：</h4>
+<ul>
+<li>
+<p><strong>四个顶点：</strong></p>
 <ul>
 <li>top : 上边界的y左边</li>
 <li>left ：左边界的x坐标</li>
@@ -188,19 +191,22 @@
 <li>View如果是通过设置translationX/Y来改变View的位置坐标的话，其四个顶点的位置并不会发生改变。</li>
 </ul>
 </li>
-<li><p><strong>坐标与宽高的关系：</strong></p>
+<li>
+<p><strong>坐标与宽高的关系：</strong></p>
 <ul>
 <li>width = right - left</li>
 <li>height = bottom - top</li>
 </ul>
 </li>
-<li><p><strong>其它位置参数：</strong></p>
+<li>
+<p><strong>其它位置参数：</strong></p>
 <ul>
 <li>y = top + translationY</li>
 <li>x = left + translationX</li>
 </ul>
 </li>
-<li><p><strong>滚动位置参数：</strong></p>
+<li>
+<p><strong>滚动位置参数：</strong></p>
 <ul>
 <li>scrollX = getScrollX</li>
 <li>scrollY = getScrollY</li>
@@ -208,48 +214,59 @@
 <p>注意：滚动位置参数并不会修改View的实际位置。此参数平移的是View的内容，而View本身并不会被修改</p>
 </li>
 </ul>
-<h4 id="点击的位置参数："><a href="#点击的位置参数：" class="headerlink" title="点击的位置参数："></a>点击的位置参数：</h4><p><strong>对于一个点击事件，使用x 、y 或 rawX 、rawY 来实现View的点击位置的获取</strong></p>
+<h4>点击的位置参数：</h4>
+<p><strong>对于一个点击事件，使用x 、y 或 rawX 、rawY 来实现View的点击位置的获取</strong></p>
 <ul>
 <li>getX() : 返回点击事件距离(消耗此点击事件的)控件左边的距离</li>
 <li>getY() : 返回点击事件距离(消耗此点击事件的)控件上面的距离</li>
 <li>getRawX() : 返回点击事件距离整个屏幕左边的距离</li>
 <li>getRawY() : 返回点击事件距离整个屏幕顶上的距离</li>
 </ul>
-<h3 id="2、View交互相关的一些类"><a href="#2、View交互相关的一些类" class="headerlink" title="2、View交互相关的一些类"></a>2、View交互相关的一些类</h3><ul>
+<h3>2、View交互相关的一些类</h3>
+<ul>
 <li>MotionEvent ： 封装了点击事件的类</li>
-<li>TouchSlop ：系统能够识别的滑动的最小距离，是一个常量<ul>
+<li>TouchSlop ：系统能够识别的滑动的最小距离，是一个常量
+<ul>
 <li>获取方式：ViewConfiguration.get(getContext().getScaledTouchSlop())</li>
 </ul>
 </li>
 <li>VelocityTracker :  用于计算滑动速度的，作用的单位是MotionEvent</li>
-<li>GestureDector：一个手势检测的工具类。可以用来在TouchEvent中实现一些较为复杂的收拾的检测。<ul>
+<li>GestureDector：一个手势检测的工具类。可以用来在TouchEvent中实现一些较为复杂的收拾的检测。
+<ul>
 <li>这个类会拦截View的监听操作，所以如果使用这个类的话，监听器要单独注册。</li>
 <li>推荐用于监听双击操作</li>
 </ul>
 </li>
-<li>Scroller： 一个用于View弹性滑动的对象<ul>
+<li>Scroller： 一个用于View弹性滑动的对象
+<ul>
 <li>本质上是一个封装好了的插值器。</li>
 </ul>
 </li>
 </ul>
-<h3 id="3、实现View滑动的方式"><a href="#3、实现View滑动的方式" class="headerlink" title="3、实现View滑动的方式"></a>3、实现View滑动的方式</h3><h4 id="Layout："><a href="#Layout：" class="headerlink" title="Layout："></a>Layout：</h4><ul>
+<h3>3、实现View滑动的方式</h3>
+<h4>Layout：</h4>
+<ul>
 <li>Layout方法最终会调用onLayout来设置View的位置</li>
 <li>故可以在View滑动的过程中，不断的调用Layout方法来更新View的位置</li>
 </ul>
-<h4 id="LayoutParamas："><a href="#LayoutParamas：" class="headerlink" title="LayoutParamas："></a>LayoutParamas：</h4><ul>
+<h4>LayoutParamas：</h4>
+<ul>
 <li>在LayoutParams中通过设置LayoutParams的LeftMargin属性和TopMargin属性来更新View的位置</li>
 <li>设置后调用setLayoutParams方法实现重绘(内部封装了requestLayout方法，并且做了相关判断)</li>
 </ul>
-<h4 id="scrollTo"><a href="#scrollTo" class="headerlink" title="scrollTo"></a>scrollTo</h4><ul>
+<h4>scrollTo</h4>
+<ul>
 <li><strong>注意</strong>，这个方法改变的是View内容的内容而非View本身的位置</li>
 <li>此方法是不会导致View重新绘制的,所以需要对View使用invalidate方法</li>
 </ul>
-<h4 id="使用动画"><a href="#使用动画" class="headerlink" title="使用动画"></a>使用动画</h4><ul>
+<h4>使用动画</h4>
+<ul>
 <li>XML动画：控制View的translationX 和 translationY 属性</li>
 <li>ObjectAnimator：相对稍微复杂一点，需要对View的动画属性设置getter和setter</li>
 <li>ValueAnimatior：使用简单，兼容性强，本质上也是一个插值器，需要手动更新View的位置坐标</li>
 </ul>
-<h4 id="各种滑动方式的对比："><a href="#各种滑动方式的对比：" class="headerlink" title="各种滑动方式的对比："></a>各种滑动方式的对比：</h4><ul>
+<h4>各种滑动方式的对比：</h4>
+<ul>
 <li>scrollTo/scrollBy : 操作简单，适合对View的内容进行滑动</li>
 <li>动画：操作简单，适合对没有交互的View和实现复杂的动画效果</li>
 <li>改变布局参数：操作稍复杂，但是适合有交互的View</li>
@@ -395,47 +412,47 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#1、View的基础知识">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">1</span>
         <span>1、View的基础知识</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#什么是View：">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">1.1</span>
         <span>什么是View：</span>
         </a></li><li>
-        <a class="is-flex" href="#View的位置参数：">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">1.2</span>
         <span>View的位置参数：</span>
         </a></li><li>
-        <a class="is-flex" href="#点击的位置参数：">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">1.3</span>
         <span>点击的位置参数：</span>
         </a></li></ul></li><li>
-        <a class="is-flex" href="#2、View交互相关的一些类">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">2</span>
         <span>2、View交互相关的一些类</span>
         </a></li><li>
-        <a class="is-flex" href="#3、实现View滑动的方式">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">3</span>
         <span>3、实现View滑动的方式</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#Layout：">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">3.1</span>
         <span>Layout：</span>
         </a></li><li>
-        <a class="is-flex" href="#LayoutParamas：">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">3.2</span>
         <span>LayoutParamas：</span>
         </a></li><li>
-        <a class="is-flex" href="#scrollTo">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">3.3</span>
         <span>scrollTo</span>
         </a></li><li>
-        <a class="is-flex" href="#使用动画">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">3.4</span>
         <span>使用动画</span>
         </a></li><li>
-        <a class="is-flex" href="#各种滑动方式的对比：">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">3.5</span>
         <span>各种滑动方式的对比：</span>
         </a></li></ul></li></ul>

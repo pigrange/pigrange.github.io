@@ -170,27 +170,125 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-四-з-∠"><a href="#EffectiveJAVA的读书笔记-四-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _"></a>EffectiveJAVA的读书笔记[四]  _ <em>(:з)∠)</em> _</h3></blockquote>
+<h3>EffectiveJAVA的读书笔记[四]  _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>16、在公共类中使用访问方法而不是公共属性</h3>
+<p><strong>关键字：</strong><code>public类</code>，<code>访问方法</code>，<code>public属性</code></p>
+<p>在<code>JAVA</code>里面，对于那些需要对外提供某些属性的类。比较建议的一种写法是对外提供访问方法(<code>getter</code>和<code>setter</code>)而不直接将这些属性设置为<code>public</code>的。曾经有人问过我这个问题，为什么要这么做，我并不知道，只觉得这是封装思想的一种体现。</p>
+<p>如下（例子源于书上）:</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//不建议这样写</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> x;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//建议这样写</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> x;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> y;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getX</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setX</span><span class="hljs-params">(<span class="hljs-keyword">double</span> x)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.x = x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getY</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setY</span><span class="hljs-params">(<span class="hljs-keyword">double</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.y = y;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>理解：</strong></p>
+<ul>
+<li>这其实是类和成员可访问性最小化的一个体现。外界通过唯一<code>public</code>的<code>API</code>来获取数据。类本身将其具体的实现隐藏，这样内部的实现无论怎么改只要返回给外界他们期望的值即可。相对的，如果直接将属性提供给外界的话，那么在一个成型的代码系统中，这个属性就几乎没有再修改的余地了。</li>
+</ul>
+<p><strong>例外：</strong></p>
+<ul>
+<li>如果一个类是包级私有的或者是一个私有的内部类，这样写是被允许的。理由很简单，它们对外提供的属性的作用范围太小了，并不会出现上面提到的那种问题。而且这样写的可读性更强，不是吗？(手动斜眼)</li>
+</ul>
+<hr>
+<h3>17、最小化可变性</h3>
+<p><strong>关键字：</strong><code>可变性</code></p>
+<p>首先我们给不可变的类一个基本的定义：</p>
+<ul>
+<li><strong>不提供任何修改对象状态的方法</strong></li>
+<li><strong>不能被继承</strong></li>
+<li><strong>所有的属性均为final</strong>。(即便这个属性是<code>private</code>的，因为你无法保证在编写逻辑的时候不修改某个属性的值，而设置为<code>final</code>后，当你不经意修改的时候会出现错误提醒你)</li>
+<li><strong>所有的属性应该是private的</strong>。（其实设置为<code>public</code>并不会出现任何问题，但是这违背了条目16的建议）</li>
+<li><strong>确保对任何可变组件的互斥访问</strong>。(这是什么意思呢？？？)</li>
+</ul>
+<p><strong>理解：</strong></p>
+<ul>
+<li>
+<p>在创建的一开始它的状态就被确定了，状态在它存在的整个生命周期均不会发生任何改变。</p>
+</li>
+<li>
+<p>线程安全的，不需要线程同步。因为不可变的对象的所有属性都是只读的，它并不会因为多线程的同时访问而出现同步问题。</p>
+</li>
+<li>
+<p>可以自由的分享，也没有必要创建很多个副本或者考虑防御性拷贝。</p>
+</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<p>为每一个不同的值都需要创建一个单独的对象，导致性能问题。</p>
+<p><strong>总结：</strong></p>
+<p>除非有很好的理由能够说明一个类应该是可变的，否则尽量将其设置为不可变的。</p>
+<hr>
+<h3>18、组合由于继承</h3>
+<p><strong>关键词：</strong><code>组合</code> ，<code>继承</code></p>
+<p>跨越包级的继承很危险(对类来说)的。</p>
+<ul>
+<li><strong>破坏了封装的思想</strong>：子类有可能会依赖父类的一些实现细节，但是父类改变后，可能会导致子类无法使用。</li>
+<li><strong>重写父类的方法不一定有效</strong>：在出现了上面的问题的时候，一个解决方案就是重写父类的方法，但是如果这个逻辑涉及到一些父类中的私有属性的话，那么将无法实现。(子类并不能访问父类的私有属性)</li>
+<li>随着父类新版本的发布，父类可能会提供新的方法。但是这可能会对子类进行破坏(如果正好子类拥有一个相同名字参数和返回类型的方法)，从而导致编译不通过。</li>
+</ul>
+<p><strong>组合：</strong></p>
+<p>不继承一个现有的类，而是在新的类里面持有一个私有的现有类的对象。对于现有类的一些实现，新的类实现一个同名方法并在内部调用现有类的方法。</p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>新类并不依赖现有类的实现细节，所以现有类的修改并不会对新类产生影响。</li>
+</ul>
+<p><strong>理解：</strong></p>
+<ul>
+<li>这是一种基于包装类的思想，即设计模式中的装饰者模式。</li>
+<li>这种设计模式并不等同于委托</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>包装类中不适合使用回调，因为某一些设置回调的方法对象会将自我的引用返回出来，但是被包装的对象是并不知道它的外界存在一个包装器，所以它仍然会返回一个自身的引用。</li>
+</ul>
+<p><strong>总结：</strong></p>
+<p>适合使用继承的情况：只有子类真的是父类的子类型的情况下才适合使用继承。即两者中存在&quot;B is A&quot;的关系，才应该让B继承A。</p>
+<hr>
+<h3>19、要么设计继承并提供文档说明，要么就禁用继承</h3>
+<p>如题，字面意思。</p>
+<p><strong>可继承的类：</strong></p>
+<ul>
+<li>
+<p><strong>如果一个类是可以被继承的话，那么我们应该提供详细的文档说明</strong></p>
+<ul>
+<li>详细描述重写某一个方法会带来的影响。</li>
+<li>应当说明可重写方法的自用性</li>
+<li>应当详细的列出任何可能调用可重写方法的情况</li>
+</ul>
+</li>
+<li>
+<p><strong>测试一个为继承而设计的类的唯一方法是编写子类进行测试</strong></p>
+</li>
+<li>
+<p><strong>构造方法里面不能直接或间接地调用可重写的方法</strong></p>
+</li>
+</ul>
+<p><strong>禁用继承：</strong></p>
+<ul>
+<li>如果无法提供很好的设计或文档，那么就将此类设置为final以禁用继承</li>
+</ul>
+<p><strong>总结：</strong></p>
+<ul>
+<li>设计一个可继承的类需要提供详细的文档，并且需要很大程度上限制这个类的功能。</li>
+<li>如果不得不继承一个没有提供详细文档的类，最好的方法是不调用任何可重写的方法（消除父类自用可重写方法的可能性）。</li>
+</ul>
+<hr>
+<h3>20、接口优于抽象类</h3>
+<p><strong>关键字：</strong> <code>接口</code>，<code>抽象类</code></p>
+<p><code>JAVA</code>对于抽象类只允许单一继承，而对于接口来说可以多实现。</p>
+<p><strong>理解：</strong></p>
+<p>JAVA对类的继承的结构是垂直的，也就是说一个类继承了它的父类，那么它就一定满足&quot;A is B&quot;的描述，也就是说，它的根源是被确定了的。</p>
+<p>但是接口只是一种实现，它对外表述的是&quot;A can be B&quot;，这表示A是多变的，它强调了A是具有某一些行为是符合它被作为B的要求，所以它应该是有多种实现的。</p>
+<ul>
+<li>抽象类过分的强调了层级关系，这对于我们并不能准确定义某一些类的层次。比如说一个程序员也可能是一个作家，但是如果使用抽象类我们就无法给它一个精确的定义。</li>
+<li>实现了接口的类可以很方便的实现其他接口以更新功能，但是如果是实现了抽象类，那么就会比较麻烦。</li>
+<li>接口是定义<code>mixin</code>（混合类型）的理想选择，它保证了一个类除了提供自身类型以外，还能够提供某些可以选择的行为。</li>
+</ul>
+<hr>
+<p><strong>相关链接：</strong>
+<a href="https://www.jianshu.com/p/f0e618bd7022" target="_blank" rel="noopener">EffectiveJava笔记[一]</a>
+<a href="https://www.jianshu.com/p/89bf716aec06" target="_blank" rel="noopener">EffectiveJava笔记[二]</a>
+<a href="https://www.jianshu.com/p/bcded2445a44" target="_blank" rel="noopener">EffectiveJava笔记[三]</a></p>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/07/24/EffectiveJava笔记4/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -237,27 +335,152 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-三-з-∠"><a href="#EffectiveJAVA的读书笔记-三-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [三] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [三] _ <em>(:з)∠)</em> _</h3></blockquote>
+<h3>EffectiveJAVA的读书笔记 [三] _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>11、重写<code>equals</code>时重写<code>hashCode</code>方法</h3>
+<p>在每一个重写了equals方法的类中，应当重写这个类的<code>hashCode</code>方法。如果不这么做，那么将会违背<code>Object.hashCode</code>的通用约定，从而导致某一些基于hash散列的集合无法正常运行，比如说<code>HashSet</code>，</p>
+<p><code>HashMap</code>，<code>HashTable</code>。</p>
+<p><strong>规范：</strong></p>
+<ul>
+<li>在程序执行的这段时间，如果对象<code>equals</code>方法进行的比较信息没有被改变的话，那么这个对象的<code>hashCode</code>该返回同一个整数。</li>
+<li>如果这个应用程序多次执行，那么没有必要保证每一次的<code>hashCode</code>都是一样的。</li>
+<li>如果两个对象通过equals方法比较是相等的，那么他们的<code>hashCode</code>应该一样</li>
+<li>如果两个对象通过equals方法比较是不相等的，那么他们的<code>hashCode</code>不应该一样。</li>
+</ul>
+<p>对于基于hash散列的类来说，如果不重写<code>hashCode</code>方法的话，那么即便他们通过<code>equals</code>方法得到的结果是true，那么将他们作为<code>hashMap</code>的key也无法拿到正确的值，因为他们只是逻辑上相等，而<code>hashMap</code>是基于<code>hashCode</code>寻址的。</p>
+<p><strong><code>hashCode</code>的计算：</strong></p>
+<ol>
+<li>
+<p>为对象中的每一个关键域f，计算其散列码c</p>
+</li>
+<li>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = <span class="hljs-number">31</span> * result + c;</span><br></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>返回 result</p>
+</li>
+</ol>
+<p><strong>注意：</strong></p>
+<ul>
+<li>如果一个域的值是由其他域演算出来的话，那么这个域不需要用于计算<code>hashCode</code></li>
+<li>如果一个域并没有在equals方法中使用，那么这个域不应该用于计算<code>hashCode</code></li>
+<li>不要排除一些关键的属性来提高<code>hashCode</code>的性能，这可能会降低这个方法的可靠性</li>
+<li>在编写完<code>hashCode</code>之后，应当测试<code>hashCode</code>功能的正确性</li>
+<li>如果一个对象计算<code>hashCode</code>的代价比较大的话，应当缓存这个<code>hashCode</code></li>
+</ul>
+<hr>
+<h3>12、始终重写<code>toString</code>方法</h3>
+<p>虽然<code>Object</code>类提供了<code>toString</code>方法的实现，但是在某些情况它返回的<code>toString</code>并没有什么乱用。提供一个良好的<code>toString</code>方法可以使类更易于使用和调试。</p>
+<ul>
+<li><code>toString</code>方法应当返回对象中包含的所有需要关注的信息</li>
+<li>应当在文档中指定<code>toString</code>方法返回的格式</li>
+<li>在静态工具类中，编写<code>toString</code>方法是没有任何意义的。</li>
+<li>应当在任何抽象类型中定义<code>toString方法</code>，使得子类共享一个公共字符串表示形式</li>
+<li>除非父类已经实现了<code>toString</code>方法，否则应该在每一个实例化的子类中重写<code>toString</code>方法。</li>
+</ul>
+<hr>
+<h3>13、谨慎地重写<code>clone</code></h3>
+<p>首先需要指出，这个条目是基于<code>Cloneable</code>接口或者说<code>clone</code>方法而列出的。<code>Cloneable</code>接口是一个空的接口，它仅仅用来表明这个对象是允许被克隆的。真正的<code>clone</code>方法的提供是在Object类中。这一点也被作者在书中描述为设计上面的缺陷。</p>
+<p><strong><code>Cloneable</code>接口：</strong></p>
+<p>这是一个并未包含任何方法的接口，它的唯一作用就是决定<code>Object</code>类中<code>clone</code>方法实现的行为。换句话说，如果一个类实现了<code>Cloneable</code>接口，那么它就应该在clone方法里面返回对该对象的<strong>逐域拷贝</strong>，否则就会抛出<code>CloneNotSupportedException</code>异常。</p>
+<ul>
+<li>这是一种比较极端的写法，因为它违背了定义接口的作用。</li>
+<li>这是一种可以不调用构造器就创建对象的方法。</li>
+</ul>
+<p><strong>对于<code>clone</code>方法的一些约束：</strong></p>
+<ul>
+<li>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x.clone() != x) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x.clone().getClass() == x.getClass()) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x.clone().equals(x) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure></p>
+</li>
+</ul>
+<p><strong>解读：</strong></p>
+<p>不得不说，这本书的翻译是真的烂。<em>(:з)∠)</em>_</p>
+<ol>
+<li>上面提到的不调用构造方法就可以创建对象的规定其实太过于强硬，或者享有了太大的特权，想象你好不容易实现了一个单例，并通私有构造方法并抛出异常，甚至提供了<code>readResolve</code>这个方法来保证反序列化也是单例。但是一旦你实现了<code>Cloneable</code>，接口并重写了clone方法，那么你好不容易设计的单例会因为clone而失效。作者指出<strong>行为良好的clone方法，应该是可以调用构造器来创建对象的</strong>，但是遗憾，clone并没有这么做。</li>
+<li>作者强调（通常情况下）<code>(x.clone().getClass() == x.getClass()) == true</code>这个规定太过于软弱。这里我理解了半天。为什么叫过于软弱，因为它不是强制要求的，因为clone指出了不通过构造器就创建对象，但是却允许了<code>(x.clone().getClass() == x.getClass()) != true</code>。举个例子：比如我有一个child类，他继承了他的父类，但是并没有重写<code>clone</code>方法，那么这个方法将最终调用父类的<code>clone</code>。但是很遗憾，父类的设计者并未考虑到这个问题，因为他约定<code>clone</code>的一些约束，允许上面的不等条件出现，所以他使用了构造方法来clone了对象的副本。那么当子类调用<code>clone</code>方法的时候，你会惊讶的发现居然返回的是父类的对象，甚至你无法通过强制类型转化将其转化过来。</li>
+<li>为了避免上面的情况，保证子类通过调用<code>super.clone()</code>也返回自己的实例。我们的父类也应该调用自己的<code>super.clone()</code>（父类的父类的clone方法）。在这种层层传递下，所有的<code>super.clone()</code>最终都会调用<code>Object.clone()</code>方法，这样就能保证在整个类的层级结构中，所有的子类的<code>clone()</code>方法最终均会返回Object的对象，由于 <strong><code>Objcet.clone()</code>返回的是对象的逐域拷贝</strong>(也就是对整块内存的复制)，所以最终我们只需要进行强制类型转化即可。</li>
+<li>很遗憾的是，<code>Cloneable</code>接口并没有清楚的指出一个类实现这个接口应该承担什么责任。</li>
+</ol>
+<p><strong>浅克隆：</strong></p>
+<p>这里作者列举了一个<code>Stack</code>类的例子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Stack</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">private</span> Object[] elements;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> size = <span class="hljs-number">0</span>;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="hljs-number">16</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Stack</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.elements = <span class="hljs-keyword">new</span> Object[DEFAULT_INITIAL_CAPACITY];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">push</span><span class="hljs-params">(Object e)</span> </span>&#123;</span><br><span class="line">        ensureCapacity();</span><br><span class="line">        elements[size++] = e;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>)</span><br><span class="line">            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">        Object result = elements[--size];</span><br><span class="line">        elements[size] = <span class="hljs-keyword">null</span>; <span class="hljs-comment">// Eliminate obsolete reference</span></span><br><span class="line">        <span class="hljs-keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment">// Ensure space for at least one more element.</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ensureCapacity</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (elements.length == size)</span><br><span class="line">            elements = Arrays.copyOf(elements, <span class="hljs-number">2</span> * size + <span class="hljs-number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们可以看到，Stack类持有Object数组的应用。当我们克隆这个对象的时候，理想情况下，Stack的elements也会跟随一起被克隆，然而很遗憾，克隆出来的的对象和原来的对象持有相同element对象的引用，也就是说，克隆的时候，只传递了引用。</p>
+<p><strong>深克隆：</strong></p>
+<p>其实就是针对上面问题的一个解决方案罢了。</p>
+<p>对于对象持有的对象引用，我们应当递归(或迭代)地调用这些对象的<code>clone</code>方法。</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">@Override</span> </span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> HashTable <span class="hljs-title">clone</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        HashTable result = (HashTable) <span class="hljs-keyword">super</span>.clone();</span><br><span class="line">        result.buckets = <span class="hljs-keyword">new</span> Entry[buckets.length];</span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; buckets.length; i++)</span><br><span class="line">            <span class="hljs-keyword">if</span> (buckets[i] != <span class="hljs-keyword">null</span>)</span><br><span class="line">                result.buckets[i] = buckets[i].deepCopy();</span><br><span class="line">        <span class="hljs-keyword">return</span> result;</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> AssertionError();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-function">Entry <span class="hljs-title">deepCopy</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    Entry result = <span class="hljs-keyword">new</span> Entry(key, value, next);</span><br><span class="line">    <span class="hljs-keyword">for</span> (Entry p = result; p.next != <span class="hljs-keyword">null</span>; p = p.next)</span><br><span class="line">        p.next = <span class="hljs-keyword">new</span> Entry(p.next.key, p.next.value, p.next.next);</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>克隆的替代方案：</strong></p>
+<ul>
+<li>对于那些确定是不可变的类，最好不要实现clone方法，因为这没有意义。</li>
+<li>使用拷贝构造器或者拷贝工厂</li>
+<li>使用基于接口的拷贝构造器(转换构造器)或者拷贝工厂(转换工厂)。</li>
+</ul>
+<hr>
+<h3>14、考虑实现Comparable接口</h3>
+<p><code>compareTo</code>方法并没有在<code>Object</code>类中声明，它是<code>Comparable</code>接口中的唯一方法，其实这个是很好理解的，因为我们并不需要每一个对象都是可以比较大小的。</p>
+<p><strong><code>compareT</code>方法</strong></p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">compareTo</span><span class="hljs-params">(T t)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这个方法是泛型的，并且返回的结果是int类型。其值和比较的结果关系如下：</p>
+<ul>
+<li>负数：＜</li>
+<li>0：=</li>
+<li>正数：&gt;</li>
+</ul>
+<p><strong>好处：</strong></p>
+<p>通过实现<code>Comparable</code>接口，可以让类与所有依赖此接口的通用算法和集合实现来进行相互操作。并且几乎所有的JAVA平台类库中的所有值类都实现了这个接口。</p>
+<p><strong>要求：</strong></p>
+<ul>
+<li><code>sgn(x.compareTo(y)) == -sgn(y.compareTo(x)) == true</code></li>
+<li><code>(x.compareTo(y) &gt; 0 &amp;&amp; y.compareTo(z) &gt; 0) == (x.compareTo(z)&gt;0) == true</code></li>
+<li><code>x.compareTo(y) == 0 —&gt; sgn(x.compareTo(z)) == sgn(y.compareTo(z))</code></li>
+<li><code>(x.compareTo(y) == 0) == (x.equals(y))</code>   注意，与<code>equals</code>方法不同的是，<code>equals</code>方法有可能花月不同类型的对象，而<code>compareTo</code>遇到不同类型的对象的时候，会直接抛出异常。</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>
+<p>**不要使用两个值之间的差值来返回<code>compareTo</code>的结果，**这种写法可能会导致整数的最大长度溢出。</p>
+</li>
+<li>
+<p>使用<code>compareTo</code>方法的时候，应当避免使用 “&lt;”(小于)或&quot;&gt;&quot;(大于)。在具体的值进行比较的时候，应当使用静态的<code>compare</code>或者<code>Comparator</code>接口中的构建方法。</p>
+</li>
+</ul>
+<hr>
+<h3>15、使类和成员的可访问性最小化</h3>
+<p>一个良好设计的类应该隐藏它的所有实现细节，仅仅对外暴露API，这样会比较干净。其他的组件，通过API和他们进行交互，并且对他们的内部工作应当一无所知。这个概念被称为<strong>封装</strong>。</p>
+<p><strong>封装的优势：</strong></p>
+<ul>
+<li>将组成系统的组件分开，允许他们被独立的开发，测试，优化。</li>
+<li>拥有不同功能的组件可以并行开发。</li>
+</ul>
+<p><strong>可访问性最小化原则：让每一个类或成员尽可能的不可访问，即尽可能的降低访问级别。</strong></p>
+<ul>
+<li>一个顶级类(.java文件中的直接定义的类)或接口的访问级别只能是 default或者public的。如果没有必要将其设置为pubilic，那么我们就应该将其设置为default的。</li>
+<li>当我们把一个类设置为public的时候，那么它就拥有导出API的功能，在这种情况下，我们应该有义务维护这个类，让其保持着API的兼容性。当然如果是default的话就没有这个必要，因为它是包级私有的，并不拥有到处API的功能，仅仅是组件实现的一部分。</li>
+<li>如果一个default修饰的顶级类只被一个类使用的话，那么我们应该考虑将这个类作为其使用者的私有静态嵌套类。</li>
+<li>对于一个public修饰的类，我们在设计其成员的时候，应该尽可能的将其成员设置为私有的。</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>如果一个类存在一个是public且非final的实例属性，那么我们就放弃了限制这个实例的属性被修改的能力，并且当这个实例的属性被修改的时候，我们也并没有解决的方案。</li>
+<li>即便是类中的实例属性是final的，也只能保证它引用的对象无法改变而无法保证它引用的对象的属性保持不变。</li>
+<li>对所有的静态属性也是如此。我们通过public static final 来表示一个常量。但是，如果其引用的是一个对象，虽然对象的引用无法被修改，但是我们我发保证对象的属性保持不变。</li>
+<li>所有的public static final 修饰的长度不为0的数组，我们也应当注意，因为它是可变的。</li>
+</ul>
+<hr>
+<p><strong>相关链接：</strong>
+<a href="https://www.jianshu.com/p/f0e618bd7022" target="_blank" rel="noopener">EffectiveJava笔记[一]</a>
+<a href="https://www.jianshu.com/p/89bf716aec06" target="_blank" rel="noopener">EffectiveJava笔记[二]</a></p>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/07/24/EffectiveJava笔记3/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -304,27 +527,133 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-二-з-∠"><a href="#EffectiveJAVA的读书笔记-二-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [二] _ <em>(:з)∠)</em> _</h3></blockquote>
+<h3>EffectiveJAVA的读书笔记 [二] _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>6、避免创建不必要的对象</h3>
+<p>此条目下作者有这个观点：<strong>当你应该重用现有对象的时候，请不要创建新的对象</strong></p>
+<p>最突出的就是字符串常量创建的例子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="hljs-keyword">new</span> String(<span class="hljs-string">"hello"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>如上所述，本来在字符串常量池中就存在字符串&quot;hello&quot;，但是我们又创建了一个新的字符串&quot;hello&quot;的实例，显然，这个新的str实例是并不需要的。</p>
+<p><strong>使用静态工厂方法：</strong></p>
+<p>构造方法一定会创建一个新的对象，但是其实很多时候并没有这个必要。对于一些可以重用现有对象的情况，我们可以使用静态的工厂方法来获取实例（因为静态工厂方法是九二一对实例进行严格控制的）。</p>
+<p><strong>缓存创建昂贵的对象：</strong></p>
+<p>对于那些可以复用的但是创建昂贵的对象，我们可以将其设置为公共静态的，这样既可以避免重复创建带来的性能开销，也可以避免持有这个对象的容器对象在失去引用后被GC清理掉。</p>
+<p><strong>注意，这里很容易进入一个误区，就是对那些(可能)会重用的对象都进行缓存。</strong></p>
+<p>这个条目并不代表对象的创建是昂贵的。<strong>其实通过构造方法创建和回收对象的性能开销并不高。</strong></p>
+<p>作者在此条目的下面提到：</p>
+<p><strong>除非池(对象缓存)中的对象非常重量级，否则通过维护自己的对象池来避免创建对象其实并不太好，因为者会显著的加大内存的占用。</strong></p>
+<p>回到条目的开始，我们应该将重点放在<code>重用</code>和<code>不要创建新的对象</code>上面。也就是说，我们更多应该考虑的是在重用某个对象的时候，尽可能的去避免创建新(没有必要)的对象。</p>
+<hr>
+<h3>7、消除过期的对象引用：</h3>
+<p>这里有一个误区，就是JAVA拥有垃圾收集机制，所以我们就不需要手动对内存进行管理了。</p>
+<p>但是，其实这个是不一定正确的，内存泄漏在JAVA里面太频繁了。</p>
+<p>作者在书中提到<strong>当一个类自己管理内存时，程序员应当警惕内存泄漏</strong>，书中举了一个栈弹出的例子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> elements[--size];</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这种实现实际上仅仅是将size的-1了。但是elements任然保留着对size外的元素的引用，也就是说那一部分的元素的内存并不会被GC释放掉。</p>
+<p>解决方案：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    Object result = elements[--size];</span><br><span class="line">    elements[size] = <span class="hljs-keyword">null</span>;</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3>8、避免使用Finalizer和Cleaner机制</h3>
+<p>这可能对JAVA新手来说一脸懵逼(没错，我就是这种。因为压根就不知道什么是Finalizer，这里就不谈Cleaner机制了，因为我现在还是不会，不过功能应该和finalizer差不多)</p>
+<p>对于C++程序员，我们知道有一个析构函数用于回收资源。</p>
+<p><strong>Finalizer机制：</strong></p>
+<p>GC在回收对象之前调用其finalize方法，但是这并不说明finalize就等于C++的析构函数。finalize方法的调用存在很大的不确定性，也就是说它的调用在不同设备上面的行为具有很大的差异。</p>
+<ul>
+<li>
+<p>当一个对象变得不可达一直到finalize方法的调用这一段时间是任意长的。所以我们千万不要在这个方法里面做一些关闭文件流这种释放非内存资源的操作。因为很有可能出现文件流没有被及时的关闭从而导致后面的文件流打开失败。</p>
+</li>
+<li>
+<p>finalize机制已经被弃用了。</p>
+</li>
+<li>
+<p><strong>Java并不能保证Finalizer和Cleaner机制的及时运行，甚至不能够确保他们是否能够运行</strong></p>
+</li>
+<li>
+<p>System.gc和System.runFinalization 可能会增加finalize被执行的几率，但是不保证其一定被执行</p>
+</li>
+<li>
+<p><strong>在Finalizer机制中，未被捕获的异常会被忽略，cleaner机制不会有这个问题</strong></p>
+</li>
+<li>
+<p><strong>Finalizer机制会严重影响垃圾收集的效率和性能</strong></p>
+</li>
+</ul>
+<p><strong>Finalizer机制的作用：</strong></p>
+<ul>
+<li>作为安全网，防止资源拥有者忽略了他的close方法。这个很好理解，当资源拥有者忘记close的时候，通过finalize至少可能会关闭资源，着总比不关闭好。也就是说，这个机制虽然不可信，但是聊胜于无。</li>
+<li>finalize方法适用于释放一些通过native方法释放的对象(比如说通过JNI创建的对象)</li>
+</ul>
+<hr>
+<h3>9、使用try-with-resources语句替代try-finally语句</h3>
+<p>可能你刚看到这个条目的时候会和我一样对于什么叫做try-with-resources语句一脸懵逼(本人太菜，之前确实没有见过)</p>
+<p>书中举了这样一个例子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        br.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上述的代码块中，有可能由于文件流的没有正常打开导致异常出现。同理，由于引用了空的对象，br无法正常调用close方法。那么在这次情况下第二个异常会完全覆盖掉第一个异常。如果使用了catch语句块捕获了异常，那么代码就会变成如下的样子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            br.close();</span><br><span class="line">        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种代码，写出来简直辣眼睛。反复的异常捕捉显著的降低了代码的可读性。</p>
+<p><strong>使用try-with-resources语句：</strong></p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> (BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path))) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> defaultValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>相较于之前的代码，显然可读性有所提高。</p>
+<p><strong>原理：</strong></p>
+<p>能够使用try-with-resources语句的资源类其实都自动实现了AutoCloseable接口这个接口提供了一个无参数的close方法。也就是说，使用了try-with-resources语句声明的资源只要实现了这个方法，那么都会在抛出异常之前调用close方法关闭资源。另外，用于资源对象的close方法是由其自己控制，所以我们也不需要考虑资源文件关闭所产生的异常。</p>
+<hr>
+<h3>10、重写euquals方法时应当遵守的通用约定</h3>
+<p><strong>不需要重写equals方法的条件：</strong></p>
+<ul>
+<li>每一个类的实例都是一个固有且唯一的。</li>
+<li>类并不需要提供一个逻辑相等的测试功能。</li>
+<li>父类已经重写了equals方法。一个设计良好的可继承的父类应保证其子类完全实用于父类的equals方法。</li>
+<li>类是private修饰的或者default修饰的，那么这个类的equals方法应该永远不会被调用。</li>
+</ul>
+<p><strong>需要重写equals方法的条件：</strong></p>
+<ul>
+<li>一个类包含逻辑相等的概念，并且父类并没有提供equals方法。这里特指一些表示值的类，比如Ineger或者String类。</li>
+<li>使用equals方法的时候应当比较的是对象逻辑上面的相等，而并不是比较是否引用的是相同的对象。</li>
+<li>当某一个类需要作为Map的key的时候。</li>
+</ul>
+<p><strong>equals方法应当满足的属性：</strong></p>
+<ul>
+<li>自反性：一个对象必须和自身相等</li>
+<li>对称性：a.equals(b) == b.equals(a)</li>
+<li>传递性：a.equals(b)，b.equals(c)，则a.equals(c)</li>
+<li>一致性：相等的对象永远相等，不相等的对象永远不相等</li>
+<li>非空性：所有的对象都不等于null</li>
+</ul>
+<p><strong>编写高质量的equals方法：</strong></p>
+<ul>
+<li>
+<p>首先使用<code>==</code>运算符检查参数是否为该对象的引用，如果成立直接返回true，这是一种性能优化。</p>
+</li>
+<li>
+<p>应当使用<code>instanceof</code>检查传递参数是否有正确的类型，<strong>因为equals方法默认传递的参数是Object类型的</strong></p>
+</li>
+<li>
+<p>将参数进行强制类型转化</p>
+</li>
+<li>
+<p>对于参数的每一个值属性，应当验证值属性是否相等，<strong>注意，对于float或者double类型，不要用==而是使用Float.compare或者Double.compare方法比较。</strong></p>
+</li>
+<li>
+<p>对于参数的对象属性，应当递归的对持有的对象进行equals比较，由于对象引用可能为空，所以对引用对象进行比较的时候，应当使用Object.compare方法</p>
+</li>
+<li>
+<p>使用equals方法进行比较的时候，应当首先考虑最有可能不同的属性，这也是一种性能优化。</p>
+</li>
+<li>
+<p>不要忘记验证自己实现的equals方法是否满足上面提到的5个属性。</p>
+</li>
+</ul>
+<p><strong>注意事项：</strong></p>
+<ul>
+<li>重写equals方法的时候，应该重写hashCode方法</li>
+<li>不要对equals方法太过于吹毛求疵，这可能会因为考虑因素太多导致实现非常困难。</li>
+<li>重写equals方法的时候，参数是Object类型的，不要将参数替换成其他的类型。</li>
+</ul>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/07/24/EffectiveJava笔记2/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -371,27 +700,81 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-一-з-∠"><a href="#EffectiveJAVA的读书笔记-一-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [一] _ <em>(:з)∠)</em> _</h3></blockquote>
+<h3>EffectiveJAVA的读书笔记 [一] _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>1、考虑使用静态工厂方法代替构造方法：</h3>
+<p><strong>静态工厂方法的优点</strong>：</p>
+<ul>
+<li>拥有名字，更加容易阅读</li>
+<li>不需要每一次调用的时候都创建一个对象，可以对实例的数量进行严格的控制</li>
+<li>可以返回其返回类型的任何子类型的对象</li>
+<li>可以根据传入参数的不同而返回不同类型的对象，（构造方法只能返回自己的对象）</li>
+<li>在编写包含该方法的类的时候，返回的对象的类不需要存在。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>如果只提供静态工厂方法，那么它就有可能没有public或者private的构造方法，也就是说无法被子类化。</li>
+<li>没有一个统一的对静态构造方法的命名的规范，导致可能很难找到他们。</li>
+</ul>
+<hr>
+<h3>2、当构造方法的参数过多的时候，使用Builder模式:</h3>
+<p>静态工厂方法和普通的构造方法都无法很好的解决构造方法中参数很多且可选的参数很多的问题。</p>
+<p><strong>使用构造方法的缺点：</strong></p>
+<ul>
+<li>过多的方法重载，导致非常的繁琐</li>
+<li>并且在获取类的实例的时候可选(参数)的构造方法太多，以至于降低可读性</li>
+</ul>
+<p><strong>1、JavaBean模式：</strong></p>
+<p>通过一个无参数(这里指可选参数)的构造方法来创建对象，然后调用一系列setter方法来设置参数</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>代码较为冗余</li>
+<li>由于是实现创建好了对象在设置值，所以在多线程的情况下无法保证对象参数的一致性（也就是说先创建好了对象再去设置参数，无法保证在创建过程中对象的不可变的）</li>
+</ul>
+<p><strong>2、Builder模式：</strong></p>
+<p>客户端不直接创建对象，而是通过一个builder预先配置好对象的每一个可选参数，然后通过builder的build方法来生成对象，这样产生的对象就是不可改变的，<strong>Builder通常是它所构建的类的一个静态的成员。</strong></p>
+<hr>
+<h3>3、使用私有构造方法或枚举来实现单例</h3>
+<p>单例通常表示的是无状态的对象。比如说一个只提供函数功能的对象或者一个系统组件。</p>
+<p><strong>1、实现单例的方式：</strong></p>
+<ol>
+<li>创建一个静态final的自身引用，并私有构造方法</li>
+<li>提供一个公共静态方法用于返回自身的单例。</li>
+<li><strong>注意，对于构造方法，应当在请求创建第二个实例的时候抛出异常</strong>，因为Java的反射机制可以调用private的构造方法。</li>
+</ol>
+<p><strong>2、单例与序列化：</strong></p>
+<p>如果单例的对象需要支持序列化的话，那么仅仅将这个类直接实现Serializable接口是不行的，这个问题正好是前面应该注意的点的良好反应。</p>
+<p>当使用ObjectInuptStream对对象进行反序列化的时候，Java会通过反射去调用类的无参构造方法(尽管它是私有的)，当然如果按照我们前面的实现，那么很有可能在反序列化的时候直接抛出了异常(因为请求创建了第二个实例)</p>
+<p><strong>解决方案：</strong></p>
+<ol>
+<li>在单例类中提供一个readResolve方法，并在这个方法中返回我们的单例对象。</li>
+</ol>
+<hr>
+<h3>4、使用私有构造方法来执行非实例化</h3>
+<p>这个条目是直接基于EffectiveJava直译而来。通俗来讲就是对于那些只用于提供静态方法或者静态属性的类(比如某些Util工具类或者config配置文件)，我们应该避免他们被创建实例或者继承，因为并没有任何意义。</p>
+<p><strong>采取的操作：</strong></p>
+<ul>
+<li>将类设置为final，避免被继承</li>
+<li>将类的构造方法设置为私有，并在代码块里面抛出异常(防止别人通过反射来创建实</li>
+</ul>
+<hr>
+<h3>5、依赖注入优于硬连接资源</h3>
+<p>这个又是显得异常的高大上。至少对于我来说，看见依赖注入就觉得这个是高大上且较难的东西，并且第一遍读这个条目的时候也没有搞明白这个到底是啥。</p>
+<p>其实弄明白了什么是依赖注入，这个条目就非常的简单了。</p>
+<p><strong>依赖注入：</strong></p>
+<ul>
+<li>依赖：举个比较普遍的例子。我把我自己比作对象a，我的电脑比作对象b。如果我需要写这篇blog，我就需要我的电脑，也就是说a依赖于b。</li>
+<li>依赖注入：对于a依赖的对象b，我们不应该在a的类中直接创建b的实例，而是提供b的设置api或者通过构造方法将b的引用传入。也就是说将a的依赖b注入给了b。</li>
+<li>这样做有两个好处，一是b的生命周期并不用需要a来进行管理。二是对于多个依赖b的对象，如果b是不可变的，那么可以实现b的复用。</li>
+<li>虽然通过接口传递依赖也是一种实现，不过不推荐这么做，因为在并发的环境中，这是非常容易出错的。除非我们的对象非得支持多种依赖，那么最好的解决方式还是将其设置为final然后再通过构造方法传入。</li>
+</ul>
+<p><strong>依赖注入的有用变体：</strong></p>
+<p>将资源工厂传递给构造方法。</p>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/07/24/EffectiveJava笔记1/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>

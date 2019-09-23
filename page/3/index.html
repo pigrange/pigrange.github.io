@@ -160,27 +160,81 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-一-з-∠"><a href="#EffectiveJAVA的读书笔记-一-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [一] _ <em>(:з)∠)</em> _</h3></blockquote>
+<h3>EffectiveJAVA的读书笔记 [一] _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>1、考虑使用静态工厂方法代替构造方法：</h3>
+<p><strong>静态工厂方法的优点</strong>：</p>
+<ul>
+<li>拥有名字，更加容易阅读</li>
+<li>不需要每一次调用的时候都创建一个对象，可以对实例的数量进行严格的控制</li>
+<li>可以返回其返回类型的任何子类型的对象</li>
+<li>可以根据传入参数的不同而返回不同类型的对象，（构造方法只能返回自己的对象）</li>
+<li>在编写包含该方法的类的时候，返回的对象的类不需要存在。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>如果只提供静态工厂方法，那么它就有可能没有public或者private的构造方法，也就是说无法被子类化。</li>
+<li>没有一个统一的对静态构造方法的命名的规范，导致可能很难找到他们。</li>
+</ul>
+<hr>
+<h3>2、当构造方法的参数过多的时候，使用Builder模式:</h3>
+<p>静态工厂方法和普通的构造方法都无法很好的解决构造方法中参数很多且可选的参数很多的问题。</p>
+<p><strong>使用构造方法的缺点：</strong></p>
+<ul>
+<li>过多的方法重载，导致非常的繁琐</li>
+<li>并且在获取类的实例的时候可选(参数)的构造方法太多，以至于降低可读性</li>
+</ul>
+<p><strong>1、JavaBean模式：</strong></p>
+<p>通过一个无参数(这里指可选参数)的构造方法来创建对象，然后调用一系列setter方法来设置参数</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>代码较为冗余</li>
+<li>由于是实现创建好了对象在设置值，所以在多线程的情况下无法保证对象参数的一致性（也就是说先创建好了对象再去设置参数，无法保证在创建过程中对象的不可变的）</li>
+</ul>
+<p><strong>2、Builder模式：</strong></p>
+<p>客户端不直接创建对象，而是通过一个builder预先配置好对象的每一个可选参数，然后通过builder的build方法来生成对象，这样产生的对象就是不可改变的，<strong>Builder通常是它所构建的类的一个静态的成员。</strong></p>
+<hr>
+<h3>3、使用私有构造方法或枚举来实现单例</h3>
+<p>单例通常表示的是无状态的对象。比如说一个只提供函数功能的对象或者一个系统组件。</p>
+<p><strong>1、实现单例的方式：</strong></p>
+<ol>
+<li>创建一个静态final的自身引用，并私有构造方法</li>
+<li>提供一个公共静态方法用于返回自身的单例。</li>
+<li><strong>注意，对于构造方法，应当在请求创建第二个实例的时候抛出异常</strong>，因为Java的反射机制可以调用private的构造方法。</li>
+</ol>
+<p><strong>2、单例与序列化：</strong></p>
+<p>如果单例的对象需要支持序列化的话，那么仅仅将这个类直接实现Serializable接口是不行的，这个问题正好是前面应该注意的点的良好反应。</p>
+<p>当使用ObjectInuptStream对对象进行反序列化的时候，Java会通过反射去调用类的无参构造方法(尽管它是私有的)，当然如果按照我们前面的实现，那么很有可能在反序列化的时候直接抛出了异常(因为请求创建了第二个实例)</p>
+<p><strong>解决方案：</strong></p>
+<ol>
+<li>在单例类中提供一个readResolve方法，并在这个方法中返回我们的单例对象。</li>
+</ol>
+<hr>
+<h3>4、使用私有构造方法来执行非实例化</h3>
+<p>这个条目是直接基于EffectiveJava直译而来。通俗来讲就是对于那些只用于提供静态方法或者静态属性的类(比如某些Util工具类或者config配置文件)，我们应该避免他们被创建实例或者继承，因为并没有任何意义。</p>
+<p><strong>采取的操作：</strong></p>
+<ul>
+<li>将类设置为final，避免被继承</li>
+<li>将类的构造方法设置为私有，并在代码块里面抛出异常(防止别人通过反射来创建实</li>
+</ul>
+<hr>
+<h3>5、依赖注入优于硬连接资源</h3>
+<p>这个又是显得异常的高大上。至少对于我来说，看见依赖注入就觉得这个是高大上且较难的东西，并且第一遍读这个条目的时候也没有搞明白这个到底是啥。</p>
+<p>其实弄明白了什么是依赖注入，这个条目就非常的简单了。</p>
+<p><strong>依赖注入：</strong></p>
+<ul>
+<li>依赖：举个比较普遍的例子。我把我自己比作对象a，我的电脑比作对象b。如果我需要写这篇blog，我就需要我的电脑，也就是说a依赖于b。</li>
+<li>依赖注入：对于a依赖的对象b，我们不应该在a的类中直接创建b的实例，而是提供b的设置api或者通过构造方法将b的引用传入。也就是说将a的依赖b注入给了b。</li>
+<li>这样做有两个好处，一是b的生命周期并不用需要a来进行管理。二是对于多个依赖b的对象，如果b是不可变的，那么可以实现b的复用。</li>
+<li>虽然通过接口传递依赖也是一种实现，不过不推荐这么做，因为在并发的环境中，这是非常容易出错的。除非我们的对象非得支持多种依赖，那么最好的解决方式还是将其设置为final然后再通过构造方法传入。</li>
+</ul>
+<p><strong>依赖注入的有用变体：</strong></p>
+<p>将资源工厂传递给构造方法。</p>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/07/24/EffectiveJava笔记1/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>

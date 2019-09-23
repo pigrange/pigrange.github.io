@@ -171,27 +171,133 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-二-з-∠"><a href="#EffectiveJAVA的读书笔记-二-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [二] _ <em>(:з)∠)</em> _</h3></blockquote>
+<h3>EffectiveJAVA的读书笔记 [二] _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>6、避免创建不必要的对象</h3>
+<p>此条目下作者有这个观点：<strong>当你应该重用现有对象的时候，请不要创建新的对象</strong></p>
+<p>最突出的就是字符串常量创建的例子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="hljs-keyword">new</span> String(<span class="hljs-string">"hello"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>如上所述，本来在字符串常量池中就存在字符串&quot;hello&quot;，但是我们又创建了一个新的字符串&quot;hello&quot;的实例，显然，这个新的str实例是并不需要的。</p>
+<p><strong>使用静态工厂方法：</strong></p>
+<p>构造方法一定会创建一个新的对象，但是其实很多时候并没有这个必要。对于一些可以重用现有对象的情况，我们可以使用静态的工厂方法来获取实例（因为静态工厂方法是九二一对实例进行严格控制的）。</p>
+<p><strong>缓存创建昂贵的对象：</strong></p>
+<p>对于那些可以复用的但是创建昂贵的对象，我们可以将其设置为公共静态的，这样既可以避免重复创建带来的性能开销，也可以避免持有这个对象的容器对象在失去引用后被GC清理掉。</p>
+<p><strong>注意，这里很容易进入一个误区，就是对那些(可能)会重用的对象都进行缓存。</strong></p>
+<p>这个条目并不代表对象的创建是昂贵的。<strong>其实通过构造方法创建和回收对象的性能开销并不高。</strong></p>
+<p>作者在此条目的下面提到：</p>
+<p><strong>除非池(对象缓存)中的对象非常重量级，否则通过维护自己的对象池来避免创建对象其实并不太好，因为者会显著的加大内存的占用。</strong></p>
+<p>回到条目的开始，我们应该将重点放在<code>重用</code>和<code>不要创建新的对象</code>上面。也就是说，我们更多应该考虑的是在重用某个对象的时候，尽可能的去避免创建新(没有必要)的对象。</p>
+<hr>
+<h3>7、消除过期的对象引用：</h3>
+<p>这里有一个误区，就是JAVA拥有垃圾收集机制，所以我们就不需要手动对内存进行管理了。</p>
+<p>但是，其实这个是不一定正确的，内存泄漏在JAVA里面太频繁了。</p>
+<p>作者在书中提到<strong>当一个类自己管理内存时，程序员应当警惕内存泄漏</strong>，书中举了一个栈弹出的例子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> elements[--size];</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这种实现实际上仅仅是将size的-1了。但是elements任然保留着对size外的元素的引用，也就是说那一部分的元素的内存并不会被GC释放掉。</p>
+<p>解决方案：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    Object result = elements[--size];</span><br><span class="line">    elements[size] = <span class="hljs-keyword">null</span>;</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3>8、避免使用Finalizer和Cleaner机制</h3>
+<p>这可能对JAVA新手来说一脸懵逼(没错，我就是这种。因为压根就不知道什么是Finalizer，这里就不谈Cleaner机制了，因为我现在还是不会，不过功能应该和finalizer差不多)</p>
+<p>对于C++程序员，我们知道有一个析构函数用于回收资源。</p>
+<p><strong>Finalizer机制：</strong></p>
+<p>GC在回收对象之前调用其finalize方法，但是这并不说明finalize就等于C++的析构函数。finalize方法的调用存在很大的不确定性，也就是说它的调用在不同设备上面的行为具有很大的差异。</p>
+<ul>
+<li>
+<p>当一个对象变得不可达一直到finalize方法的调用这一段时间是任意长的。所以我们千万不要在这个方法里面做一些关闭文件流这种释放非内存资源的操作。因为很有可能出现文件流没有被及时的关闭从而导致后面的文件流打开失败。</p>
+</li>
+<li>
+<p>finalize机制已经被弃用了。</p>
+</li>
+<li>
+<p><strong>Java并不能保证Finalizer和Cleaner机制的及时运行，甚至不能够确保他们是否能够运行</strong></p>
+</li>
+<li>
+<p>System.gc和System.runFinalization 可能会增加finalize被执行的几率，但是不保证其一定被执行</p>
+</li>
+<li>
+<p><strong>在Finalizer机制中，未被捕获的异常会被忽略，cleaner机制不会有这个问题</strong></p>
+</li>
+<li>
+<p><strong>Finalizer机制会严重影响垃圾收集的效率和性能</strong></p>
+</li>
+</ul>
+<p><strong>Finalizer机制的作用：</strong></p>
+<ul>
+<li>作为安全网，防止资源拥有者忽略了他的close方法。这个很好理解，当资源拥有者忘记close的时候，通过finalize至少可能会关闭资源，着总比不关闭好。也就是说，这个机制虽然不可信，但是聊胜于无。</li>
+<li>finalize方法适用于释放一些通过native方法释放的对象(比如说通过JNI创建的对象)</li>
+</ul>
+<hr>
+<h3>9、使用try-with-resources语句替代try-finally语句</h3>
+<p>可能你刚看到这个条目的时候会和我一样对于什么叫做try-with-resources语句一脸懵逼(本人太菜，之前确实没有见过)</p>
+<p>书中举了这样一个例子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        br.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上述的代码块中，有可能由于文件流的没有正常打开导致异常出现。同理，由于引用了空的对象，br无法正常调用close方法。那么在这次情况下第二个异常会完全覆盖掉第一个异常。如果使用了catch语句块捕获了异常，那么代码就会变成如下的样子：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            br.close();</span><br><span class="line">        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这种代码，写出来简直辣眼睛。反复的异常捕捉显著的降低了代码的可读性。</p>
+<p><strong>使用try-with-resources语句：</strong></p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> (BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path))) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> defaultValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>相较于之前的代码，显然可读性有所提高。</p>
+<p><strong>原理：</strong></p>
+<p>能够使用try-with-resources语句的资源类其实都自动实现了AutoCloseable接口这个接口提供了一个无参数的close方法。也就是说，使用了try-with-resources语句声明的资源只要实现了这个方法，那么都会在抛出异常之前调用close方法关闭资源。另外，用于资源对象的close方法是由其自己控制，所以我们也不需要考虑资源文件关闭所产生的异常。</p>
+<hr>
+<h3>10、重写euquals方法时应当遵守的通用约定</h3>
+<p><strong>不需要重写equals方法的条件：</strong></p>
+<ul>
+<li>每一个类的实例都是一个固有且唯一的。</li>
+<li>类并不需要提供一个逻辑相等的测试功能。</li>
+<li>父类已经重写了equals方法。一个设计良好的可继承的父类应保证其子类完全实用于父类的equals方法。</li>
+<li>类是private修饰的或者default修饰的，那么这个类的equals方法应该永远不会被调用。</li>
+</ul>
+<p><strong>需要重写equals方法的条件：</strong></p>
+<ul>
+<li>一个类包含逻辑相等的概念，并且父类并没有提供equals方法。这里特指一些表示值的类，比如Ineger或者String类。</li>
+<li>使用equals方法的时候应当比较的是对象逻辑上面的相等，而并不是比较是否引用的是相同的对象。</li>
+<li>当某一个类需要作为Map的key的时候。</li>
+</ul>
+<p><strong>equals方法应当满足的属性：</strong></p>
+<ul>
+<li>自反性：一个对象必须和自身相等</li>
+<li>对称性：a.equals(b) == b.equals(a)</li>
+<li>传递性：a.equals(b)，b.equals(c)，则a.equals(c)</li>
+<li>一致性：相等的对象永远相等，不相等的对象永远不相等</li>
+<li>非空性：所有的对象都不等于null</li>
+</ul>
+<p><strong>编写高质量的equals方法：</strong></p>
+<ul>
+<li>
+<p>首先使用<code>==</code>运算符检查参数是否为该对象的引用，如果成立直接返回true，这是一种性能优化。</p>
+</li>
+<li>
+<p>应当使用<code>instanceof</code>检查传递参数是否有正确的类型，<strong>因为equals方法默认传递的参数是Object类型的</strong></p>
+</li>
+<li>
+<p>将参数进行强制类型转化</p>
+</li>
+<li>
+<p>对于参数的每一个值属性，应当验证值属性是否相等，<strong>注意，对于float或者double类型，不要用==而是使用Float.compare或者Double.compare方法比较。</strong></p>
+</li>
+<li>
+<p>对于参数的对象属性，应当递归的对持有的对象进行equals比较，由于对象引用可能为空，所以对引用对象进行比较的时候，应当使用Object.compare方法</p>
+</li>
+<li>
+<p>使用equals方法进行比较的时候，应当首先考虑最有可能不同的属性，这也是一种性能优化。</p>
+</li>
+<li>
+<p>不要忘记验证自己实现的equals方法是否满足上面提到的5个属性。</p>
+</li>
+</ul>
+<p><strong>注意事项：</strong></p>
+<ul>
+<li>重写equals方法的时候，应该重写hashCode方法</li>
+<li>不要对equals方法太过于吹毛求疵，这可能会因为考虑因素太多导致实现非常困难。</li>
+<li>重写equals方法的时候，参数是Object类型的，不要将参数替换成其他的类型。</li>
+</ul>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/07/24/EffectiveJava笔记2/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -238,27 +344,81 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-一-з-∠"><a href="#EffectiveJAVA的读书笔记-一-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [一] _ <em>(:з)∠)</em> _</h3></blockquote>
+<h3>EffectiveJAVA的读书笔记 [一] _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>1、考虑使用静态工厂方法代替构造方法：</h3>
+<p><strong>静态工厂方法的优点</strong>：</p>
+<ul>
+<li>拥有名字，更加容易阅读</li>
+<li>不需要每一次调用的时候都创建一个对象，可以对实例的数量进行严格的控制</li>
+<li>可以返回其返回类型的任何子类型的对象</li>
+<li>可以根据传入参数的不同而返回不同类型的对象，（构造方法只能返回自己的对象）</li>
+<li>在编写包含该方法的类的时候，返回的对象的类不需要存在。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>如果只提供静态工厂方法，那么它就有可能没有public或者private的构造方法，也就是说无法被子类化。</li>
+<li>没有一个统一的对静态构造方法的命名的规范，导致可能很难找到他们。</li>
+</ul>
+<hr>
+<h3>2、当构造方法的参数过多的时候，使用Builder模式:</h3>
+<p>静态工厂方法和普通的构造方法都无法很好的解决构造方法中参数很多且可选的参数很多的问题。</p>
+<p><strong>使用构造方法的缺点：</strong></p>
+<ul>
+<li>过多的方法重载，导致非常的繁琐</li>
+<li>并且在获取类的实例的时候可选(参数)的构造方法太多，以至于降低可读性</li>
+</ul>
+<p><strong>1、JavaBean模式：</strong></p>
+<p>通过一个无参数(这里指可选参数)的构造方法来创建对象，然后调用一系列setter方法来设置参数</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>代码较为冗余</li>
+<li>由于是实现创建好了对象在设置值，所以在多线程的情况下无法保证对象参数的一致性（也就是说先创建好了对象再去设置参数，无法保证在创建过程中对象的不可变的）</li>
+</ul>
+<p><strong>2、Builder模式：</strong></p>
+<p>客户端不直接创建对象，而是通过一个builder预先配置好对象的每一个可选参数，然后通过builder的build方法来生成对象，这样产生的对象就是不可改变的，<strong>Builder通常是它所构建的类的一个静态的成员。</strong></p>
+<hr>
+<h3>3、使用私有构造方法或枚举来实现单例</h3>
+<p>单例通常表示的是无状态的对象。比如说一个只提供函数功能的对象或者一个系统组件。</p>
+<p><strong>1、实现单例的方式：</strong></p>
+<ol>
+<li>创建一个静态final的自身引用，并私有构造方法</li>
+<li>提供一个公共静态方法用于返回自身的单例。</li>
+<li><strong>注意，对于构造方法，应当在请求创建第二个实例的时候抛出异常</strong>，因为Java的反射机制可以调用private的构造方法。</li>
+</ol>
+<p><strong>2、单例与序列化：</strong></p>
+<p>如果单例的对象需要支持序列化的话，那么仅仅将这个类直接实现Serializable接口是不行的，这个问题正好是前面应该注意的点的良好反应。</p>
+<p>当使用ObjectInuptStream对对象进行反序列化的时候，Java会通过反射去调用类的无参构造方法(尽管它是私有的)，当然如果按照我们前面的实现，那么很有可能在反序列化的时候直接抛出了异常(因为请求创建了第二个实例)</p>
+<p><strong>解决方案：</strong></p>
+<ol>
+<li>在单例类中提供一个readResolve方法，并在这个方法中返回我们的单例对象。</li>
+</ol>
+<hr>
+<h3>4、使用私有构造方法来执行非实例化</h3>
+<p>这个条目是直接基于EffectiveJava直译而来。通俗来讲就是对于那些只用于提供静态方法或者静态属性的类(比如某些Util工具类或者config配置文件)，我们应该避免他们被创建实例或者继承，因为并没有任何意义。</p>
+<p><strong>采取的操作：</strong></p>
+<ul>
+<li>将类设置为final，避免被继承</li>
+<li>将类的构造方法设置为私有，并在代码块里面抛出异常(防止别人通过反射来创建实</li>
+</ul>
+<hr>
+<h3>5、依赖注入优于硬连接资源</h3>
+<p>这个又是显得异常的高大上。至少对于我来说，看见依赖注入就觉得这个是高大上且较难的东西，并且第一遍读这个条目的时候也没有搞明白这个到底是啥。</p>
+<p>其实弄明白了什么是依赖注入，这个条目就非常的简单了。</p>
+<p><strong>依赖注入：</strong></p>
+<ul>
+<li>依赖：举个比较普遍的例子。我把我自己比作对象a，我的电脑比作对象b。如果我需要写这篇blog，我就需要我的电脑，也就是说a依赖于b。</li>
+<li>依赖注入：对于a依赖的对象b，我们不应该在a的类中直接创建b的实例，而是提供b的设置api或者通过构造方法将b的引用传入。也就是说将a的依赖b注入给了b。</li>
+<li>这样做有两个好处，一是b的生命周期并不用需要a来进行管理。二是对于多个依赖b的对象，如果b是不可变的，那么可以实现b的复用。</li>
+<li>虽然通过接口传递依赖也是一种实现，不过不推荐这么做，因为在并发的环境中，这是非常容易出错的。除非我们的对象非得支持多种依赖，那么最好的解决方式还是将其设置为final然后再通过构造方法传入。</li>
+</ul>
+<p><strong>依赖注入的有用变体：</strong></p>
+<p>将资源工厂传递给构造方法。</p>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/JAVA/">JAVA</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/07/24/EffectiveJava笔记1/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>

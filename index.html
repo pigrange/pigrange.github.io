@@ -131,6 +131,73 @@
     <div class="card-content article ">
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
+            <a class="has-link-black-ter" href="/2019/09/23/View-process-2/">View工作流程[二]：Measure布局<a>
+                    
+        </a></a></h1>
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-09-23T06:35:36.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-23</time>
+                
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-24T12:05:14.470Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-24</time>
+                
+                
+                <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/源码阅读/">源码阅读</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    15 分钟 读完 (大约 2323 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+
+        <div class="content">
+            <p><em>我不管你看不看得懂，反正这一次我也没有看懂</em> 😭 <em>—— john pig</em> </p>
+<p>Android太难了。我太南了。</p>
+        </div>
+        
+        
+        
+        <hr style="height:1px;margin:1rem 0">
+        <div class="level is-mobile is-flex">
+            <div class="level-start">
+                
+                <div class="level-item is-size-7 is-uppercase">
+                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
+                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/SourceCode/">SourceCode</a>
+                </div>
+                
+            </div>
+            <div class="level-start">
+                <div class="level-item">
+                    <a class="button is-size-7 is-light" href="/2019/09/23/View-process-2/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    <div class="card">
+    
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
             <a class="has-link-black-ter" href="/2019/09/22/寄夏予你/">寄夏予你<a>
                     
         </a></a></h1>
@@ -273,7 +340,7 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-19T10:49:53.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-19</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-19T14:46:24.423Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-19</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-23T06:52:17.393Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-23</time>
                 
                 
                 <div class="level-item">
@@ -284,7 +351,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    16 分钟 读完 (大约 2336 个字)
+                    16 分钟 读完 (大约 2337 个字)
                 </span>
                 
                 
@@ -394,75 +461,6 @@
 
 
 
-    <div class="card">
-    
-    <div class="card-content article ">
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-            <a class="has-link-black-ter" href="/2019/09/16/ViewEvent/">这是一篇非常详细的View事件分发机制的源码分析文章<a>
-                    
-        </a></a></h1>
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-09-16T08:31:58.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-16</time>
-                
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-18T11:18:59.020Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-18</time>
-                
-                
-                <div class="level-item">
-                    <a class="has-link-grey -link" href="/categories/源码阅读/">源码阅读</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    1 小时 读完 (大约 6697 个字)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-
-        <div class="content">
-            <p><em>我不管你看不看得懂，反正只要我看得懂就行了  —— john pig</em> </p>
-<p>为了准备接下来的面试，这几天又在看《开发艺术探索》，老觉得View的事件流程看的不是很明白，索性干脆直接上源码刨根问底，肝了两天，终于是对View的事件流程有一个详细的了解。</p>
-<p>本来打算像其他的大佬一样把源码拆开，结合图文描述关键方法的。但是发现这样做很难弄清整个流程的具体逻辑，脑子里可能就一个大致的流程图，也就逮住几个关键方法侃侃而谈。这样做或许可以快速了解，但是由于没有深入，始终不能留下深刻的印象。并且对于我自己来说，本来就对着整个流程了解不够清晰，一口气看完来写想必会忘记不少细节；而一边看一边写又容易分心，并且很容易纠结某一个细枝末节的东西而失去整体的框架。</p>
-<p><strong>好了，废话不多说。请慢慢 read the fucking code 吧</strong></p>
-        </div>
-        
-        
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/SourceCode/">SourceCode</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/09/16/ViewEvent/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
 
     
 <div class="card card-transparent">
@@ -529,7 +527,7 @@
                         文章
                     </p>
                     <p class="title has-text-weight-normal">
-                        11
+                        12
                     </p>
                 </div>
             </div>
@@ -641,7 +639,7 @@
         <h3 class="menu-label">
             标签云
         </h3>
-        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/JAVA/" style="font-size: 16.67px;">JAVA</a> <a href="/tags/Review/" style="font-size: 13.33px;">Review</a> <a href="/tags/SourceCode/" style="font-size: 13.33px;">SourceCode</a> <a href="/tags/you/" style="font-size: 10px;">you</a>
+        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/JAVA/" style="font-size: 16.67px;">JAVA</a> <a href="/tags/Review/" style="font-size: 13.33px;">Review</a> <a href="/tags/SourceCode/" style="font-size: 16.67px;">SourceCode</a> <a href="/tags/you/" style="font-size: 10px;">you</a>
     </div>
 </div>
 
@@ -657,6 +655,25 @@
         <h3 class="menu-label">
             最新文章
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/09/23/View-process-2/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/assets/gallery/thumbnails/SourceCode.jpg" alt="View工作流程[二]：Measure布局">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-23T06:35:36.000Z">2019-09-23</time></div>
+                    <a href="/2019/09/23/View-process-2/" class="has-link-black-ter is-size-6">View工作流程[二]：Measure布局</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/源码阅读/">源码阅读</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -734,25 +751,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/09/16/ViewEvent/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/assets/gallery/thumbnails/SourceCode.jpg" alt="这是一篇非常详细的View事件分发机制的源码分析文章">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-16T08:31:58.000Z">2019-09-16</time></div>
-                    <a href="/2019/09/16/ViewEvent/" class="has-link-black-ter is-size-6">这是一篇非常详细的View事件分发机制的源码分析文章</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/源码阅读/">源码阅读</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -771,7 +769,7 @@
                     <span class="level-item">九月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">7</span>
+                    <span class="level-item tag">8</span>
                 </span>
             </a>
         </li>
@@ -812,6 +810,25 @@
         
         <article class="media">
             
+            <a href="/2019/09/23/View-process-2/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/assets/gallery/thumbnails/SourceCode.jpg" alt="View工作流程[二]：Measure布局">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-23T06:35:36.000Z">2019-09-23</time></div>
+                    <a href="/2019/09/23/View-process-2/" class="has-link-black-ter is-size-6">View工作流程[二]：Measure布局</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/源码阅读/">源码阅读</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/09/22/寄夏予你/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/assets/img/summer/you.png" alt="寄夏予你">
@@ -886,25 +903,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2019/09/16/ViewEvent/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/assets/gallery/thumbnails/SourceCode.jpg" alt="这是一篇非常详细的View事件分发机制的源码分析文章">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-16T08:31:58.000Z">2019-09-16</time></div>
-                    <a href="/2019/09/16/ViewEvent/" class="has-link-black-ter is-size-6">这是一篇非常详细的View事件分发机制的源码分析文章</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/源码阅读/">源码阅读</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -923,7 +921,7 @@
                     <span class="level-item">九月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">7</span>
+                    <span class="level-item tag">8</span>
                 </span>
             </a>
         </li>

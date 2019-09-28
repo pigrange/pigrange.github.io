@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="夜话，思考人生系列，未完待续。。。">
+    <meta name="description" content="夜话，思考人生系列，未完待续。。。 我不管你看不看得懂，反正我也不知道自己当时是怎么想的。—— john pig 这篇文章我会分享自己对于多线程并发的一些理解，段落之间的联系可能不会很大，随便看就是了。另外就是这种存粹的想法真的非常难写哇。先补源码去了，开个坑，有时间就补一点。">
 <meta name="keywords" content="Android,总结归纳,多线程,Handler">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从多线程到Handler">
 <meta property="og:url" content="https://pigrange.github.io/2019/09/28/从多线程到Handler/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="夜话，思考人生系列，未完待续。。。">
+<meta property="og:description" content="夜话，思考人生系列，未完待续。。。 我不管你看不看得懂，反正我也不知道自己当时是怎么想的。—— john pig 这篇文章我会分享自己对于多线程并发的一些理解，段落之间的联系可能不会很大，随便看就是了。另外就是这种存粹的想法真的非常难写哇。先补源码去了，开个坑，有时间就补一点。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/img/handler/Handler.jpg">
-<meta property="og:updated_time" content="2019-09-28T09:37:25.552Z">
+<meta property="og:updated_time" content="2019-09-28T09:44:00.582Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从多线程到Handler">
-<meta name="twitter:description" content="夜话，思考人生系列，未完待续。。。">
+<meta name="twitter:description" content="夜话，思考人生系列，未完待续。。。 我不管你看不看得懂，反正我也不知道自己当时是怎么想的。—— john pig 这篇文章我会分享自己对于多线程并发的一些理解，段落之间的联系可能不会很大，随便看就是了。另外就是这种存粹的想法真的非常难写哇。先补源码去了，开个坑，有时间就补一点。">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/img/handler/Handler.jpg">
 
 
@@ -147,7 +147,7 @@
             <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-09-28T05:49:34.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-28</time>
                 
-                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-28T09:37:25.552Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-28</time>
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-28T09:44:00.582Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-28</time>
                 
                 
                 <div class="level-item">
@@ -158,7 +158,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    25 分钟 读完 (大约 3780 个字)
+                    26 分钟 读完 (大约 3890 个字)
                 </span>
                 
                 
@@ -168,6 +168,8 @@
 
         <div class="content">
             <p>夜话，思考人生系列，未完待续。。。</p>
+<p><em>我不管你看不看得懂，反正我也不知道自己当时是怎么想的。—— john pig</em></p>
+<p>这篇文章我会分享自己对于多线程并发的一些理解，段落之间的联系可能不会很大，随便看就是了。另外就是这种存粹的想法真的非常难写哇。先补源码去了，开个坑，有时间就补一点。</p>
 <a id="more"></a>
 
 <h4 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h4><p>本来正在筹备一篇关于Android Handler机制的的文章，但是对于Handler机制的设计原则，真的是越想越绕。</p>
@@ -188,8 +190,8 @@
 </ul>
 <p>这里我不打算讲主动式，因为具体我也不是特别了解，不过可以提一点是它是通过管道以流的方式实现的。所以这里我们就谈共享内存的线程通信。</p>
 <p><strong>为什么需要线程间进行通信：</strong></p>
-<p>因为在许多场景下，我们为了提升系统的执行效率引入了多线程，但是多线程线程之间的任务并不是完全独立的，比如A线程用于线程，B线程用于网络请求，那么显然B线程很有可能是对A线程处理完成的数据是具有依赖的(因为可能会用来进行显示或者数值运算后显示)。然而，从CPU的执行来看，两个线程的执行是完全独立的，我们无法做到从线程或CPU的实现层面上让A线程直接去通知B线程，（你看我们之前捕获线程都大费周章），于是便有了共享数据。</p>
-<p><strong>共享数据：</strong></p>
+<p>因为在许多场景下，我们为了提升系统的执行效率引入了多线程，但是多线程线程之间的任务并不是完全独立的，比如A线程用于线程，B线程用于网络请求，那么显然B线程很有可能是对A线程处理完成的数据是具有依赖的(因为可能会用来进行显示或者数值运算后显示)。然而，从CPU的执行来看，两个线程的执行是完全独立的，我们无法做到从线程或CPU的实现层面上让运行在两个不同线程上面的程序直接进行数据交互，于是便有了内存共享数据。</p>
+<p><strong>内存共享数据：</strong></p>
 <p>由于线程是进程中的执行单元，所以它们在执行时对数据或者对象的访问最终得到的内存地址是一样的，也就是说它们运行的时候内存是共享的。而这就成了线程间进行通信的前提，线程A中的Alice希望给线程B中的Bob发一个消息，很简单。Alice把消息放在某个内存里面，Bob在执行的时候，去看就行了。</p>
 <p>是不是很熟悉？没错，在我们开发的时候，其实很多时候就无形的在使用线程间通信，或者说，我们在多线程的环境下，对某一个数据进行了修改，其实就已经进行了线程通信了，因为这个线程对数据的操控的结果已经对其他线程可见了，也就是说其他的线程已经收到发送信息线程所传达的信息了。</p>
 <p><strong>原子性的线程通信与同步：</strong></p>

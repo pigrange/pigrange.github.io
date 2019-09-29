@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="EffectiveJAVA的读书笔记 [三] _ (:з)∠) _">
+    <meta name="description" content="EffectiveJAVA的读书笔记 [三] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 11、重写equals时重写hashCode方法 在每一个重写了equals方法的类中，应当重写这个类的hashCode方法。如果不这么做，那么将会违背Object.hashCode的通用约定，从而导致某一些基于hash散列的集合无法正常运行，比如说HashSet， HashMap，Ha">
 <meta name="keywords" content="JAVA">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EffectiveJava笔记[三]">
 <meta property="og:url" content="https://pigrange.github.io/2019/07/24/EffectiveJava笔记3/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="EffectiveJAVA的读书笔记 [三] _ (:з)∠) _">
+<meta property="og:description" content="EffectiveJAVA的读书笔记 [三] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 11、重写equals时重写hashCode方法 在每一个重写了equals方法的类中，应当重写这个类的hashCode方法。如果不这么做，那么将会违背Object.hashCode的通用约定，从而导致某一些基于hash散列的集合无法正常运行，比如说HashSet， HashMap，Ha">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava3.jpg">
 <meta property="og:updated_time" content="2019-09-18T11:22:01.808Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EffectiveJava笔记[三]">
-<meta name="twitter:description" content="EffectiveJAVA的读书笔记 [三] _ (:з)∠) _">
+<meta name="twitter:description" content="EffectiveJAVA的读书笔记 [三] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 11、重写equals时重写hashCode方法 在每一个重写了equals方法的类中，应当重写这个类的hashCode方法。如果不这么做，那么将会违背Object.hashCode的通用约定，从而导致某一些基于hash散列的集合无法正常运行，比如说HashSet， HashMap，Ha">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava3.jpg">
 
 
@@ -168,10 +168,11 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-三-з-∠"><a href="#EffectiveJAVA的读书笔记-三-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [三] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [三] _ <em>(:з)∠)</em> _</h3></blockquote>
-<a id="more"></a>
-
-<h3 id="11、重写equals时重写hashCode方法"><a href="#11、重写equals时重写hashCode方法" class="headerlink" title="11、重写equals时重写hashCode方法"></a>11、重写<code>equals</code>时重写<code>hashCode</code>方法</h3><p>在每一个重写了equals方法的类中，应当重写这个类的<code>hashCode</code>方法。如果不这么做，那么将会违背<code>Object.hashCode</code>的通用约定，从而导致某一些基于hash散列的集合无法正常运行，比如说<code>HashSet</code>，</p>
+<h3>EffectiveJAVA的读书笔记 [三] _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>11、重写<code>equals</code>时重写<code>hashCode</code>方法</h3>
+<p>在每一个重写了equals方法的类中，应当重写这个类的<code>hashCode</code>方法。如果不这么做，那么将会违背<code>Object.hashCode</code>的通用约定，从而导致某一些基于hash散列的集合无法正常运行，比如说<code>HashSet</code>，</p>
 <p><code>HashMap</code>，<code>HashTable</code>。</p>
 <p><strong>规范：</strong></p>
 <ul>
@@ -183,11 +184,14 @@
 <p>对于基于hash散列的类来说，如果不重写<code>hashCode</code>方法的话，那么即便他们通过<code>equals</code>方法得到的结果是true，那么将他们作为<code>hashMap</code>的key也无法拿到正确的值，因为他们只是逻辑上相等，而<code>hashMap</code>是基于<code>hashCode</code>寻址的。</p>
 <p><strong><code>hashCode</code>的计算：</strong></p>
 <ol>
-<li><p>为对象中的每一个关键域f，计算其散列码c</p>
+<li>
+<p>为对象中的每一个关键域f，计算其散列码c</p>
 </li>
-<li><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = <span class="hljs-number">31</span> * result + c;</span><br></pre></td></tr></table></figure>
+<li>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = <span class="hljs-number">31</span> * result + c;</span><br></pre></td></tr></table></figure></p>
 </li>
-<li><p>返回 result</p>
+<li>
+<p>返回 result</p>
 </li>
 </ol>
 <p><strong>注意：</strong></p>
@@ -199,7 +203,8 @@
 <li>如果一个对象计算<code>hashCode</code>的代价比较大的话，应当缓存这个<code>hashCode</code></li>
 </ul>
 <hr>
-<h3 id="12、始终重写toString方法"><a href="#12、始终重写toString方法" class="headerlink" title="12、始终重写toString方法"></a>12、始终重写<code>toString</code>方法</h3><p>虽然<code>Object</code>类提供了<code>toString</code>方法的实现，但是在某些情况它返回的<code>toString</code>并没有什么乱用。提供一个良好的<code>toString</code>方法可以使类更易于使用和调试。</p>
+<h3>12、始终重写<code>toString</code>方法</h3>
+<p>虽然<code>Object</code>类提供了<code>toString</code>方法的实现，但是在某些情况它返回的<code>toString</code>并没有什么乱用。提供一个良好的<code>toString</code>方法可以使类更易于使用和调试。</p>
 <ul>
 <li><code>toString</code>方法应当返回对象中包含的所有需要关注的信息</li>
 <li>应当在文档中指定<code>toString</code>方法返回的格式</li>
@@ -208,7 +213,8 @@
 <li>除非父类已经实现了<code>toString</code>方法，否则应该在每一个实例化的子类中重写<code>toString</code>方法。</li>
 </ul>
 <hr>
-<h3 id="13、谨慎地重写clone"><a href="#13、谨慎地重写clone" class="headerlink" title="13、谨慎地重写clone"></a>13、谨慎地重写<code>clone</code></h3><p>首先需要指出，这个条目是基于<code>Cloneable</code>接口或者说<code>clone</code>方法而列出的。<code>Cloneable</code>接口是一个空的接口，它仅仅用来表明这个对象是允许被克隆的。真正的<code>clone</code>方法的提供是在Object类中。这一点也被作者在书中描述为设计上面的缺陷。</p>
+<h3>13、谨慎地重写<code>clone</code></h3>
+<p>首先需要指出，这个条目是基于<code>Cloneable</code>接口或者说<code>clone</code>方法而列出的。<code>Cloneable</code>接口是一个空的接口，它仅仅用来表明这个对象是允许被克隆的。真正的<code>clone</code>方法的提供是在Object类中。这一点也被作者在书中描述为设计上面的缺陷。</p>
 <p><strong><code>Cloneable</code>接口：</strong></p>
 <p>这是一个并未包含任何方法的接口，它的唯一作用就是决定<code>Object</code>类中<code>clone</code>方法实现的行为。换句话说，如果一个类实现了<code>Cloneable</code>接口，那么它就应该在clone方法里面返回对该对象的<strong>逐域拷贝</strong>，否则就会抛出<code>CloneNotSupportedException</code>异常。</p>
 <ul>
@@ -217,16 +223,18 @@
 </ul>
 <p><strong>对于<code>clone</code>方法的一些约束：</strong></p>
 <ul>
-<li><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x.clone() != x) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure>
+<li>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x.clone() != x) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure></p>
 </li>
-<li><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x.clone().getClass() == x.getClass()) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure>
+<li>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x.clone().getClass() == x.getClass()) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure></p>
 </li>
-<li><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x.clone().equals(x) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure>
-
+<li>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x.clone().equals(x) == <span class="hljs-keyword">true</span></span><br></pre></td></tr></table></figure></p>
 </li>
 </ul>
 <p><strong>解读：</strong></p>
-<p>不得不说，这本书的翻译是真的烂。<em>(:з)∠)_</em></p>
+<p>不得不说，这本书的翻译是真的烂。<em>(:з)∠)</em>_</p>
 <ol>
 <li>上面提到的不调用构造方法就可以创建对象的规定其实太过于强硬，或者享有了太大的特权，想象你好不容易实现了一个单例，并通私有构造方法并抛出异常，甚至提供了<code>readResolve</code>这个方法来保证反序列化也是单例。但是一旦你实现了<code>Cloneable</code>，接口并重写了clone方法，那么你好不容易设计的单例会因为clone而失效。作者指出<strong>行为良好的clone方法，应该是可以调用构造器来创建对象的</strong>，但是遗憾，clone并没有这么做。</li>
 <li>作者强调（通常情况下）<code>(x.clone().getClass() == x.getClass()) == true</code>这个规定太过于软弱。这里我理解了半天。为什么叫过于软弱，因为它不是强制要求的，因为clone指出了不通过构造器就创建对象，但是却允许了<code>(x.clone().getClass() == x.getClass()) != true</code>。举个例子：比如我有一个child类，他继承了他的父类，但是并没有重写<code>clone</code>方法，那么这个方法将最终调用父类的<code>clone</code>。但是很遗憾，父类的设计者并未考虑到这个问题，因为他约定<code>clone</code>的一些约束，允许上面的不等条件出现，所以他使用了构造方法来clone了对象的副本。那么当子类调用<code>clone</code>方法的时候，你会惊讶的发现居然返回的是父类的对象，甚至你无法通过强制类型转化将其转化过来。</li>
@@ -235,14 +243,12 @@
 </ol>
 <p><strong>浅克隆：</strong></p>
 <p>这里作者列举了一个<code>Stack</code>类的例子：</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Stack</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">private</span> Object[] elements;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> size = <span class="hljs-number">0</span>;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="hljs-number">16</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Stack</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.elements = <span class="hljs-keyword">new</span> Object[DEFAULT_INITIAL_CAPACITY];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">push</span><span class="hljs-params">(Object e)</span> </span>&#123;</span><br><span class="line">        ensureCapacity();</span><br><span class="line">        elements[size++] = e;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>)</span><br><span class="line">            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">        Object result = elements[--size];</span><br><span class="line">        elements[size] = <span class="hljs-keyword">null</span>; <span class="hljs-comment">// Eliminate obsolete reference</span></span><br><span class="line">        <span class="hljs-keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment">// Ensure space for at least one more element.</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ensureCapacity</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (elements.length == size)</span><br><span class="line">            elements = Arrays.copyOf(elements, <span class="hljs-number">2</span> * size + <span class="hljs-number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Stack</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">private</span> Object[] elements;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> size = <span class="hljs-number">0</span>;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> DEFAULT_INITIAL_CAPACITY = <span class="hljs-number">16</span>;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Stack</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.elements = <span class="hljs-keyword">new</span> Object[DEFAULT_INITIAL_CAPACITY];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">push</span><span class="hljs-params">(Object e)</span> </span>&#123;</span><br><span class="line">        ensureCapacity();</span><br><span class="line">        elements[size++] = e;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>)</span><br><span class="line">            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">        Object result = elements[--size];</span><br><span class="line">        elements[size] = <span class="hljs-keyword">null</span>; <span class="hljs-comment">// Eliminate obsolete reference</span></span><br><span class="line">        <span class="hljs-keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment">// Ensure space for at least one more element.</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ensureCapacity</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (elements.length == size)</span><br><span class="line">            elements = Arrays.copyOf(elements, <span class="hljs-number">2</span> * size + <span class="hljs-number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>我们可以看到，Stack类持有Object数组的应用。当我们克隆这个对象的时候，理想情况下，Stack的elements也会跟随一起被克隆，然而很遗憾，克隆出来的的对象和原来的对象持有相同element对象的引用，也就是说，克隆的时候，只传递了引用。</p>
 <p><strong>深克隆：</strong></p>
 <p>其实就是针对上面问题的一个解决方案罢了。</p>
 <p>对于对象持有的对象引用，我们应当递归(或迭代)地调用这些对象的<code>clone</code>方法。</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">@Override</span> </span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> HashTable <span class="hljs-title">clone</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        HashTable result = (HashTable) <span class="hljs-keyword">super</span>.clone();</span><br><span class="line">        result.buckets = <span class="hljs-keyword">new</span> Entry[buckets.length];</span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; buckets.length; i++)</span><br><span class="line">            <span class="hljs-keyword">if</span> (buckets[i] != <span class="hljs-keyword">null</span>)</span><br><span class="line">                result.buckets[i] = buckets[i].deepCopy();</span><br><span class="line">        <span class="hljs-keyword">return</span> result;</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> AssertionError();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-function">Entry <span class="hljs-title">deepCopy</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    Entry result = <span class="hljs-keyword">new</span> Entry(key, value, next);</span><br><span class="line">    <span class="hljs-keyword">for</span> (Entry p = result; p.next != <span class="hljs-keyword">null</span>; p = p.next)</span><br><span class="line">        p.next = <span class="hljs-keyword">new</span> Entry(p.next.key, p.next.value, p.next.next);</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">@Override</span> </span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> HashTable <span class="hljs-title">clone</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        HashTable result = (HashTable) <span class="hljs-keyword">super</span>.clone();</span><br><span class="line">        result.buckets = <span class="hljs-keyword">new</span> Entry[buckets.length];</span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; buckets.length; i++)</span><br><span class="line">            <span class="hljs-keyword">if</span> (buckets[i] != <span class="hljs-keyword">null</span>)</span><br><span class="line">                result.buckets[i] = buckets[i].deepCopy();</span><br><span class="line">        <span class="hljs-keyword">return</span> result;</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> AssertionError();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-function">Entry <span class="hljs-title">deepCopy</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    Entry result = <span class="hljs-keyword">new</span> Entry(key, value, next);</span><br><span class="line">    <span class="hljs-keyword">for</span> (Entry p = result; p.next != <span class="hljs-keyword">null</span>; p = p.next)</span><br><span class="line">        p.next = <span class="hljs-keyword">new</span> Entry(p.next.key, p.next.value, p.next.next);</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p><strong>克隆的替代方案：</strong></p>
 <ul>
 <li>对于那些确定是不可变的类，最好不要实现clone方法，因为这没有意义。</li>
@@ -250,10 +256,10 @@
 <li>使用基于接口的拷贝构造器(转换构造器)或者拷贝工厂(转换工厂)。</li>
 </ul>
 <hr>
-<h3 id="14、考虑实现Comparable接口"><a href="#14、考虑实现Comparable接口" class="headerlink" title="14、考虑实现Comparable接口"></a>14、考虑实现Comparable接口</h3><p><code>compareTo</code>方法并没有在<code>Object</code>类中声明，它是<code>Comparable</code>接口中的唯一方法，其实这个是很好理解的，因为我们并不需要每一个对象都是可以比较大小的。</p>
+<h3>14、考虑实现Comparable接口</h3>
+<p><code>compareTo</code>方法并没有在<code>Object</code>类中声明，它是<code>Comparable</code>接口中的唯一方法，其实这个是很好理解的，因为我们并不需要每一个对象都是可以比较大小的。</p>
 <p><strong><code>compareT</code>方法</strong></p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">compareTo</span><span class="hljs-params">(T t)</span></span></span><br></pre></td></tr></table></figure>
-
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">compareTo</span><span class="hljs-params">(T t)</span></span></span><br></pre></td></tr></table></figure></p>
 <p>可以看到，这个方法是泛型的，并且返回的结果是int类型。其值和比较的结果关系如下：</p>
 <ul>
 <li>负数：＜</li>
@@ -266,18 +272,21 @@
 <ul>
 <li><code>sgn(x.compareTo(y)) == -sgn(y.compareTo(x)) == true</code></li>
 <li><code>(x.compareTo(y) &gt; 0 &amp;&amp; y.compareTo(z) &gt; 0) == (x.compareTo(z)&gt;0) == true</code></li>
-<li><code>x.compareTo(y) ==  0 —&gt;  sgn(x.compareTo(z)) == sgn(y.compareTo(z))</code></li>
-<li><code>(x.compareTo(y) == 0)  == (x.equals(y))</code>   注意，与<code>equals</code>方法不同的是，<code>equals</code>方法有可能花月不同类型的对象，而<code>compareTo</code>遇到不同类型的对象的时候，会直接抛出异常。</li>
+<li><code>x.compareTo(y) == 0 —&gt; sgn(x.compareTo(z)) == sgn(y.compareTo(z))</code></li>
+<li><code>(x.compareTo(y) == 0) == (x.equals(y))</code>   注意，与<code>equals</code>方法不同的是，<code>equals</code>方法有可能花月不同类型的对象，而<code>compareTo</code>遇到不同类型的对象的时候，会直接抛出异常。</li>
 </ul>
 <p><strong>注意：</strong></p>
 <ul>
-<li><p><strong>不要使用两个值之间的差值来返回<code>compareTo</code>的结果，</strong>这种写法可能会导致整数的最大长度溢出。 </p>
+<li>
+<p>**不要使用两个值之间的差值来返回<code>compareTo</code>的结果，**这种写法可能会导致整数的最大长度溢出。</p>
 </li>
-<li><p>使用<code>compareTo</code>方法的时候，应当避免使用 “&lt;”(小于)或”&gt;”(大于)。在具体的值进行比较的时候，应当使用静态的<code>compare</code>或者<code>Comparator</code>接口中的构建方法。</p>
+<li>
+<p>使用<code>compareTo</code>方法的时候，应当避免使用 “&lt;”(小于)或&quot;&gt;&quot;(大于)。在具体的值进行比较的时候，应当使用静态的<code>compare</code>或者<code>Comparator</code>接口中的构建方法。</p>
 </li>
 </ul>
 <hr>
-<h3 id="15、使类和成员的可访问性最小化"><a href="#15、使类和成员的可访问性最小化" class="headerlink" title="15、使类和成员的可访问性最小化"></a>15、使类和成员的可访问性最小化</h3><p>一个良好设计的类应该隐藏它的所有实现细节，仅仅对外暴露API，这样会比较干净。其他的组件，通过API和他们进行交互，并且对他们的内部工作应当一无所知。这个概念被称为<strong>封装</strong>。</p>
+<h3>15、使类和成员的可访问性最小化</h3>
+<p>一个良好设计的类应该隐藏它的所有实现细节，仅仅对外暴露API，这样会比较干净。其他的组件，通过API和他们进行交互，并且对他们的内部工作应当一无所知。这个概念被称为<strong>封装</strong>。</p>
 <p><strong>封装的优势：</strong></p>
 <ul>
 <li>将组成系统的组件分开，允许他们被独立的开发，测试，优化。</li>
@@ -298,7 +307,9 @@
 <li>所有的public static final 修饰的长度不为0的数组，我们也应当注意，因为它是可变的。</li>
 </ul>
 <hr>
-<p><strong>相关链接：</strong><br><a href="https://www.jianshu.com/p/f0e618bd7022" target="_blank" rel="noopener">EffectiveJava笔记[一]</a><br><a href="https://www.jianshu.com/p/89bf716aec06" target="_blank" rel="noopener">EffectiveJava笔记[二]</a></p>
+<p><strong>相关链接：</strong>
+<a href="https://www.jianshu.com/p/f0e618bd7022" target="_blank" rel="noopener">EffectiveJava笔记[一]</a>
+<a href="https://www.jianshu.com/p/89bf716aec06" target="_blank" rel="noopener">EffectiveJava笔记[二]</a></p>
 
         </div>
         
@@ -408,7 +419,7 @@
                         分类
                     </p>
                     <p class="title has-text-weight-normal">
-                        10
+                        9
                     </p>
                 </div>
             </div>
@@ -440,27 +451,27 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#EffectiveJAVA的读书笔记-三-з-∠">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">1</span>
         <span>EffectiveJAVA的读书笔记 [三] _ (:з)∠) _</span>
         </a></li><li>
-        <a class="is-flex" href="#11、重写equals时重写hashCode方法">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">2</span>
         <span>11、重写equals时重写hashCode方法</span>
         </a></li><li>
-        <a class="is-flex" href="#12、始终重写toString方法">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">3</span>
         <span>12、始终重写toString方法</span>
         </a></li><li>
-        <a class="is-flex" href="#13、谨慎地重写clone">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">4</span>
         <span>13、谨慎地重写clone</span>
         </a></li><li>
-        <a class="is-flex" href="#14、考虑实现Comparable接口">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">5</span>
         <span>14、考虑实现Comparable接口</span>
         </a></li><li>
-        <a class="is-flex" href="#15、使类和成员的可访问性最小化">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">6</span>
         <span>15、使类和成员的可访问性最小化</span>
         </a></li></ul>

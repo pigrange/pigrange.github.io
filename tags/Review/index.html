@@ -170,26 +170,114 @@
 
         <div class="content">
             <p>对Android开发艺术探索线程和线程池章节内容的一些总结。</p>
+<p>&lt;!-- more --&gt;</p>
+<h3><strong>概述:</strong></h3>
+<h4><strong>线程和进程：</strong></h4>
+<ul>
+<li>线程是CPU的最小执行单元，而进程是操作系统调度的最小单元。</li>
+<li>线程本身是没有内存的概念，线程的建立和执行需要依托于进程提供的内存。</li>
+<li>进程和进程之间是完全内存独立的，同一个进程中的线程共享进程提供的资源。</li>
+</ul>
+<h3><strong>主线程和子线程：</strong></h3>
+<p>主线程：进程创建的时候会启动一个线程进行执行任务，这个线程就是主线程。</p>
+<p>子线程：除了主线程外额外再创建的线程，用于执行一些耗时的任务，增强并发性以提升系统的响应速度。</p>
+<h3><strong>Android中的线程：</strong></h3>
+<h4>AsyncTask：</h4>
+<ul>
+<li>轻量级的异步任务类，不适合做特别耗时的后台任务。</li>
+<li>内部是使用线程池和Handler进行封装的。</li>
+<li>使用的时候需要继承AsyncTask类来手动实现任务处理的逻辑。</li>
+<li>默认的构造方法回调线程是主线程，用户也可以指定其他的线程为回调线程。</li>
+</ul>
+<p>API如下：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//在线程池中执行，用于执行异步任务。</span></span><br><span class="line"><span class="hljs-comment">//返回的结果会传递给onPostExecute方法</span></span><br><span class="line"><span class="hljs-comment">//</span></span><br><span class="line"><span class="hljs-comment">//注意：这个方法可以接受可变长度的参数，并且会</span></span><br><span class="line"><span class="hljs-comment">//将这些参数分派成多个任务串行执行</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">protected</span> Value <span class="hljs-title">doInBackground</span><span class="hljs-params">(params...)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-comment">//todo</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//如果用户在执行任务的时候需要不断的更新状态</span></span><br><span class="line"><span class="hljs-comment">//用户通过调用pushlishProgress将数据传给回调线程</span></span><br><span class="line"><span class="hljs-comment">//回调线程会调用这个方法处理更新状态的数据</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onProgressUpdate</span><span class="hljs-params">(values)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">super</span>.onProgressUpdate(values);</span><br><span class="line">    <span class="hljs-comment">//todo</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//在回调线程中执行，处理doInBackground执行的结果</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onPostExecute</span><span class="hljs-params">(values)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">super</span>.onPostExecute(values);</span><br><span class="line">    <span class="hljs-comment">//todo</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>AsyncTask的三个泛型参数：</p>
+<ul>
+<li>Params : 输入给Synctask执行的参数，比如网络请求中的URL</li>
+<li>Progress : 实时反馈的数据，如果做进度条的话，那么用 int  或者 float 就行了</li>
+<li>Result : 网络返回的数据，比如网络请求的话，就是Response</li>
+</ul>
+<h4>HandlerThread:</h4>
+<p>Android提供的一种Thread的派生类，内部实现封装了MessageQueue和Looper。</p>
+<h4>IntentService:</h4>
+<p>一种特殊的Service , 继承了Service并且内部封装了Handler和HandlerThread，也就是说相较于Service，IntentService可以很方便的执行一些耗时的任务。</p>
+<ul>
+<li>第一次启动的时候，其onCreate方法会被调用(主线程中调用)，此时会初始化HandlerThread。</li>
+<li>其他组件传递过来的Intent最终会调用onStartCommand方法(非HandlerThread运行)，而onStartCommand会调用其持有的Handler的sendMessage方法，其内部的Looper接受到消息后会回调IntentService内部的onHandleIntent方法</li>
+<li>onHandleIntent被调用的时候，此方法是运行在HandlerThread上的，从而实现了IntentService耗时任务的执行。</li>
+</ul>
+<p><strong>停止IntentService</strong>: 调用stopSelf方法。此方法会直接导致IntentService的销毁，并且此后会回调IntentService的onDestory方法，此方法会调用Looper.quit方法，结束当前HandlerThread的执行。</p>
+<h3>线程池：</h3>
+<p>线程池的优势：</p>
+<ul>
+<li>线程的复用，避免了线程在频繁创建和销毁所带来的性能的开销</li>
+<li>有效控制线程的最大并发数量，从而有效控制系统的并发性能</li>
+<li>方便对线程的管理</li>
+</ul>
+<h4>ThreadPoolExecutor</h4>
+<p>构造方法如下：</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ThreadPoolExecutor</span><span class="hljs-params">(<span class="hljs-keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">                          <span class="hljs-keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">                          <span class="hljs-keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">                          TimeUnit unit,</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-params">                          BlockingQueue&lt;Runnable&gt; workQueue)</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参数说明：</p>
+<ul>
+<li>corePoolSize：线程池中核心线程的数量，默认情况下核心线程会一直存活以等待新的任务的到来。</li>
+<li>maximumPoolSize：线程池中能容纳的最大线程的数量，当线程的数量达到这个值后，后续的任务会被阻塞。</li>
+<li>keepAliveTime：非核心线程闲时的超时时长，超过这个时长，非核心线程就会被回收。
+<ul>
+<li>当线程池的allowCoreThreadTimeOut属性为true的时候，超时机制对核心线程有效。</li>
+</ul>
+</li>
+<li>Unit ：keepAliveTime的单位。从TimeUnit中指定</li>
+<li>workQueue：线程池中的任务队列。</li>
+</ul>
+<p>线程池的执行过程：</p>
+<ul>
+<li>当线程池中的线程数量未达到核心线程的数量的时候，那么当任务到来的时候，线程池会直接启动一个核心线程来执行任务。</li>
+<li>当线程池中线程的数量到达核心线程数量或超过核心线程的数量的时候，任务会被插入到线程池中的任务队列中排队等待</li>
+<li>如果任务队列已满，并且当前线程数量未达到线程数量的最大值，那么线程池会立即启动一个非核心线程来执行任务</li>
+<li>如果达到了最大值的话，线程池就会拒绝这个任务，这个时候可以通过线程池的RejectedExecutionHandler来通知调用者。</li>
+</ul>
+<p>Async中线程池的配置规则：</p>
+<ul>
+<li>核心线程数为CPU数+1</li>
+<li>线程池的最大线程数为CPU核心数 * 2 + 1</li>
+<li>核心线程不存在超时机制，非核心线程的超时为1秒</li>
+<li>任务队列的容量为128</li>
+</ul>
+<h4>Android中提供的基本线程池：</h4>
+<p><strong>FixedThreadPool：</strong></p>
+<ul>
+<li>只有核心线程，并且核心线程不会被回收(除非此线程池被关闭了)</li>
+<li>不存在工作线程，故也没有超时机制</li>
+<li>任务队列的大小没有限制</li>
+</ul>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> threadCount = <span class="hljs-number">10</span></span><br><span class="line"><span class="hljs-keyword">val</span> fixedThreadPool = Executors.newFixedThreadPool(threadCount)</span><br></pre></td></tr></table></figure></p>
+<p><strong>CachedThreadPool：</strong></p>
+<ul>
+<li>只有非核心线程，没有核心线程</li>
+<li>非核心线程的最大数量为Integer.MAX_VALUE</li>
+<li>空闲线程的超时时间为60秒，超时后线程被回收</li>
+<li>所有的任务被提交后会被立即执行</li>
+</ul>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> cachedThreadPool = Executors.newCachedThreadPool()</span><br></pre></td></tr></table></figure></p>
+<p><strong>ScheduledThreadPool：</strong></p>
+<ul>
+<li>核心线程的数量是固定的</li>
+<li>非核心线程的数量没有限制</li>
+<li>当非核心线程闲置的时候会被立即回收，没有超时机制</li>
+<li>主要用于执行定时任务和具有固定周期的重复任务</li>
+</ul>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> scheduledThreadPool = Executors.newCachedThreadPool()</span><br></pre></td></tr></table></figure></p>
+<p><strong>SingleThreadExecutor：</strong></p>
+<ul>
+<li>内部只有一个核心线程</li>
+<li>所有的任务在线程中顺序执行</li>
+<li>单线程执行，任务之间不需要处理线程的同步问题</li>
+</ul>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> singleThreadPool = Executors.newSingleThreadExecutor()</span><br></pre></td></tr></table></figure></p>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/Review/">Review</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/09/29/线程和线程池/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -236,26 +324,108 @@
 
         <div class="content">
             <p>之前沉迷源码无法自拔，这个系列咕咕咕了好久了，其实开发艺术探索这方面没有看的很详细，因为之前看过Handler相关的源码的，对消息机制自认为还算比较熟悉，所以就没有特别的按照书中的内容讲，而是结合了自己的一下想法分析了一波。</p>
+<p>&lt;!-- more --&gt;</p>
+<h3>Android消息机制：</h3>
+<p>Android的消息机制：Handler的运行机制。</p>
+<ul>
+<li><strong>本质</strong>：MessageQueue和Looper协作运行的机制。</li>
+</ul>
+<p><strong>成员：</strong></p>
+<ul>
+<li>Hanlder: 消息机制的上层接口，用于在开发过程中很方便的进行线程之间的切换。
+<ul>
+<li>注意：更新UI仅仅是Handler的一个使用场景，这并不代表Handler就是用来更新UI的。</li>
+</ul>
+</li>
+<li>MessageQueue : 由Message组成的单链表数据结构，本质是一种阻塞队列。</li>
+<li>Looper :  消息事件的直接消费者。(因为实际上获取Meesage的是Looper，然后再由Looer分发给指定的Handler)</li>
+<li>ThreadLoacl：对Thread的ThreadMaps的一层封装，让不同的线程能够通过很方便的方式存放不同的数据。</li>
+</ul>
+<p><strong>补充</strong></p>
+<ul>
+<li>Looper和MessageQueue两者构成了一个最基本的生产者消费者模型。</li>
+<li>Handler 在整个消息机制中并不是核心，核心是有Looper和MeesageQueue构成的生产者消费者模型，给运行在主线程上的程序提供了事件驱动的基础。但是由于运行在主线程上的woker有很多种类别，所以Looper并不会真正的消耗事件，而是接收事件后统一分发给不同worker对应的Handler。
+<ul>
+<li>Looper是事件的直接消费者，它对事件的消费本质上是对事件的分发</li>
+<li>Handler是各个worker程序的代理，是事件的真正消费者</li>
+<li>Handler也可以不和运行的worker程序绑定，这种情况下，它只会用于线程切换。</li>
+</ul>
+</li>
+</ul>
+<p><strong>强调：</strong></p>
+<p>这里谈一个概念问题，我觉得这个很有必要要说清楚，因为在深入理解的时候，容易死磕一些思想从而把最基本的原则忘记了。<strong>消息机制的设计目的：<strong>本质就是一种跨线程执行任务的解决方案。如果我们只看Looper和MessageQueue的话，那么它的设计就是一个典型的生产者消费者模型，但是有一个问题，就是我们对</strong>消费</strong>这个词的理解。因为Looper是这个模型的消费者，而这个场景又很特殊，因为Handler的引入导致Looper的作用被模糊化了，所以我们很难清晰的定义整个消息机制中各个组件的职能，想必这也是为什么大多数将消息机制的文章都不会提及生产者消费者这个模型。所以这里我描述Looper为事件的直接消费者，而Handler和其对应的组件才是真正事件的处理者，如果还是对Looper感觉模棱两可的话，那就记住一点，Looper对事件的接收是导致任务在线程中切换的直接原因。Looper消费了这个事件，那么任务就成功实现了线程间切换，而实现了线程的切换，也就是实现了任务的跨线程执行。</p>
+<p>虽然这个观点实际上是有误的(因为本质上线程切换是共享内存实现的)，但是这样能让我们很好的理解Android的消息处理机制。</p>
+<h3>Android的消息机制概述：</h3>
+<p>Handler的直接作用(对于开发者) ：将一个任务切换到指定的线程中去执行。注意：这个能力是Looper提供的。</p>
+<p>非主线程更新UI的问题：ViewRootImpl在requestLayout方法中会首先检查当前的线程是否是UI线程。如果不是UI线程的话，直接就抛异常了。</p>
+<p>**注意：**UI线程在大多数情况下是等于主线程的，但是这个也不是绝对的，查看ViewRootImpl的实现我们可以看到ViewRootImpl所指向的mThread实际上是ViewRootImpl被创建的时运行的线程。亲测在UI线程中new 出来的View并通过WindowManager.addView实现的View是可以完全在子线程中正常运行的。</p>
+<p>Android中Handler的主要作用：解决子线程中无法更新UI的问题。</p>
+<p>单线程控制UI的原因：UI的改变操作不是原子性的，多线程并发控制UI容易出现同步问题。如果加锁解决的话，性能甚至不一定有单线程好，因为反而会有线程阻塞来降低效率。（这也是生产者模式相对于等待通知机制的一种优势，因为通过引入缓存机制，协调了生产者消费者之间任务速度不平衡的问题）</p>
+<h4><strong>Handler的创建方式</strong>：</h4>
+<p>先归纳一下，三种方式，两个作用。</p>
+<h5><strong>切换线程：</strong></h5>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//绑定当前创建线程的Looper</span></span><br><span class="line"><span class="hljs-keyword">val</span> handler = Handler()</span><br><span class="line"><span class="hljs-comment">//或</span></span><br><span class="line"><span class="hljs-comment">//绑定指定的looper</span></span><br><span class="line"><span class="hljs-keyword">val</span> handler = Handler(looper)</span><br></pre></td></tr></table></figure></p>
+<p>Handler和持有Handler的对象之间的耦合度是比较低的，因为Handler并不会持有外部对象的引用。这种情况下一般是通过Handler的post Runnable来实现切换线程运行方法实现的。</p>
+<p>**补充：**这种情况是不会因为消息机制的原因导致内存泄漏的。因为和Activity(这里就用Activity做例子，下面一样)相关操作的代码一定是写在Activity里面的，那么我们就可以不必担心Activity的在销毁后还存在引用没有被GC的情况。所以这种方法的主要作用就是用来切换线程。</p>
+<h5><strong>代理Activity接受异步的消息:</strong></h5>
+<p>首先我们分析一下Hanlder的运行过程。前面说了，Looper的其实只会分发这个消息，并不会处理这个消息。那么消息由谁处理呢？没错就是那些运行在此线程中的工作对象(在Android通常是四大组件)，但是Looper并不知道这个消息的接受者是哪个工作对象，因为这个Message是Activity里的Hander发送的，所以Looper只会把这个消息返回给Handler，让Handler来决定如何处理这个事情。这里有两种情况：</p>
+<ul>
+<li>如果Hanlder从Message那里拿到的消息是一个Runnable，那么就是上面描述的切换线程。Handler直接执行这个Runnable ，并且之后的事情，就和他没有关系了。这种情况由于Handler并不持有Activity的引用。所以Handler和Activity解耦的。</li>
+<li>如果Handler拿到的是消息，那么它就必须作为消息的传递者来通知Activity。那么这种情况下Handler一定是直接或间接的持有Activity的引用的。那么如何通知呢？很简单，直接访问Activity的数据或执行方法或者通过Activity传递过来的回调接口间接的访问Activity的数据或执行方法，但是它们本质是一样的，实现如下：</li>
+</ul>
+<p>实现1：</p>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> callback = <span class="hljs-keyword">object</span> : Handler.Callback &#123;</span><br><span class="line">    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleMessage</span><span class="hljs-params">(msg: <span class="hljs-type">Message</span>?)</span></span>: <span class="hljs-built_in">Boolean</span> &#123;</span><br><span class="line">        doSomeThing()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="hljs-keyword">val</span> handler = Handler(callback)</span><br></pre></td></tr></table></figure></p>
+<p>实现2：</p>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> handler = <span class="hljs-keyword">object</span> : Handler() &#123;</span><br><span class="line">    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleMessage</span><span class="hljs-params">(msg: <span class="hljs-type">Message</span>?)</span></span> &#123;</span><br><span class="line">        doSomething()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4>内存泄漏：</h4>
+<p>**注意：**上面两种实现都有内存泄漏的风险。因为这里的Handler代理了Activity接受了消息，而它又直接或间接的持有Activity的引用，代理的方式使得Handler会被传递到其他执行耗时任务的对象里去，而这些对象正在别的线程里面执行耗时任务，那么如果这个时候Activity被终止了的话，由于Handler只持有Activity引用的关系，Activity不会被正常GC.</p>
+<h3>Handler消息机制分析：</h3>
+<h4>ThreadLoacl:</h4>
+<p>线程内部的数据存储类，可以实现在不同的线程里面存储不同的信息。消息机制种主要用于存放Looper，**注意：**一个线程可以存放多个ThreadLocal，但是一个ThreadLoacl只能存放一个数据。</p>
+<h5><strong>ThreadLocal的使用方式：</strong></h5>
+<p>创建：</p>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> threadLocal = ThreadLocal&lt;Data&gt;()</span><br></pre></td></tr></table></figure></p>
+<p>存数据：</p>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threadLocal.<span class="hljs-keyword">set</span>(<span class="hljs-keyword">data</span>)</span><br></pre></td></tr></table></figure></p>
+<p>取数据：</p>
+<p><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threadLocal.<span class="hljs-keyword">get</span>()</span><br></pre></td></tr></table></figure></p>
+<h5>ThreadLoacl原理分析：</h5>
+<p>不具体讲，康康get和set的实现就行了。</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//获取元素</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> T <span class="hljs-title">get</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="hljs-keyword">if</span> (map != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        ThreadLocalMap.Entry e = map.getEntry(<span class="hljs-keyword">this</span>);</span><br><span class="line">        <span class="hljs-keyword">if</span> (e != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-meta">@SuppressWarnings</span>(<span class="hljs-string">"unchecked"</span>)</span><br><span class="line">            T result = (T)e.value;</span><br><span class="line">            <span class="hljs-keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> setInitialValue();</span><br><span class="line">&#125;</span><br><span class="line"><span class="hljs-comment">//存放元素</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">set</span><span class="hljs-params">(T value)</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="hljs-keyword">if</span> (map != <span class="hljs-keyword">null</span>)</span><br><span class="line">        map.set(<span class="hljs-keyword">this</span>, value);</span><br><span class="line">    <span class="hljs-keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ThreadLocal实际上是面向用户的一层接口，和消息机制中Handler的地位相似，实际上数据是通过线程对象里面存放的名为ThreadLoaclMap的map进行存放的。所以保证不同线程不同数据的本质原因还是因为<code>Thread.currentThread()</code>在不同的线程调用下返回的结果是不相同的。</p>
+<h3>消息队列的工作原理：</h3>
+<p>前面我也说了消息队列本质就是一个生产者消费者模式，所以这里我并不打算从源码的角度分析Looper的具体实现和MessageQueue如何构成的阻塞队列，这里我用一个简单的例子跟随源码康康大致的运行流程，然后再强调几点需要注意的地方就行了。</p>
+<h4>工作原理：</h4>
+<h5>Handler 发送消息的过程：</h5>
+<p>Handler#post</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">post</span><span class="hljs-params">(Runnable r)</span></span>&#123;</span><br><span class="line">    <span class="hljs-keyword">return</span>  sendMessageDelayed(getPostMessage(r), <span class="hljs-number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>getPostMessage方法主要是将传递进来的runnable封装成一个Message</p>
+<p>Handler#getPostMessage</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Message <span class="hljs-title">getPostMessage</span><span class="hljs-params">(Runnable r)</span> </span>&#123;</span><br><span class="line">    Message m = Message.obtain();</span><br><span class="line">    m.callback = r;</span><br><span class="line">    <span class="hljs-keyword">return</span> m;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Handler#sendMessageDelay</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMessageDelayed</span><span class="hljs-params">(Message msg, <span class="hljs-keyword">long</span> delayMillis)</span></span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (delayMillis &lt; <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        delayMillis = <span class="hljs-number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Handler#sendMessageAtTime</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMessageAtTime</span><span class="hljs-params">(Message msg, <span class="hljs-keyword">long</span> uptimeMillis)</span> </span>&#123;</span><br><span class="line">    MessageQueue queue = mQueue;</span><br><span class="line">    <span class="hljs-keyword">if</span> (queue == <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        RuntimeException e = <span class="hljs-keyword">new</span> RuntimeException(</span><br><span class="line">            <span class="hljs-keyword">this</span> + <span class="hljs-string">" sendMessageAtTime() called with no mQueue"</span>);</span><br><span class="line">        Log.w(<span class="hljs-string">"Looper"</span>, e.getMessage(), e);</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> enqueueMessage(queue, msg, uptimeMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Handler#enqueueMessage</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">enqueueMessage</span><span class="hljs-params">(MessageQueue queue, Message msg, <span class="hljs-keyword">long</span> uptimeMillis)</span> </span>&#123;</span><br><span class="line">    msg.target = <span class="hljs-keyword">this</span>;</span><br><span class="line">    <span class="hljs-keyword">if</span> (mAsynchronous) &#123;</span><br><span class="line">        msg.setAsynchronous(<span class="hljs-keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-comment">//在这里讲消息放入消息队列</span></span><br><span class="line">    <span class="hljs-keyword">return</span> queue.enqueueMessage(msg, uptimeMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5>Looper 获取消息的过程</h5>
+<p>looper#loop</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">loop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> Looper me = myLooper();</span><br><span class="line">    <span class="hljs-keyword">final</span> MessageQueue queue = me.mQueue;</span><br><span class="line">    <span class="hljs-comment">//...删掉一些代码</span></span><br><span class="line">    <span class="hljs-keyword">boolean</span> slowDeliveryDetected = <span class="hljs-keyword">false</span>;</span><br><span class="line">    <span class="hljs-keyword">for</span> (; ; ) &#123;</span><br><span class="line">        Message msg = queue.next(); <span class="hljs-comment">// might block</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (msg == <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            <span class="hljs-comment">//这个target就是Handler</span></span><br><span class="line">            <span class="hljs-comment">//这里就实现了Looper将消息分发给Handler</span></span><br><span class="line">            msg.target.dispatchMessage(msg);</span><br><span class="line">            dispatchEnd = needEndTime ? SystemClock.uptimeMillis() : <span class="hljs-number">0</span>;</span><br><span class="line">        &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (traceTag != <span class="hljs-number">0</span>) &#123;</span><br><span class="line">                Trace.traceEnd(traceTag);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-comment">//...删掉一些代码</span></span><br><span class="line">        msg.recycleUnchecked();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，Looper.loop其实就是让Looper作为消费者去拿MessageQueue里面的message。通过queque.next()获取消息，注意<code>queue.next</code>方法会阻塞线程，并且一般情况下一定不会返回空。如果消息为空，那么looper直接返回，这个线程也就是失去了控制，直接运行到结束。</p>
+<p><strong>补充一下:</strong> queue.next返回null是让Looper结束死循环的唯一方式。而结束Looper面向开发者的API是Looer的quit方法，一旦quit方法被调用，MessageQueue的quit方法会被执行，从而清空自己的所有消息，使得next返null。(Looper的quit方法应该只能通过别的线程调用吧)。</p>
+<p>Handler#dispatchMessage</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">dispatchMessage</span><span class="hljs-params">(Message msg)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-comment">//这里的message.callback就是传递进来的runable</span></span><br><span class="line">    <span class="hljs-keyword">if</span> (msg.callback != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        handleCallback(msg);</span><br><span class="line">    &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">        <span class="hljs-comment">//对应Handler的构造方法里面直接传CallBack的实现</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (mCallback != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (mCallback.handleMessage(msg)) &#123;</span><br><span class="line">                <span class="hljs-keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-comment">//对应Handler直接重写HandlerMessage的实现</span></span><br><span class="line">        handleMessage(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4>补充：</h4>
+<h5>MessageQueue如何阻塞：</h5>
+<p>主要是两个native方法，我就简单描述一下，具体咋实现的我们不深究。</p>
+<p>MessageQueue#next</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function">Message <span class="hljs-title">next</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> ptr = mPtr;</span><br><span class="line">    <span class="hljs-keyword">if</span> (ptr == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">int</span> pendingIdleHandlerCount = -<span class="hljs-number">1</span>; <span class="hljs-comment">// -1 only during first iteration</span></span><br><span class="line">    <span class="hljs-keyword">int</span> nextPollTimeoutMillis = <span class="hljs-number">0</span>;</span><br><span class="line">    <span class="hljs-keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (nextPollTimeoutMillis != <span class="hljs-number">0</span>) &#123;</span><br><span class="line">            Binder.flushPendingCommands();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-comment">//这个方法会通过ptr的值和nextPollTimeoutMillis</span></span><br><span class="line">        <span class="hljs-comment">//的值来判断是否阻塞当前线程</span></span><br><span class="line">        <span class="hljs-comment">//我们可以把它当作待条件的wait方法</span></span><br><span class="line">        nativePollOnce(ptr, nextPollTimeoutMillis);</span><br><span class="line">        <span class="hljs-comment">//...省略其他的代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>MessageQueue#enqueueMessage</p>
+<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">enqueueMessage</span><span class="hljs-params">(Message msg, <span class="hljs-keyword">long</span> when)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) &#123;</span><br><span class="line">        msg.markInUse();</span><br><span class="line">        msg.when = when;</span><br><span class="line">        Message p = mMessages;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//...这里省略掉将消息入队列的代码</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (needWake) &#123;</span><br><span class="line">            <span class="hljs-comment">//这个方法用于唤醒Ptr指向的线程</span></span><br><span class="line">            <span class="hljs-comment">//我们可以把它当作条件motify方法</span></span><br><span class="line">            nativeWake(mPtr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/Review/">Review</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/09/29/Android消息机制/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -302,26 +472,140 @@
 
         <div class="content">
             <p>前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。</p>
+<p>&lt;!-- more --&gt;</p>
+<h3>两个比较重要的类：</h3>
+<h4>ViewRootImpl:</h4>
+<p><strong>注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是DecorView，而对DecorView的直接持有者又是PhoneWindow(这里我们不说parent，因为phoneWindow不是View的子类)。</strong></p>
+<p>这里要说明一点，虽然PhoneWindow直接持有了DecorView的引用，但是由于职能的限制(如果PhoneWondow再去管理View就太臃肿了)，PhoneWindow的实例并不直接对当前Activity的DecorView进行管理(PhoneWindow更多的是和Activity进行交互)，所以Android才引入了ViewRoot这个控制层(或者说叫handler？)，来使WindowManager间接的管理Windows下的View。</p>
+<p>ViewRoot作为PhoneWindow和DecorView之间的桥梁，直接控制了DecorView以及整个ViewTree的测量、布局、绘制、以及事件分发的工作。另外，它还代理了WindowMnagerGlobal负责和WindowManagerSercvice进行直接通信来调整窗口位置的大小以及对来自于WMS的事件进行相应的处理。</p>
+<p><strong>整个View树的PerformTraversal是通过ViewRootImpl开始的</strong>，而ViewRoot的PerformTraversal内部会一次调用PerformMeasure，PerformLayout，PerformDraw三个方法，这三个方法将会对顶层的View即DecorView依次进行mesure，layout和draw，而mesure，layout，draw的内部又会调用View的onMeasure, onLayout , onDraw方法。而如果这个View是一个ViewGroup的话，其onMeasure, onLayout和Draw的dispatchDraw又会调用其子View的Measure , Layout , Draw 方法。在这个递归调用下。整个View树就完成了测量，定位，和绘制的工作。</p>
+<h4>DecorView:</h4>
+<p>DecorView是View树中的顶层View，是ViewGroup的子类，是比ContentView还要顶层的视图。一般情况下，用户是不需要和DecorView进行交互。</p>
+<p><strong>DecorView的结构:</strong></p>
+<ul>
+<li>TitleBar: 用于挂载Actionbar</li>
+<li>ContentPatent: 用于挂载ContentView</li>
+</ul>
+<p>​	<strong>注意：这里所说的挂载实际上是通过addView添加上去的，这里的ContentParent实际上是一个ContentFrameLayout，这里命名为ContentParent只是为了说明其地位的特殊，而不是说这就是一个特殊的类。我们可以通过在DecorView中调用findViewById(android.R.id.content)获取到它。</strong></p>
+<h3>MesureSpec</h3>
+<p>MesureSpec是一个32位的Int类型，用于表示一个父View对child的约束类型和能提供的最大的空间。也就是说，这一个int值表示了两个数据。其中它的高2位，用于表示测量的类型，而低30位用于表示测量的大小。这样做有一个好处，就是省掉了为了传递一组数据创建一个对象在内存上面的开销(光是对象头就占用了8个字节了，如果是用数组的话，对象头12个字节，更大)。</p>
+<p><strong>组成：</strong></p>
+<ul>
+<li>
+<p>MesureMode</p>
+<ul>
+<li>UNSPECIFIED: parent不约束child，child想要多大就给多大。</li>
+<li>EXACTILY:  parent确定child有多大了，child在拿到之后就是自己的最终大小。</li>
+<li>AT_MOST:  parent确定child的最大的大小，child拿到后再根据自己的需求设置自己的大小</li>
+</ul>
+<p><strong>注：这里为了便于理解，先暂时不考虑View有背景的情况</strong></p>
+</li>
+<li>
+<p>MesureSize</p>
+<ul>
+<li>parent 提供给child的尺寸的数值，用于建议child应该多大</li>
+</ul>
+</li>
+</ul>
+<h4><strong>谈一谈LayoutParamas和MesureSpec：</strong></h4>
+<p>可以说在View的测量这一块，LayoutParamas和MesureSpec的组合起到了决定性的作用。</p>
+<ul>
+<li>
+<p><strong>LayoutParamas 是child告诉parent的</strong></p>
+<ul>
+<li>child通过LayoutParams告诉parent自己的dimension是什么(Android把matchParent和wrapcontent也算作dimension了，只不过是特殊的标志，前者为-1，后者为-2).</li>
+</ul>
+</li>
+<li>
+<p><strong>MesureSpec 是从parent返回给child的</strong></p>
+<ul>
+<li>parent通过LayoutParamas获取了child的意图后，结合自生的情况(自身的MesureMode，MesureSize，margin，padding等)，计算出child的大小，并将其封装为MesureSpec后返回给child。</li>
+</ul>
+</li>
+</ul>
+<p>对于UNSPECIFIED我们一般不考虑，这个只有在多次测量的时候才会出现。</p>
+<p>对于MesureMode是WrapContent的场景简单解释一下：这个时候parent是不知道child实际上应该是多大的(因为它并不知道child有哪些内容)，所以这个时候，提供给child一个最大的值，让child自己搞，只要不超过这个范围就行了。</p>
+<p>**可能有些人会说了，既然child能够通过LayoutParams知道自己的测量模式是啥，那为啥还需要MesureMode呢？**这个问题我也考虑过，也想问，猜测有两个因素，一个是有UNSPECIFIED的存在那么MesureSpce必须再带一个附加信息，另外一点就是涉及LayoutParams的职能问题。Child确实可以通过LayoutParams获取，但是一旦这么做，就模糊了LayoutParams的概念。这显然是不太清真的(雾)。</p>
+<p><strong>注意：对于DecorView，其MesureSpec是在自身中创建的，而不是由parent分发下来的。因为它的parent就是phoneWindow了，大小是确定的。</strong></p>
+<h4>对MesureSpec的一些总结：</h4>
+<p>引用网络上的一张View 的MesureSpec创建规则的表</p>
+<p><img src="https://github.com/pigrange/pigrange.github.io/blob/master/assets/img/ViewMesureSpec.jpg?raw=true" alt></p>
+<p>这个其实很好理解：</p>
+<p>只要记住三点(这里我们就不考虑UNSPECIFIED了)：</p>
+<ul>
+<li>child指明了自己的大小是多少dp/sp的时候，parent不会对child做任何限制，mesureMode一定是EXACTLY，而measureSize一定是child在LayoutPrama中的大小。也就是说View的大小是在测量前就一定确定好了的，但是这了还是要强调一下，大小虽然确定的，但是位置是未知的，还是得在layout之后才知道。</li>
+<li>child是MATCH_PARENT的时候，只要它的parent(向上递归)存在一个ViewGroup是WRAP_CONTENT，那么它的size就会变成(伪)WRAP_CONTENT。而其他情况，那么就是父View提供的measureMode就是EXACTLY.
+<ul>
+<li>这里做一下解释为什么是(伪)WRAP_CONTENT，因为如果子View不对WRAP_CONTEN做特殊处理的话，那么它的实际效果和MATCH_PARENT是一样的.(这个我们后面在源码里分析)</li>
+</ul>
+</li>
+<li>child是WRAP_CONTENT的时候就很简单了，它从parent那里得到的mesureMode一定是AT_MOST。</li>
+</ul>
+<h3>(真)View的工作原理</h3>
+<p><em>前面bb太久了，差点没有抓住重点。</em></p>
+<p>因为后面打算单独做一起结合源码分析View的工作原理。因此，这里只对View的工作原理做一些步骤上的描述。</p>
+<h4>Msasure过程：</h4>
+<ul>
+<li>
+<p>完成了View大小的测量</p>
+</li>
+<li>
+<p>由Measure方法和onMeasure方法组成(实际上是在Measure方法里面调用了onMeasure方法)</p>
+</li>
+<li>
+<p>mesure方法是一个final的方法，而提供给开发者可以重写的是view的onMeasure方法。</p>
+</li>
+<li>
+<p>onMeasure提供了parent传来的mesureSpec，View的实际的宽、高实际是在onMeasure里面设置的</p>
+</li>
+<li>
+<p>如果这个View是一个ViewGroup，那么还会调用mesasureChildren这个方法去测量它的所有的child。</p>
+</li>
+</ul>
+<h4>Layout过程：</h4>
+<ul>
+<li>完成了View位置的确定</li>
+<li>由layout方法和onLayout方法组成(同上，实际上是在Layout中调用了onLayout)</li>
+<li>Layout方法不是一个final方法，可以被重写。View的具体位置是在layout中设置的</li>
+<li>onLayout是用于ViewGroup来确定child的位置的</li>
+<li>View的MeasuredWidth/Height是onMeasure时确定的</li>
+<li>View的Width/Height是在layout时确定的，不过两者默认值是相同的，除非重写layout方法</li>
+</ul>
+<h4>Draw过程：</h4>
+<p>draw的过程就比较简单了，这里我们只需要记住draw里面调用了onDraw即可，对于draw的源码内容的分析，后面我会在源码解读的文章里面进行阐述，下面我们简单看看Draw的具体流程。</p>
+<ul>
+<li>绘制背景: drawBackground(canvas)</li>
+<li>绘制自己: onDraw(canvas)</li>
+<li>绘制自己的子View: dispatchDraw(canvas)</li>
+<li>绘制装饰: onDrawForeground(canvas)</li>
+<li>绘制焦点: drawDefaultFocusHighlight(canvas)</li>
+</ul>
+<h4>View宽高的获取：</h4>
+<p>这里我觉得有必要单独拿出来讲一讲，因为在我的开发经历中确实在这方面踩过不少的坑。</p>
+<p>由于View的工作流程和Activity的生命周期里面是不相同的，所以我们无法在确保Activity生命周期里面的某一函数里面拿到View的宽高。如果你在View的measure或者layout之前尝试获取其宽高的话，那么始终得到的都是0。</p>
+<p><strong>下面是一些方法：</strong></p>
+<ul>
+<li>Activity#onWindowFocusChanged方法</li>
+<li>View#WindowonFocusChanged方法
+<ul>
+<li>当DecorView绘制完成Activity正准备显示出来的时候，会回调Activity#onWindowFocusChanged这个方法</li>
+</ul>
+</li>
+<li>view.post(runnable)
+<ul>
+<li>用的比较多，也是比较推荐的方法(因为写起来比较方便)。</li>
+</ul>
+</li>
+<li>使用ViewTreeObserver
+<ul>
+<li>ViewTreeObserver可以注册GlobalLayoutListener , 当ViewTree的内部由一个View的可见性发现改变的时候 将会回调onGlobalLayout方法。但是要注意，这个方法会被调用很多次，所以这里只提一个思路，我本人并不推荐这个写法。</li>
+</ul>
+</li>
+</ul>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/Review/">Review</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/09/18/Android3/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -368,26 +652,113 @@
 
         <div class="content">
             <p>这里整理了一些关于View事件体系的一些基础的知识点，而有关View事件分发机制的部分，我单独攥写了一篇关于事件分发源码阅读的文章，所以这里就不再进行总结归纳。</p>
+<p>&lt;!-- more --&gt;</p>
+<h3>1、View的基础知识</h3>
+<h4>什么是View：</h4>
+<ul>
+<li>Android所有的控件的父类，是界面层的一种抽象</li>
+<li>View的结构和前端的DOM相似，View也可以有一组控件组成</li>
+</ul>
+<h4>View的位置参数：</h4>
+<ul>
+<li>
+<p><strong>四个顶点：</strong></p>
+<ul>
+<li>top : 上边界的y左边</li>
+<li>left ：左边界的x坐标</li>
+<li>right：右边界的x坐标</li>
+<li>bottom：下边界的y坐标</li>
+</ul>
+<p><strong>注意：</strong></p>
+<ul>
+<li>四个顶点的位置是相对于父容器来说的，如果还需要获取一个View的绝对坐标的话，需要代入它所有的parent的四个顶点的坐标来进行计算。</li>
+<li>View如果是通过设置translationX/Y来改变View的位置坐标的话，其四个顶点的位置并不会发生改变。</li>
+</ul>
+</li>
+<li>
+<p><strong>坐标与宽高的关系：</strong></p>
+<ul>
+<li>width = right - left</li>
+<li>height = bottom - top</li>
+</ul>
+</li>
+<li>
+<p><strong>其它位置参数：</strong></p>
+<ul>
+<li>y = top + translationY</li>
+<li>x = left + translationX</li>
+</ul>
+</li>
+<li>
+<p><strong>滚动位置参数：</strong></p>
+<ul>
+<li>scrollX = getScrollX</li>
+<li>scrollY = getScrollY</li>
+</ul>
+<p>注意：滚动位置参数并不会修改View的实际位置。此参数平移的是View的内容，而View本身并不会被修改</p>
+</li>
+</ul>
+<h4>点击的位置参数：</h4>
+<p><strong>对于一个点击事件，使用x 、y 或 rawX 、rawY 来实现View的点击位置的获取</strong></p>
+<ul>
+<li>getX() : 返回点击事件距离(消耗此点击事件的)控件左边的距离</li>
+<li>getY() : 返回点击事件距离(消耗此点击事件的)控件上面的距离</li>
+<li>getRawX() : 返回点击事件距离整个屏幕左边的距离</li>
+<li>getRawY() : 返回点击事件距离整个屏幕顶上的距离</li>
+</ul>
+<h3>2、View交互相关的一些类</h3>
+<ul>
+<li>MotionEvent ： 封装了点击事件的类</li>
+<li>TouchSlop ：系统能够识别的滑动的最小距离，是一个常量
+<ul>
+<li>获取方式：ViewConfiguration.get(getContext().getScaledTouchSlop())</li>
+</ul>
+</li>
+<li>VelocityTracker :  用于计算滑动速度的，作用的单位是MotionEvent</li>
+<li>GestureDector：一个手势检测的工具类。可以用来在TouchEvent中实现一些较为复杂的收拾的检测。
+<ul>
+<li>这个类会拦截View的监听操作，所以如果使用这个类的话，监听器要单独注册。</li>
+<li>推荐用于监听双击操作</li>
+</ul>
+</li>
+<li>Scroller： 一个用于View弹性滑动的对象
+<ul>
+<li>本质上是一个封装好了的插值器。</li>
+</ul>
+</li>
+</ul>
+<h3>3、实现View滑动的方式</h3>
+<h4>Layout：</h4>
+<ul>
+<li>Layout方法最终会调用onLayout来设置View的位置</li>
+<li>故可以在View滑动的过程中，不断的调用Layout方法来更新View的位置</li>
+</ul>
+<h4>LayoutParamas：</h4>
+<ul>
+<li>在LayoutParams中通过设置LayoutParams的LeftMargin属性和TopMargin属性来更新View的位置</li>
+<li>设置后调用setLayoutParams方法实现重绘(内部封装了requestLayout方法，并且做了相关判断)</li>
+</ul>
+<h4>scrollTo</h4>
+<ul>
+<li><strong>注意</strong>，这个方法改变的是View内容的内容而非View本身的位置</li>
+<li>此方法是不会导致View重新绘制的,所以需要对View使用invalidate方法</li>
+</ul>
+<h4>使用动画</h4>
+<ul>
+<li>XML动画：控制View的translationX 和 translationY 属性</li>
+<li>ObjectAnimator：相对稍微复杂一点，需要对View的动画属性设置getter和setter</li>
+<li>ValueAnimatior：使用简单，兼容性强，本质上也是一个插值器，需要手动更新View的位置坐标</li>
+</ul>
+<h4>各种滑动方式的对比：</h4>
+<ul>
+<li>scrollTo/scrollBy : 操作简单，适合对View的内容进行滑动</li>
+<li>动画：操作简单，适合对没有交互的View和实现复杂的动画效果</li>
+<li>改变布局参数：操作稍复杂，但是适合有交互的View</li>
+</ul>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/Review/">Review</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/09/15/Android2/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -434,26 +805,230 @@
 
         <div class="content">
             <p>这是这个系列的开篇，主要内容是Android相关知识点的整理。其内容内容来自于《Android开发艺术探索》的整理，故我也把它当作是复习开发艺术探索的读书笔记。</p>
+<p>&lt;!-- more --&gt;</p>
+<h3>一、Activity的生命周期</h3>
+<h4>1、正常情况下Activity的什么周期:</h4>
+<p><strong>正常情况下，Activity经历的生命周期如下：</strong></p>
+<ol>
+<li>onCreate()
+<ul>
+<li>表示Activity正在启动，这里编写用户的逻辑，比如数据的准备，视图的创建，Listener的注册。</li>
+<li>这个方法调用的时候，Activity还未被创建好，也不可见。</li>
+</ul>
+</li>
+<li>onStart()
+<ul>
+<li>在perfromStart中调用 callActivityOnstart方法 &lt;---  final 方法</li>
+<li>表示当前的Activity正在被启动，on starting的意思。</li>
+<li>在这个状态下，Activity已经可见了，但是由于没有出现在前台，所以不可见。</li>
+<li>这个方法会在onCreate之后执行，所以这个时候Activity已经被创建好了</li>
+<li>这个方法会将onStart指令分发给所有的子Fragment。(fragmentActivity中)</li>
+</ul>
+</li>
+<li>onRestart
+<ul>
+<li>Activity没有被完全销毁，重启的过程。</li>
+<li>这种情况下，一般是用户的Activity离开前台退回到后台所导致的。</li>
+<li>这个方法是在onStart()之前调用的。</li>
+<li>**补充：**这个方法实际上是在performResume中调用的，performResume会首先调用perfromRestart，由于才创建的Activity的mStoped是false，所以perfromRestart直接return了，而performRestart里面会调用perfromStart来间接调用onStart方法。</li>
+<li>performStart方法最终会将View变得可见(目前还不清楚具体的实现在哪里)</li>
+</ul>
+</li>
+<li>onResume()
+<ul>
+<li>Activity在onStart之后就已经创建完成。onResume是将其添加到window上，让其可见。</li>
+<li>也就说onResume的时候Activity才正式显示到前台。</li>
+</ul>
+</li>
+<li>onPause()
+<ul>
+<li>表示Activity正在停止，这个方法是在onStop之前被调用的。</li>
+<li>这个方法里面应该做一些停止动画的操作，但是不能太耗时。</li>
+<li>这个方法会在新的Activity的onCreate方法调用之前被执行，所以如果这个方法耗时的话，新的Activity会被强制等待。</li>
+</ul>
+</li>
+<li>onStop()
+<ul>
+<li>表示Activity即将被停止，这个方法也同样不能太耗时。但是这个方法会在新的Activity的onResume之后才被调用。所以在调用这个方法的时候Activity已经变得不可见了。</li>
+<li>**说明：**因为这个方法是在performStop里面调用的，而performStop里面会WindowManager将View从Window中移除了，onStop是在移除RootView之后被调用的。</li>
+</ul>
+</li>
+<li>onDestory()
+<ul>
+<li>表示Activity即将被销毁。用于做一些资源的释放。</li>
+<li>注意：在内存不足的情况下从而导致Activity的非正常结束，这个方法是不会被回调的。</li>
+</ul>
+</li>
+</ol>
+<p><strong>对应关系</strong>：</p>
+<ul>
+<li>onCreate -&gt; onDestory</li>
+<li>onStart -&gt; onStop</li>
+<li>onResume -&gt; onPause</li>
+</ul>
+<p>**注：**对应关系并不是完全对应的，只是说宏观的流程下，这几个方法有如下的对应关系。</p>
+<h4>2、异常情况下Activity的生命周期</h4>
+<p><strong>异常情况下Activity的生命周期如下：</strong></p>
+<ol>
+<li>资源相关的系统配置发生改变导致Activity被杀死并重新创建</li>
+<li>资源内存不足导致低优先级的Activity被杀死</li>
+</ol>
+<p><strong>（1）配置改变的情况(注意，这种情况activity算异常终止)：</strong></p>
+<p>Activity会依赖于系统资源，如果系统的状态发生了改变会导致Activity所依赖的系统资源发生改变，因此Activity会进行重建。</p>
+<ul>
+<li>手机的屏幕进行了旋转，Activity会进行重建(完全的重建)。
+<ul>
+<li>这种情况下Activity会被销毁，其onPause , onStop , onDestory均会被调用。</li>
+<li>这种情况会调用activity的onSaveInstanceState方法
+<ul>
+<li>此方法会保存window的层级状态(通过调用window的saveHierarchyState方法) ---&gt; Activity的视图结构</li>
+<li>此方法会保存所有的fragment状态</li>
+<li>此方法会保存所有的outfill状态（这个是什么东西？</li>
+</ul>
+</li>
+<li>当系统重建的时候Activity会调用onSaveInstanceState方法。
+<ul>
+<li>因此，也可以在这个方法里面对保存的状态进行恢复</li>
+</ul>
+</li>
+<li><strong>注意</strong>：这里保存的状态是是Boundle，故需要用Parceble来进行状态的保存。</li>
+</ul>
+</li>
+</ul>
+<p><strong>（2）内存资源不足导致的Activity被重建的情况：</strong></p>
+<ul>
+<li><strong>注意：在这种情况下，Activity的onSaveInstanceState方法也是会被调用的</strong></li>
+<li><strong>Activity的优先级：</strong>
+<ul>
+<li>前台</li>
+<li>可见但是并非前台：onStop没有被调用</li>
+<li>后台：onStop方法被调用了</li>
+</ul>
+</li>
+<li><strong>Avtivity脱离了四大组件很容易被杀死</strong></li>
+<li>对于Activity的配置发生了改变的情况，可以强制指定onConfigChange来拒绝系统重建Activity
+<ul>
+<li>在Manifast中指定configChange这个属性即可</li>
+<li>**注意：**对于屏幕发生改变的情况，还需要指定screenSize属性</li>
+</ul>
+</li>
+</ul>
+<h3>二、Avtivity的启动模式：</h3>
+<h4>任务栈：</h4>
+<p><strong>(1)任务栈是和App(包名)相绑定的</strong></p>
+<p><strong>(2)注意任务栈是有前台和后台之分的</strong>。</p>
+<p><strong>(3)Activity不可见并不等于Activity就在后台的任务栈中。</strong></p>
+<ul>
+<li>一个Activity可能会有多个任务栈</li>
+<li>任务栈通过taskAffinity进行指定</li>
+</ul>
+<p><strong>(4)出现前后台两个任务栈的例子：</strong></p>
+<ol>
+<li>App1启动，打开了Activity A和Activity B</li>
+<li>用户点击了Home，返回了主界面，此时App的所有任务栈回归后台。</li>
+<li>用户启动了App2，并且通过App2的Activity启动了App1的Activity C
+<ul>
+<li>Acitivity C是 singleTask，并且没有指定taskAffinity(即默认的)</li>
+</ul>
+</li>
+<li>Activity C在前台任务栈，Activity A B 在后台任务栈。</li>
+</ol>
+<h4>四种启动模式：</h4>
+<ul>
+<li>Standard: 标准模式，谁启动这个Activity，就压进启动者的任务栈，无复用机制，不绑定taskAffinity，始终创建新的实例。</li>
+<li>SingleTop: 栈顶复用模式，有栈顶复用机制，其他的和Standard一样，不绑定taskAffinity</li>
+<li>SingleTask：栈内复用模式，绑定taskAffinity，三个强调点，如下：
+<ul>
+<li>系统会在指定的Task栈中创建新的Activity，并且在这个Task栈中实现单例，如果不指定Task栈的话，那就是默认的任务栈 (taskAffinity为包名)
+<ul>
+<li>尽管可能会在新的任务栈中创建Activity，但是点击返回会将焦点转移至原来的Activity，而不是这个Activity栈的下一个(当然也可能是，这个得看启动它的Activity所在的栈)。</li>
+</ul>
+</li>
+<li>这个Activity会在这个任务栈中实现单例，并且被赋予焦点的时候会将上面的所有Activity全部出栈。</li>
+<li><strong>如果前台任务栈启动了后台任务栈的方法，会把整个后台任务栈搬到前台来</strong>
+<ul>
+<li>这种情况，点击返回就会将此栈一一退出，因为后台栈已经和前台栈合并了</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>SingleInstance：全局单例的模式，Activity会维护一个自己的栈，并且这个栈中就只有这一个Activity。</li>
+</ul>
+<h4>android:taskAffinity属性：</h4>
+<p><strong>用于标记Activity所属的Task，默认的情况下值为应用的包名。</strong></p>
+<ul>
+<li>LaunchMode 为 singleTask的Activity</li>
+<li>LaunchMode为singleInstance的Activity</li>
+<li>使用flag＝Intent.FLAG_ACTIVITY_NEW_TASK启动的Activity</li>
+</ul>
+<h4>LaunchMode和Intent Flag的对应关系：</h4>
+<ul>
+<li>FLAG_ACTIVITY_NEW_TASK   &lt;==&gt;  SingleTask</li>
+<li>FLAG_ACTIVITY_SINGLE_TOP  &lt;==&gt; SingleTop</li>
+</ul>
+<h4>FLAG_ACTIVITY_CLEAR_TOP：</h4>
+<ul>
+<li>SingleTask默认带有ClearTop标志</li>
+<li>如果Standard/或者SingleTop设置了FLAG_ACTIVITY_CLEAR_TOP的话，如果栈内有，会将当前栈的上面的全部去掉(包括原有的Activity)，再创建一个新的实例。</li>
+</ul>
+<h4>启动模式的指定：</h4>
+<ol>
+<li>通过配置AndroidMenifest实现</li>
+<li>通过在Intent中设立标志位来实现</li>
+</ol>
+<p><strong>比较：</strong></p>
+<ul>
+<li>第一种的优先级更低</li>
+<li>第一种无法为Standard设置ClearTop</li>
+<li>第二种无法实现SingleInstance</li>
+</ul>
+<h3>三、IntentFilter的匹配规则：</h3>
+<p><strong>IntentFiler 用于匹配隐式的Intent</strong></p>
+<h4>三个匹配规则：</h4>
+<p><strong>注意：三个匹配规则需均满足才能匹配成功。</strong></p>
+<ul>
+<li>action 匹配规则</li>
+<li>category 匹配规则</li>
+<li>data 匹配规则</li>
+</ul>
+<h5>Action：</h5>
+<ul>
+<li>Activity可以设置多个</li>
+<li>Intent只有能够匹配让其中的一个即可</li>
+<li>如果不设置的话，就永远匹配不上</li>
+<li><strong>对于Intent来说，Intent只能设置一个Action属性</strong></li>
+</ul>
+<h5>category：</h5>
+<ul>
+<li>Intent和Activity均能够设置多个</li>
+<li>intent设置的categoriy需要均匹配上</li>
+<li>如果intent不设置，则其会设置默认的DEFAUT</li>
+<li><strong>对于Activity，需要设置DEFAULT来接受Intent中DEAFULT的匹配条件</strong></li>
+</ul>
+<h5>Data</h5>
+<ul>
+<li><strong>实际上只需要匹配两个内容：</strong>
+<ul>
+<li>URI</li>
+<li>MimeType</li>
+</ul>
+</li>
+<li>由于URI结构比较复杂，故在注册Activity的时候，需要对URI的每一个结构单独设置匹配条件</li>
+<li>Activity的Data可以设置多个</li>
+<li><strong>Intent的Data需要完全匹配上Activity中的其中一个才能通过</strong></li>
+<li>Intent中通过Uri.parse(string) 指定Uri，指代MIME的string 指定MimeType</li>
+<li><strong>setData 和 setType有冲突，如果都要匹配，需要调用setDataAndType方法</strong></li>
+<li>URI的schema必须指定此URI才有效(才能够接受匹配)</li>
+</ul>
+<h4>判断是否有Activity能够匹配Intent：</h4>
+<ul>
+<li>PackgeManager.resolveActivity方法</li>
+<li>Intent.resolveActivity方法(其实就是调用的PM的resolveActivity方法，只是做了封装)</li>
+</ul>
+
         </div>
         
         
-        
-        <hr style="height:1px;margin:1rem 0">
-        <div class="level is-mobile is-flex">
-            <div class="level-start">
-                
-                <div class="level-item is-size-7 is-uppercase">
-                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
-                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/Review/">Review</a>
-                </div>
-                
-            </div>
-            <div class="level-start">
-                <div class="level-item">
-                    <a class="button is-size-7 is-light" href="/2019/09/13/Android1/#more">阅读更多</a>
-                </div>
-            </div>
-        </div>
         
         
     </div>
@@ -521,7 +1096,7 @@
                         分类
                     </p>
                     <p class="title has-text-weight-normal">
-                        10
+                        9
                     </p>
                 </div>
             </div>
@@ -578,17 +1153,6 @@
             </li>
         
             <li>
-                <a class="level is-mobile" href="https://dp2px.com/" target="_blank">
-                    <span class="level-left">
-                        <span class="level-item">dp2px</span>
-                    </span>
-                    <span class="level-right">
-                        <span class="level-item tag">dp2px.com</span>
-                    </span>
-                </a>
-            </li>
-        
-            <li>
                 <a class="level is-mobile" href="https://www.gcssloop.com/#blog" target="_blank">
                     <span class="level-left">
                         <span class="level-item">gcsloop</span>
@@ -600,12 +1164,23 @@
             </li>
         
             <li>
-                <a class="level is-mobile" href="https://angericky.github.io/" target="_blank">
+                <a class="level is-mobile" href="https://www.androidperformance.com/" target="_blank">
                     <span class="level-left">
-                        <span class="level-item">赵菁菁的blog</span>
+                        <span class="level-item">高爷Cracker</span>
                     </span>
                     <span class="level-right">
-                        <span class="level-item tag">angericky.github.io</span>
+                        <span class="level-item tag">www.androidperformance.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://dp2px.com/" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">dp2px</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">dp2px.com</span>
                     </span>
                 </a>
             </li>
@@ -691,7 +1266,7 @@
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-28T05:49:34.000Z">2019-09-28</time></div>
                     <a href="/2019/09/28/从多线程到Handler/" class="has-link-black-ter is-size-6">从多线程到Handler</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/日常/">日常</a> / <a class="has-link-grey -link" href="/categories/日常/Thoughts/">Thoughts</a>
+                        <a class="has-link-grey -link" href="/categories/日常/">日常</a> / <a class="has-link-grey -link" href="/categories/日常/胡思乱想/">胡思乱想</a>
                     </p>
                 </div>
             </div>
@@ -729,7 +1304,7 @@
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-22T11:03:10.000Z">2019-09-22</time></div>
                     <a href="/2019/09/22/寄夏予你/" class="has-link-black-ter is-size-6">寄夏予你</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/随笔/">随笔</a> / <a class="has-link-grey -link" href="/categories/随笔/日常/">日常</a>
+                        <a class="has-link-grey -link" href="/categories/日常/">日常</a> / <a class="has-link-grey -link" href="/categories/日常/随笔/">随笔</a>
                     </p>
                 </div>
             </div>
@@ -843,7 +1418,7 @@
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-28T05:49:34.000Z">2019-09-28</time></div>
                     <a href="/2019/09/28/从多线程到Handler/" class="has-link-black-ter is-size-6">从多线程到Handler</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/日常/">日常</a> / <a class="has-link-grey -link" href="/categories/日常/Thoughts/">Thoughts</a>
+                        <a class="has-link-grey -link" href="/categories/日常/">日常</a> / <a class="has-link-grey -link" href="/categories/日常/胡思乱想/">胡思乱想</a>
                     </p>
                 </div>
             </div>
@@ -881,7 +1456,7 @@
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-09-22T11:03:10.000Z">2019-09-22</time></div>
                     <a href="/2019/09/22/寄夏予你/" class="has-link-black-ter is-size-6">寄夏予你</a>
                     <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/随笔/">随笔</a> / <a class="has-link-grey -link" href="/categories/随笔/日常/">日常</a>
+                        <a class="has-link-grey -link" href="/categories/日常/">日常</a> / <a class="has-link-grey -link" href="/categories/日常/随笔/">随笔</a>
                     </p>
                 </div>
             </div>

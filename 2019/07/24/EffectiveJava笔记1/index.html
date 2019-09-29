@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _">
+    <meta name="description" content="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 1、考虑使用静态工厂方法代替构造方法： 静态工厂方法的优点：  拥有名字，更加容易阅读 不需要每一次调用的时候都创建一个对象，可以对实例的数量进行严格的控制 可以返回其返回类型的任何子类型的对象 可以根据传入参数的不同而返回不同类型的对象，（构造方法只能返回自己的对象） 在编写包含该方法">
 <meta name="keywords" content="JAVA">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EffectiveJava笔记[一]">
 <meta property="og:url" content="https://pigrange.github.io/2019/07/24/EffectiveJava笔记1/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _">
+<meta property="og:description" content="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 1、考虑使用静态工厂方法代替构造方法： 静态工厂方法的优点：  拥有名字，更加容易阅读 不需要每一次调用的时候都创建一个对象，可以对实例的数量进行严格的控制 可以返回其返回类型的任何子类型的对象 可以根据传入参数的不同而返回不同类型的对象，（构造方法只能返回自己的对象） 在编写包含该方法">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava.jpg">
 <meta property="og:updated_time" content="2019-09-18T12:14:33.326Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EffectiveJava笔记[一]">
-<meta name="twitter:description" content="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _">
+<meta name="twitter:description" content="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 1、考虑使用静态工厂方法代替构造方法： 静态工厂方法的优点：  拥有名字，更加容易阅读 不需要每一次调用的时候都创建一个对象，可以对实例的数量进行严格的控制 可以返回其返回类型的任何子类型的对象 可以根据传入参数的不同而返回不同类型的对象，（构造方法只能返回自己的对象） 在编写包含该方法">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava.jpg">
 
 
@@ -168,10 +168,11 @@
 
         <div class="content">
             <blockquote>
-<h3 id="EffectiveJAVA的读书笔记-一-з-∠"><a href="#EffectiveJAVA的读书笔记-一-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [一] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [一] _ <em>(:з)∠)</em> _</h3></blockquote>
-<a id="more"></a>
-
-<h3 id="1、考虑使用静态工厂方法代替构造方法："><a href="#1、考虑使用静态工厂方法代替构造方法：" class="headerlink" title="1、考虑使用静态工厂方法代替构造方法："></a>1、考虑使用静态工厂方法代替构造方法：</h3><p><strong>静态工厂方法的优点</strong>：</p>
+<h3>EffectiveJAVA的读书笔记 [一] _ <em>(:з)∠)</em> _</h3>
+</blockquote>
+<p>&lt;!-- more --&gt;</p>
+<h3>1、考虑使用静态工厂方法代替构造方法：</h3>
+<p><strong>静态工厂方法的优点</strong>：</p>
 <ul>
 <li>拥有名字，更加容易阅读</li>
 <li>不需要每一次调用的时候都创建一个对象，可以对实例的数量进行严格的控制</li>
@@ -185,7 +186,8 @@
 <li>没有一个统一的对静态构造方法的命名的规范，导致可能很难找到他们。</li>
 </ul>
 <hr>
-<h3 id="2、当构造方法的参数过多的时候，使用Builder模式"><a href="#2、当构造方法的参数过多的时候，使用Builder模式" class="headerlink" title="2、当构造方法的参数过多的时候，使用Builder模式:"></a>2、当构造方法的参数过多的时候，使用Builder模式:</h3><p>静态工厂方法和普通的构造方法都无法很好的解决构造方法中参数很多且可选的参数很多的问题。</p>
+<h3>2、当构造方法的参数过多的时候，使用Builder模式:</h3>
+<p>静态工厂方法和普通的构造方法都无法很好的解决构造方法中参数很多且可选的参数很多的问题。</p>
 <p><strong>使用构造方法的缺点：</strong></p>
 <ul>
 <li>过多的方法重载，导致非常的繁琐</li>
@@ -201,7 +203,8 @@
 <p><strong>2、Builder模式：</strong></p>
 <p>客户端不直接创建对象，而是通过一个builder预先配置好对象的每一个可选参数，然后通过builder的build方法来生成对象，这样产生的对象就是不可改变的，<strong>Builder通常是它所构建的类的一个静态的成员。</strong></p>
 <hr>
-<h3 id="3、使用私有构造方法或枚举来实现单例"><a href="#3、使用私有构造方法或枚举来实现单例" class="headerlink" title="3、使用私有构造方法或枚举来实现单例"></a>3、使用私有构造方法或枚举来实现单例</h3><p>单例通常表示的是无状态的对象。比如说一个只提供函数功能的对象或者一个系统组件。</p>
+<h3>3、使用私有构造方法或枚举来实现单例</h3>
+<p>单例通常表示的是无状态的对象。比如说一个只提供函数功能的对象或者一个系统组件。</p>
 <p><strong>1、实现单例的方式：</strong></p>
 <ol>
 <li>创建一个静态final的自身引用，并私有构造方法</li>
@@ -216,14 +219,16 @@
 <li>在单例类中提供一个readResolve方法，并在这个方法中返回我们的单例对象。</li>
 </ol>
 <hr>
-<h3 id="4、使用私有构造方法来执行非实例化"><a href="#4、使用私有构造方法来执行非实例化" class="headerlink" title="4、使用私有构造方法来执行非实例化"></a>4、使用私有构造方法来执行非实例化</h3><p>这个条目是直接基于EffectiveJava直译而来。通俗来讲就是对于那些只用于提供静态方法或者静态属性的类(比如某些Util工具类或者config配置文件)，我们应该避免他们被创建实例或者继承，因为并没有任何意义。</p>
+<h3>4、使用私有构造方法来执行非实例化</h3>
+<p>这个条目是直接基于EffectiveJava直译而来。通俗来讲就是对于那些只用于提供静态方法或者静态属性的类(比如某些Util工具类或者config配置文件)，我们应该避免他们被创建实例或者继承，因为并没有任何意义。</p>
 <p><strong>采取的操作：</strong></p>
 <ul>
 <li>将类设置为final，避免被继承</li>
 <li>将类的构造方法设置为私有，并在代码块里面抛出异常(防止别人通过反射来创建实</li>
 </ul>
 <hr>
-<h3 id="5、依赖注入优于硬连接资源"><a href="#5、依赖注入优于硬连接资源" class="headerlink" title="5、依赖注入优于硬连接资源"></a>5、依赖注入优于硬连接资源</h3><p>这个又是显得异常的高大上。至少对于我来说，看见依赖注入就觉得这个是高大上且较难的东西，并且第一遍读这个条目的时候也没有搞明白这个到底是啥。</p>
+<h3>5、依赖注入优于硬连接资源</h3>
+<p>这个又是显得异常的高大上。至少对于我来说，看见依赖注入就觉得这个是高大上且较难的东西，并且第一遍读这个条目的时候也没有搞明白这个到底是啥。</p>
 <p>其实弄明白了什么是依赖注入，这个条目就非常的简单了。</p>
 <p><strong>依赖注入：</strong></p>
 <ul>
@@ -336,7 +341,7 @@
                         分类
                     </p>
                     <p class="title has-text-weight-normal">
-                        10
+                        9
                     </p>
                 </div>
             </div>
@@ -368,27 +373,27 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#EffectiveJAVA的读书笔记-一-з-∠">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">1</span>
         <span>EffectiveJAVA的读书笔记 [一] _ (:з)∠) _</span>
         </a></li><li>
-        <a class="is-flex" href="#1、考虑使用静态工厂方法代替构造方法：">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">2</span>
         <span>1、考虑使用静态工厂方法代替构造方法：</span>
         </a></li><li>
-        <a class="is-flex" href="#2、当构造方法的参数过多的时候，使用Builder模式">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">3</span>
         <span>2、当构造方法的参数过多的时候，使用Builder模式:</span>
         </a></li><li>
-        <a class="is-flex" href="#3、使用私有构造方法或枚举来实现单例">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">4</span>
         <span>3、使用私有构造方法或枚举来实现单例</span>
         </a></li><li>
-        <a class="is-flex" href="#4、使用私有构造方法来执行非实例化">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">5</span>
         <span>4、使用私有构造方法来执行非实例化</span>
         </a></li><li>
-        <a class="is-flex" href="#5、依赖注入优于硬连接资源">
+        <a class="is-flex" href="#undefined">
         <span class="has-mr-6">6</span>
         <span>5、依赖注入优于硬连接资源</span>
         </a></li></ul>

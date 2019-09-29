@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。 &amp;lt;!-- more --&amp;gt; 两个比较重要的类： ViewRootImpl: 注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是D">
+    <meta name="description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
 <meta name="keywords" content="Android,Review">
 <meta property="og:type" content="article">
 <meta property="og:title" content="View的工作原理">
 <meta property="og:url" content="https://pigrange.github.io/2019/09/18/Android3/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。 &amp;lt;!-- more --&amp;gt; 两个比较重要的类： ViewRootImpl: 注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是D">
+<meta property="og:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.png">
 <meta property="og:updated_time" content="2019-09-24T12:13:50.318Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View的工作原理">
-<meta name="twitter:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。 &amp;lt;!-- more --&amp;gt; 两个比较重要的类： ViewRootImpl: 注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是D">
+<meta name="twitter:description" content="前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.png">
 
 
@@ -168,27 +168,23 @@
 
         <div class="content">
             <p>前面整理总结了View的事件体系，那么接下来我们再来看看View的工作原理吧。和前面一样，这篇文章主要是对知识点进行一些总结归纳，而涉及源码的部分，我会单独写一篇文章来详细分析。</p>
-<p>&lt;!-- more --&gt;</p>
-<h3>两个比较重要的类：</h3>
-<h4>ViewRootImpl:</h4>
-<p><strong>注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是DecorView，而对DecorView的直接持有者又是PhoneWindow(这里我们不说parent，因为phoneWindow不是View的子类)。</strong></p>
+<a id="more"></a>
+
+<h3 id="两个比较重要的类："><a href="#两个比较重要的类：" class="headerlink" title="两个比较重要的类："></a>两个比较重要的类：</h3><h4 id="ViewRootImpl"><a href="#ViewRootImpl" class="headerlink" title="ViewRootImpl:"></a>ViewRootImpl:</h4><p><strong>注意：这个类虽然名字和View有关，但是其并不继承自View，可以说在实现上和View没啥关系，整个ViewTree的根View是DecorView，而对DecorView的直接持有者又是PhoneWindow(这里我们不说parent，因为phoneWindow不是View的子类)。</strong></p>
 <p>这里要说明一点，虽然PhoneWindow直接持有了DecorView的引用，但是由于职能的限制(如果PhoneWondow再去管理View就太臃肿了)，PhoneWindow的实例并不直接对当前Activity的DecorView进行管理(PhoneWindow更多的是和Activity进行交互)，所以Android才引入了ViewRoot这个控制层(或者说叫handler？)，来使WindowManager间接的管理Windows下的View。</p>
 <p>ViewRoot作为PhoneWindow和DecorView之间的桥梁，直接控制了DecorView以及整个ViewTree的测量、布局、绘制、以及事件分发的工作。另外，它还代理了WindowMnagerGlobal负责和WindowManagerSercvice进行直接通信来调整窗口位置的大小以及对来自于WMS的事件进行相应的处理。</p>
 <p><strong>整个View树的PerformTraversal是通过ViewRootImpl开始的</strong>，而ViewRoot的PerformTraversal内部会一次调用PerformMeasure，PerformLayout，PerformDraw三个方法，这三个方法将会对顶层的View即DecorView依次进行mesure，layout和draw，而mesure，layout，draw的内部又会调用View的onMeasure, onLayout , onDraw方法。而如果这个View是一个ViewGroup的话，其onMeasure, onLayout和Draw的dispatchDraw又会调用其子View的Measure , Layout , Draw 方法。在这个递归调用下。整个View树就完成了测量，定位，和绘制的工作。</p>
-<h4>DecorView:</h4>
-<p>DecorView是View树中的顶层View，是ViewGroup的子类，是比ContentView还要顶层的视图。一般情况下，用户是不需要和DecorView进行交互。</p>
+<h4 id="DecorView"><a href="#DecorView" class="headerlink" title="DecorView:"></a>DecorView:</h4><p>DecorView是View树中的顶层View，是ViewGroup的子类，是比ContentView还要顶层的视图。一般情况下，用户是不需要和DecorView进行交互。</p>
 <p><strong>DecorView的结构:</strong></p>
 <ul>
 <li>TitleBar: 用于挂载Actionbar</li>
 <li>ContentPatent: 用于挂载ContentView</li>
 </ul>
-<p>​	<strong>注意：这里所说的挂载实际上是通过addView添加上去的，这里的ContentParent实际上是一个ContentFrameLayout，这里命名为ContentParent只是为了说明其地位的特殊，而不是说这就是一个特殊的类。我们可以通过在DecorView中调用findViewById(android.R.id.content)获取到它。</strong></p>
-<h3>MesureSpec</h3>
-<p>MesureSpec是一个32位的Int类型，用于表示一个父View对child的约束类型和能提供的最大的空间。也就是说，这一个int值表示了两个数据。其中它的高2位，用于表示测量的类型，而低30位用于表示测量的大小。这样做有一个好处，就是省掉了为了传递一组数据创建一个对象在内存上面的开销(光是对象头就占用了8个字节了，如果是用数组的话，对象头12个字节，更大)。</p>
+<p>​    <strong>注意：这里所说的挂载实际上是通过addView添加上去的，这里的ContentParent实际上是一个ContentFrameLayout，这里命名为ContentParent只是为了说明其地位的特殊，而不是说这就是一个特殊的类。我们可以通过在DecorView中调用findViewById(android.R.id.content)获取到它。</strong></p>
+<h3 id="MesureSpec"><a href="#MesureSpec" class="headerlink" title="MesureSpec"></a>MesureSpec</h3><p>MesureSpec是一个32位的Int类型，用于表示一个父View对child的约束类型和能提供的最大的空间。也就是说，这一个int值表示了两个数据。其中它的高2位，用于表示测量的类型，而低30位用于表示测量的大小。这样做有一个好处，就是省掉了为了传递一组数据创建一个对象在内存上面的开销(光是对象头就占用了8个字节了，如果是用数组的话，对象头12个字节，更大)。</p>
 <p><strong>组成：</strong></p>
 <ul>
-<li>
-<p>MesureMode</p>
+<li><p>MesureMode</p>
 <ul>
 <li>UNSPECIFIED: parent不约束child，child想要多大就给多大。</li>
 <li>EXACTILY:  parent确定child有多大了，child在拿到之后就是自己的最终大小。</li>
@@ -196,24 +192,20 @@
 </ul>
 <p><strong>注：这里为了便于理解，先暂时不考虑View有背景的情况</strong></p>
 </li>
-<li>
-<p>MesureSize</p>
+<li><p>MesureSize</p>
 <ul>
 <li>parent 提供给child的尺寸的数值，用于建议child应该多大</li>
 </ul>
 </li>
 </ul>
-<h4><strong>谈一谈LayoutParamas和MesureSpec：</strong></h4>
-<p>可以说在View的测量这一块，LayoutParamas和MesureSpec的组合起到了决定性的作用。</p>
+<h4 id="谈一谈LayoutParamas和MesureSpec："><a href="#谈一谈LayoutParamas和MesureSpec：" class="headerlink" title="谈一谈LayoutParamas和MesureSpec："></a><strong>谈一谈LayoutParamas和MesureSpec：</strong></h4><p>可以说在View的测量这一块，LayoutParamas和MesureSpec的组合起到了决定性的作用。</p>
 <ul>
-<li>
-<p><strong>LayoutParamas 是child告诉parent的</strong></p>
+<li><p><strong>LayoutParamas 是child告诉parent的</strong></p>
 <ul>
 <li>child通过LayoutParams告诉parent自己的dimension是什么(Android把matchParent和wrapcontent也算作dimension了，只不过是特殊的标志，前者为-1，后者为-2).</li>
 </ul>
 </li>
-<li>
-<p><strong>MesureSpec 是从parent返回给child的</strong></p>
+<li><p><strong>MesureSpec 是从parent返回给child的</strong></p>
 <ul>
 <li>parent通过LayoutParamas获取了child的意图后，结合自生的情况(自身的MesureMode，MesureSize，margin，padding等)，计算出child的大小，并将其封装为MesureSpec后返回给child。</li>
 </ul>
@@ -221,45 +213,35 @@
 </ul>
 <p>对于UNSPECIFIED我们一般不考虑，这个只有在多次测量的时候才会出现。</p>
 <p>对于MesureMode是WrapContent的场景简单解释一下：这个时候parent是不知道child实际上应该是多大的(因为它并不知道child有哪些内容)，所以这个时候，提供给child一个最大的值，让child自己搞，只要不超过这个范围就行了。</p>
-<p>**可能有些人会说了，既然child能够通过LayoutParams知道自己的测量模式是啥，那为啥还需要MesureMode呢？**这个问题我也考虑过，也想问，猜测有两个因素，一个是有UNSPECIFIED的存在那么MesureSpce必须再带一个附加信息，另外一点就是涉及LayoutParams的职能问题。Child确实可以通过LayoutParams获取，但是一旦这么做，就模糊了LayoutParams的概念。这显然是不太清真的(雾)。</p>
+<p><strong>可能有些人会说了，既然child能够通过LayoutParams知道自己的测量模式是啥，那为啥还需要MesureMode呢？</strong>这个问题我也考虑过，也想问，猜测有两个因素，一个是有UNSPECIFIED的存在那么MesureSpce必须再带一个附加信息，另外一点就是涉及LayoutParams的职能问题。Child确实可以通过LayoutParams获取，但是一旦这么做，就模糊了LayoutParams的概念。这显然是不太清真的(雾)。</p>
 <p><strong>注意：对于DecorView，其MesureSpec是在自身中创建的，而不是由parent分发下来的。因为它的parent就是phoneWindow了，大小是确定的。</strong></p>
-<h4>对MesureSpec的一些总结：</h4>
-<p>引用网络上的一张View 的MesureSpec创建规则的表</p>
+<h4 id="对MesureSpec的一些总结："><a href="#对MesureSpec的一些总结：" class="headerlink" title="对MesureSpec的一些总结："></a>对MesureSpec的一些总结：</h4><p>引用网络上的一张View 的MesureSpec创建规则的表</p>
 <p><img src="https://github.com/pigrange/pigrange.github.io/blob/master/assets/img/ViewMesureSpec.jpg?raw=true" alt></p>
 <p>这个其实很好理解：</p>
 <p>只要记住三点(这里我们就不考虑UNSPECIFIED了)：</p>
 <ul>
 <li>child指明了自己的大小是多少dp/sp的时候，parent不会对child做任何限制，mesureMode一定是EXACTLY，而measureSize一定是child在LayoutPrama中的大小。也就是说View的大小是在测量前就一定确定好了的，但是这了还是要强调一下，大小虽然确定的，但是位置是未知的，还是得在layout之后才知道。</li>
-<li>child是MATCH_PARENT的时候，只要它的parent(向上递归)存在一个ViewGroup是WRAP_CONTENT，那么它的size就会变成(伪)WRAP_CONTENT。而其他情况，那么就是父View提供的measureMode就是EXACTLY.
-<ul>
+<li>child是MATCH_PARENT的时候，只要它的parent(向上递归)存在一个ViewGroup是WRAP_CONTENT，那么它的size就会变成(伪)WRAP_CONTENT。而其他情况，那么就是父View提供的measureMode就是EXACTLY.<ul>
 <li>这里做一下解释为什么是(伪)WRAP_CONTENT，因为如果子View不对WRAP_CONTEN做特殊处理的话，那么它的实际效果和MATCH_PARENT是一样的.(这个我们后面在源码里分析)</li>
 </ul>
 </li>
 <li>child是WRAP_CONTENT的时候就很简单了，它从parent那里得到的mesureMode一定是AT_MOST。</li>
 </ul>
-<h3>(真)View的工作原理</h3>
-<p><em>前面bb太久了，差点没有抓住重点。</em></p>
+<h3 id="真-View的工作原理"><a href="#真-View的工作原理" class="headerlink" title="(真)View的工作原理"></a>(真)View的工作原理</h3><p><em>前面bb太久了，差点没有抓住重点。</em></p>
 <p>因为后面打算单独做一起结合源码分析View的工作原理。因此，这里只对View的工作原理做一些步骤上的描述。</p>
-<h4>Msasure过程：</h4>
-<ul>
-<li>
-<p>完成了View大小的测量</p>
+<h4 id="Msasure过程："><a href="#Msasure过程：" class="headerlink" title="Msasure过程："></a>Msasure过程：</h4><ul>
+<li><p>完成了View大小的测量</p>
 </li>
-<li>
-<p>由Measure方法和onMeasure方法组成(实际上是在Measure方法里面调用了onMeasure方法)</p>
+<li><p>由Measure方法和onMeasure方法组成(实际上是在Measure方法里面调用了onMeasure方法)</p>
 </li>
-<li>
-<p>mesure方法是一个final的方法，而提供给开发者可以重写的是view的onMeasure方法。</p>
+<li><p>mesure方法是一个final的方法，而提供给开发者可以重写的是view的onMeasure方法。</p>
 </li>
-<li>
-<p>onMeasure提供了parent传来的mesureSpec，View的实际的宽、高实际是在onMeasure里面设置的</p>
+<li><p>onMeasure提供了parent传来的mesureSpec，View的实际的宽、高实际是在onMeasure里面设置的</p>
 </li>
-<li>
-<p>如果这个View是一个ViewGroup，那么还会调用mesasureChildren这个方法去测量它的所有的child。</p>
+<li><p>如果这个View是一个ViewGroup，那么还会调用mesasureChildren这个方法去测量它的所有的child。</p>
 </li>
 </ul>
-<h4>Layout过程：</h4>
-<ul>
+<h4 id="Layout过程："><a href="#Layout过程：" class="headerlink" title="Layout过程："></a>Layout过程：</h4><ul>
 <li>完成了View位置的确定</li>
 <li>由layout方法和onLayout方法组成(同上，实际上是在Layout中调用了onLayout)</li>
 <li>Layout方法不是一个final方法，可以被重写。View的具体位置是在layout中设置的</li>
@@ -267,8 +249,7 @@
 <li>View的MeasuredWidth/Height是onMeasure时确定的</li>
 <li>View的Width/Height是在layout时确定的，不过两者默认值是相同的，除非重写layout方法</li>
 </ul>
-<h4>Draw过程：</h4>
-<p>draw的过程就比较简单了，这里我们只需要记住draw里面调用了onDraw即可，对于draw的源码内容的分析，后面我会在源码解读的文章里面进行阐述，下面我们简单看看Draw的具体流程。</p>
+<h4 id="Draw过程："><a href="#Draw过程：" class="headerlink" title="Draw过程："></a>Draw过程：</h4><p>draw的过程就比较简单了，这里我们只需要记住draw里面调用了onDraw即可，对于draw的源码内容的分析，后面我会在源码解读的文章里面进行阐述，下面我们简单看看Draw的具体流程。</p>
 <ul>
 <li>绘制背景: drawBackground(canvas)</li>
 <li>绘制自己: onDraw(canvas)</li>
@@ -276,25 +257,21 @@
 <li>绘制装饰: onDrawForeground(canvas)</li>
 <li>绘制焦点: drawDefaultFocusHighlight(canvas)</li>
 </ul>
-<h4>View宽高的获取：</h4>
-<p>这里我觉得有必要单独拿出来讲一讲，因为在我的开发经历中确实在这方面踩过不少的坑。</p>
+<h4 id="View宽高的获取："><a href="#View宽高的获取：" class="headerlink" title="View宽高的获取："></a>View宽高的获取：</h4><p>这里我觉得有必要单独拿出来讲一讲，因为在我的开发经历中确实在这方面踩过不少的坑。</p>
 <p>由于View的工作流程和Activity的生命周期里面是不相同的，所以我们无法在确保Activity生命周期里面的某一函数里面拿到View的宽高。如果你在View的measure或者layout之前尝试获取其宽高的话，那么始终得到的都是0。</p>
 <p><strong>下面是一些方法：</strong></p>
 <ul>
 <li>Activity#onWindowFocusChanged方法</li>
-<li>View#WindowonFocusChanged方法
-<ul>
+<li>View#WindowonFocusChanged方法<ul>
 <li>当DecorView绘制完成Activity正准备显示出来的时候，会回调Activity#onWindowFocusChanged这个方法</li>
 </ul>
 </li>
-<li>view.post(runnable)
-<ul>
+<li>view.post(runnable)<ul>
 <li>用的比较多，也是比较推荐的方法(因为写起来比较方便)。</li>
 </ul>
 </li>
-<li>使用ViewTreeObserver
-<ul>
-<li>ViewTreeObserver可以注册GlobalLayoutListener , 当ViewTree的内部由一个View的可见性发现改变的时候 将会回调onGlobalLayout方法。但是要注意，这个方法会被调用很多次，所以这里只提一个思路，我本人并不推荐这个写法。</li>
+<li>使用ViewTreeObserver<ul>
+<li>ViewTreeObserver可以注册GlobalLayoutListener , 当ViewTree的内部由一个View的可见性发现改变的时候 将会回调onGlobalLayout方法。但是要注意，这个方法会被调用很多次，所以这里只提一个思路，我本人并不推荐这个写法。 </li>
 </ul>
 </li>
 </ul>
@@ -439,47 +416,47 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#两个比较重要的类：">
         <span class="has-mr-6">1</span>
         <span>两个比较重要的类：</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#ViewRootImpl">
         <span class="has-mr-6">1.1</span>
         <span>ViewRootImpl:</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#DecorView">
         <span class="has-mr-6">1.2</span>
         <span>DecorView:</span>
         </a></li></ul></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#MesureSpec">
         <span class="has-mr-6">2</span>
         <span>MesureSpec</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#谈一谈LayoutParamas和MesureSpec：">
         <span class="has-mr-6">2.1</span>
         <span>谈一谈LayoutParamas和MesureSpec：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#对MesureSpec的一些总结：">
         <span class="has-mr-6">2.2</span>
         <span>对MesureSpec的一些总结：</span>
         </a></li></ul></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#真-View的工作原理">
         <span class="has-mr-6">3</span>
         <span>(真)View的工作原理</span>
         </a><ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#Msasure过程：">
         <span class="has-mr-6">3.1</span>
         <span>Msasure过程：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#Layout过程：">
         <span class="has-mr-6">3.2</span>
         <span>Layout过程：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#Draw过程：">
         <span class="has-mr-6">3.3</span>
         <span>Draw过程：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#View宽高的获取：">
         <span class="has-mr-6">3.4</span>
         <span>View宽高的获取：</span>
         </a></li></ul></li></ul>

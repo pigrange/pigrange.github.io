@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 6、避免创建不必要的对象 此条目下作者有这个观点：当你应该重用现有对象的时候，请不要创建新的对象 最突出的就是字符串常量创建的例子： 1String str = new String(&quot;hello&quot;); 如上所述，本来在字符串常量池中就存在字符串&amp;quot;hello&amp;quot;，但是我">
+    <meta name="description" content="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _">
 <meta name="keywords" content="JAVA">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EffectiveJava笔记[二]">
 <meta property="og:url" content="https://pigrange.github.io/2019/07/24/EffectiveJava笔记2/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 6、避免创建不必要的对象 此条目下作者有这个观点：当你应该重用现有对象的时候，请不要创建新的对象 最突出的就是字符串常量创建的例子： 1String str = new String(&quot;hello&quot;); 如上所述，本来在字符串常量池中就存在字符串&amp;quot;hello&amp;quot;，但是我">
+<meta property="og:description" content="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava2.jpg">
 <meta property="og:updated_time" content="2019-09-18T11:21:00.392Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EffectiveJava笔记[二]">
-<meta name="twitter:description" content="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 6、避免创建不必要的对象 此条目下作者有这个观点：当你应该重用现有对象的时候，请不要创建新的对象 最突出的就是字符串常量创建的例子： 1String str = new String(&quot;hello&quot;); 如上所述，本来在字符串常量池中就存在字符串&amp;quot;hello&amp;quot;，但是我">
+<meta name="twitter:description" content="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava2.jpg">
 
 
@@ -168,14 +168,14 @@
 
         <div class="content">
             <blockquote>
-<h3>EffectiveJAVA的读书笔记 [二] _ <em>(:з)∠)</em> _</h3>
-</blockquote>
-<p>&lt;!-- more --&gt;</p>
-<h3>6、避免创建不必要的对象</h3>
-<p>此条目下作者有这个观点：<strong>当你应该重用现有对象的时候，请不要创建新的对象</strong></p>
+<h3 id="EffectiveJAVA的读书笔记-二-з-∠"><a href="#EffectiveJAVA的读书笔记-二-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记 [二] _ (:з)∠) _"></a>EffectiveJAVA的读书笔记 [二] _ <em>(:з)∠)</em> _</h3></blockquote>
+<a id="more"></a>
+
+<h3 id="6、避免创建不必要的对象"><a href="#6、避免创建不必要的对象" class="headerlink" title="6、避免创建不必要的对象"></a>6、避免创建不必要的对象</h3><p>此条目下作者有这个观点：<strong>当你应该重用现有对象的时候，请不要创建新的对象</strong></p>
 <p>最突出的就是字符串常量创建的例子：</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="hljs-keyword">new</span> String(<span class="hljs-string">"hello"</span>);</span><br></pre></td></tr></table></figure></p>
-<p>如上所述，本来在字符串常量池中就存在字符串&quot;hello&quot;，但是我们又创建了一个新的字符串&quot;hello&quot;的实例，显然，这个新的str实例是并不需要的。</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="hljs-keyword">new</span> String(<span class="hljs-string">"hello"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如上所述，本来在字符串常量池中就存在字符串”hello”，但是我们又创建了一个新的字符串”hello”的实例，显然，这个新的str实例是并不需要的。</p>
 <p><strong>使用静态工厂方法：</strong></p>
 <p>构造方法一定会创建一个新的对象，但是其实很多时候并没有这个必要。对于一些可以重用现有对象的情况，我们可以使用静态的工厂方法来获取实例（因为静态工厂方法是九二一对实例进行严格控制的）。</p>
 <p><strong>缓存创建昂贵的对象：</strong></p>
@@ -186,38 +186,32 @@
 <p><strong>除非池(对象缓存)中的对象非常重量级，否则通过维护自己的对象池来避免创建对象其实并不太好，因为者会显著的加大内存的占用。</strong></p>
 <p>回到条目的开始，我们应该将重点放在<code>重用</code>和<code>不要创建新的对象</code>上面。也就是说，我们更多应该考虑的是在重用某个对象的时候，尽可能的去避免创建新(没有必要)的对象。</p>
 <hr>
-<h3>7、消除过期的对象引用：</h3>
-<p>这里有一个误区，就是JAVA拥有垃圾收集机制，所以我们就不需要手动对内存进行管理了。</p>
+<h3 id="7、消除过期的对象引用："><a href="#7、消除过期的对象引用：" class="headerlink" title="7、消除过期的对象引用："></a>7、消除过期的对象引用：</h3><p>这里有一个误区，就是JAVA拥有垃圾收集机制，所以我们就不需要手动对内存进行管理了。</p>
 <p>但是，其实这个是不一定正确的，内存泄漏在JAVA里面太频繁了。</p>
 <p>作者在书中提到<strong>当一个类自己管理内存时，程序员应当警惕内存泄漏</strong>，书中举了一个栈弹出的例子：</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> elements[--size];</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> elements[--size];</span><br></pre></td></tr></table></figure>
+
 <p>可以看到，这种实现实际上仅仅是将size的-1了。但是elements任然保留着对size外的元素的引用，也就是说那一部分的元素的内存并不会被GC释放掉。</p>
 <p>解决方案：</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    Object result = elements[--size];</span><br><span class="line">    elements[size] = <span class="hljs-keyword">null</span>;</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">pop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (size == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> EmptyStackException();</span><br><span class="line">    &#125;</span><br><span class="line">    Object result = elements[--size];</span><br><span class="line">    elements[size] = <span class="hljs-keyword">null</span>;</span><br><span class="line">    <span class="hljs-keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <hr>
-<h3>8、避免使用Finalizer和Cleaner机制</h3>
-<p>这可能对JAVA新手来说一脸懵逼(没错，我就是这种。因为压根就不知道什么是Finalizer，这里就不谈Cleaner机制了，因为我现在还是不会，不过功能应该和finalizer差不多)</p>
+<h3 id="8、避免使用Finalizer和Cleaner机制"><a href="#8、避免使用Finalizer和Cleaner机制" class="headerlink" title="8、避免使用Finalizer和Cleaner机制"></a>8、避免使用Finalizer和Cleaner机制</h3><p>这可能对JAVA新手来说一脸懵逼(没错，我就是这种。因为压根就不知道什么是Finalizer，这里就不谈Cleaner机制了，因为我现在还是不会，不过功能应该和finalizer差不多)</p>
 <p>对于C++程序员，我们知道有一个析构函数用于回收资源。</p>
 <p><strong>Finalizer机制：</strong></p>
 <p>GC在回收对象之前调用其finalize方法，但是这并不说明finalize就等于C++的析构函数。finalize方法的调用存在很大的不确定性，也就是说它的调用在不同设备上面的行为具有很大的差异。</p>
 <ul>
-<li>
-<p>当一个对象变得不可达一直到finalize方法的调用这一段时间是任意长的。所以我们千万不要在这个方法里面做一些关闭文件流这种释放非内存资源的操作。因为很有可能出现文件流没有被及时的关闭从而导致后面的文件流打开失败。</p>
+<li><p>当一个对象变得不可达一直到finalize方法的调用这一段时间是任意长的。所以我们千万不要在这个方法里面做一些关闭文件流这种释放非内存资源的操作。因为很有可能出现文件流没有被及时的关闭从而导致后面的文件流打开失败。</p>
 </li>
-<li>
-<p>finalize机制已经被弃用了。</p>
+<li><p>finalize机制已经被弃用了。</p>
 </li>
-<li>
-<p><strong>Java并不能保证Finalizer和Cleaner机制的及时运行，甚至不能够确保他们是否能够运行</strong></p>
+<li><p><strong>Java并不能保证Finalizer和Cleaner机制的及时运行，甚至不能够确保他们是否能够运行</strong></p>
 </li>
-<li>
-<p>System.gc和System.runFinalization 可能会增加finalize被执行的几率，但是不保证其一定被执行</p>
+<li><p>System.gc和System.runFinalization 可能会增加finalize被执行的几率，但是不保证其一定被执行</p>
 </li>
-<li>
-<p><strong>在Finalizer机制中，未被捕获的异常会被忽略，cleaner机制不会有这个问题</strong></p>
+<li><p><strong>在Finalizer机制中，未被捕获的异常会被忽略，cleaner机制不会有这个问题</strong></p>
 </li>
-<li>
-<p><strong>Finalizer机制会严重影响垃圾收集的效率和性能</strong></p>
+<li><p><strong>Finalizer机制会严重影响垃圾收集的效率和性能</strong></p>
 </li>
 </ul>
 <p><strong>Finalizer机制的作用：</strong></p>
@@ -226,21 +220,22 @@
 <li>finalize方法适用于释放一些通过native方法释放的对象(比如说通过JNI创建的对象)</li>
 </ul>
 <hr>
-<h3>9、使用try-with-resources语句替代try-finally语句</h3>
-<p>可能你刚看到这个条目的时候会和我一样对于什么叫做try-with-resources语句一脸懵逼(本人太菜，之前确实没有见过)</p>
+<h3 id="9、使用try-with-resources语句替代try-finally语句"><a href="#9、使用try-with-resources语句替代try-finally语句" class="headerlink" title="9、使用try-with-resources语句替代try-finally语句"></a>9、使用try-with-resources语句替代try-finally语句</h3><p>可能你刚看到这个条目的时候会和我一样对于什么叫做try-with-resources语句一脸懵逼(本人太菜，之前确实没有见过)</p>
 <p>书中举了这样一个例子：</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        br.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        br.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>在上述的代码块中，有可能由于文件流的没有正常打开导致异常出现。同理，由于引用了空的对象，br无法正常调用close方法。那么在这次情况下第二个异常会完全覆盖掉第一个异常。如果使用了catch语句块捕获了异常，那么代码就会变成如下的样子：</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            br.close();</span><br><span class="line">        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path));</span><br><span class="line">    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            br.close();</span><br><span class="line">        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这种代码，写出来简直辣眼睛。反复的异常捕捉显著的降低了代码的可读性。</p>
 <p><strong>使用try-with-resources语句：</strong></p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> (BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path))) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> defaultValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">static</span> String <span class="hljs-title">firstLineOfFile</span><span class="hljs-params">(String path)</span> <span class="hljs-keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">try</span> (BufferedReader br = <span class="hljs-keyword">new</span> BufferedReader(<span class="hljs-keyword">new</span> FileReader(path))) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> br.readLine();</span><br><span class="line">    &#125; <span class="hljs-keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> defaultValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>相较于之前的代码，显然可读性有所提高。</p>
 <p><strong>原理：</strong></p>
 <p>能够使用try-with-resources语句的资源类其实都自动实现了AutoCloseable接口这个接口提供了一个无参数的close方法。也就是说，使用了try-with-resources语句声明的资源只要实现了这个方法，那么都会在抛出异常之前调用close方法关闭资源。另外，用于资源对象的close方法是由其自己控制，所以我们也不需要考虑资源文件关闭所产生的异常。</p>
 <hr>
-<h3>10、重写euquals方法时应当遵守的通用约定</h3>
-<p><strong>不需要重写equals方法的条件：</strong></p>
+<h3 id="10、重写euquals方法时应当遵守的通用约定"><a href="#10、重写euquals方法时应当遵守的通用约定" class="headerlink" title="10、重写euquals方法时应当遵守的通用约定"></a>10、重写euquals方法时应当遵守的通用约定</h3><p><strong>不需要重写equals方法的条件：</strong></p>
 <ul>
 <li>每一个类的实例都是一个固有且唯一的。</li>
 <li>类并不需要提供一个逻辑相等的测试功能。</li>
@@ -263,26 +258,19 @@
 </ul>
 <p><strong>编写高质量的equals方法：</strong></p>
 <ul>
-<li>
-<p>首先使用<code>==</code>运算符检查参数是否为该对象的引用，如果成立直接返回true，这是一种性能优化。</p>
+<li><p>首先使用<code>==</code>运算符检查参数是否为该对象的引用，如果成立直接返回true，这是一种性能优化。</p>
 </li>
-<li>
-<p>应当使用<code>instanceof</code>检查传递参数是否有正确的类型，<strong>因为equals方法默认传递的参数是Object类型的</strong></p>
+<li><p>应当使用<code>instanceof</code>检查传递参数是否有正确的类型，<strong>因为equals方法默认传递的参数是Object类型的</strong></p>
 </li>
-<li>
-<p>将参数进行强制类型转化</p>
+<li><p>将参数进行强制类型转化</p>
 </li>
-<li>
-<p>对于参数的每一个值属性，应当验证值属性是否相等，<strong>注意，对于float或者double类型，不要用==而是使用Float.compare或者Double.compare方法比较。</strong></p>
+<li><p>对于参数的每一个值属性，应当验证值属性是否相等，<strong>注意，对于float或者double类型，不要用==而是使用Float.compare或者Double.compare方法比较。</strong></p>
 </li>
-<li>
-<p>对于参数的对象属性，应当递归的对持有的对象进行equals比较，由于对象引用可能为空，所以对引用对象进行比较的时候，应当使用Object.compare方法</p>
+<li><p>对于参数的对象属性，应当递归的对持有的对象进行equals比较，由于对象引用可能为空，所以对引用对象进行比较的时候，应当使用Object.compare方法</p>
 </li>
-<li>
-<p>使用equals方法进行比较的时候，应当首先考虑最有可能不同的属性，这也是一种性能优化。</p>
+<li><p>使用equals方法进行比较的时候，应当首先考虑最有可能不同的属性，这也是一种性能优化。</p>
 </li>
-<li>
-<p>不要忘记验证自己实现的equals方法是否满足上面提到的5个属性。</p>
+<li><p>不要忘记验证自己实现的equals方法是否满足上面提到的5个属性。</p>
 </li>
 </ul>
 <p><strong>注意事项：</strong></p>
@@ -432,27 +420,27 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#EffectiveJAVA的读书笔记-二-з-∠">
         <span class="has-mr-6">1</span>
         <span>EffectiveJAVA的读书笔记 [二] _ (:з)∠) _</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#6、避免创建不必要的对象">
         <span class="has-mr-6">2</span>
         <span>6、避免创建不必要的对象</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#7、消除过期的对象引用：">
         <span class="has-mr-6">3</span>
         <span>7、消除过期的对象引用：</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#8、避免使用Finalizer和Cleaner机制">
         <span class="has-mr-6">4</span>
         <span>8、避免使用Finalizer和Cleaner机制</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#9、使用try-with-resources语句替代try-finally语句">
         <span class="has-mr-6">5</span>
         <span>9、使用try-with-resources语句替代try-finally语句</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#10、重写euquals方法时应当遵守的通用约定">
         <span class="has-mr-6">6</span>
         <span>10、重写euquals方法时应当遵守的通用约定</span>
         </a></li></ul>

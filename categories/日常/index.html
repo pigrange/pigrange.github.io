@@ -173,65 +173,26 @@
             <p>夜话，胡思乱想系列，未完待续。。。</p>
 <p><em>我不管你看不看得懂，反正我也不知道自己当时是怎么想的。—— john pig</em></p>
 <p>这篇文章我会分享自己对于多线程并发的一些理解，段落之间的联系可能不会很大，随便看就是了。另外就是这种存粹的想法真的非常难写哇。先补源码去了，开个坑，有时间就补一点。</p>
-<p>&lt;!-- more --&gt;</p>
-<h4>前言：</h4>
-<p>本来正在筹备一篇关于Android Handler机制的的文章，但是对于Handler机制的设计原则，真的是越想越绕。</p>
-<p>从最初的内存泄漏问题，想到了Hanlder的使用场景和HandlerThread的使用的必要性，再到Hander在非主线程使用的可行性的分析，再到结合生产者消费者模型，类比分析这两者的异同，以及各个组件的职责。结果发现，网上大多数的文章看的我一脸懵逼，很多将生产者消费者模型的文章都是对这种设计思想轻描淡写，然后奉上一堆示例代码。</p>
-<p>所以本人打算撰写此文，以加深个人的这(类)设计思想的理解。</p>
-<p>**注：**学术才浅，以下内容仅代表个人观点，所有有关与本文分析得出的结论仅供参考。如有不同观点，欢迎与我联系共同探讨。</p>
-<h4>多线程和并发：</h4>
-<p>首先我们来探讨一下为什么会有多线程的概念。注意，这里并不仅仅局限于JAVA，另外也强调一下，我们暂时忽略进程和线程的关系，单从应用代码的执行和CPU的关系进行相关的分析，并且假设我们现在的CPU只有一个核心。</p>
-<p>多线程的主要作用的用于增加CPU的执行效率，但是这个执行效率的增加只能是通过缓解单线程下CPU傻乎乎的等待耗时I/O操作所实现的。而对于存粹的计算性的任务(TASK)来说，多线程是几乎没有优势的，或者说由于CPU切换上下文，线程的切换在某些时候反而会降低CPU的执行时间。</p>
-<p>多线程在非IO的场景下也并不是没有好处，比如它可以减少多任务情况下其他任务的等待时间来提升应用的响应速度。因为CPU线程的不停切换，虽然整体拖慢了CPU的执行时间，但是对于一个排着队等待执行的任务序列来说，CPU的不断轮切换线程，使得这些等待的任务很快就能被CPU所执行，但是只有一小会儿。对于用户来说，宏观的体验就是这个应用它很快就响应了，但是它速度很慢。同样对于系统的使用者来说，他也会觉得这些任务是同时在运行的，我们就说这些任务是并发执行的。</p>
-<p>所以实际上并发只是宏观上的并行，而在逻辑上仍然是串行的。</p>
-<h4>线程间的通信：</h4>
-<p>再看康康什么是通信：通信很好理解，就是传递信息，共享信息。那么线程间通信呢？也很好理解，就是在线程之间共享信息，传递信息。那么是谁传递信息呢？在线程中运行的代码块传递信息。</p>
-<p>网上有不少文章实际上是有误导性的，因为它们描述线程间通信的方式的时候往往会变成描述线程通信的具体手段，但是这种手段是面向开发者的，是编程语言对开发者提供的一种实现方式，本身和线程间的通信并没有太多的什么关系。</p>
-<p>这里我们暂时不考虑JMM的内存模型，假设所有的线程没有所谓的工作内存的概念，所有对数据的写入是直接发生在主存上面的。在这种条件下，我们就可以不去考虑volatile关键字的语义了，因为所有的变量都满足可见性。</p>
-<p>那么在这种条件下，线程通信的方式就只有两种：</p>
-<ul>
-<li><strong>被动式：共享内存</strong></li>
-<li><strong>主动式：写入数据</strong></li>
-</ul>
-<p>这里我不打算讲主动式，因为具体我也不是特别了解，不过可以提一点是它是通过管道以流的方式实现的。所以这里我们就谈共享内存的线程通信。</p>
-<p><strong>为什么需要线程间进行通信：</strong></p>
-<p>因为在许多场景下，我们为了提升系统的执行效率引入了多线程，但是多线程线程之间的任务并不是完全独立的，比如A线程用于线程，B线程用于网络请求，那么显然B线程很有可能是对A线程处理完成的数据是具有依赖的(因为可能会用来进行显示或者数值运算后显示)。然而，从CPU的执行来看，两个线程的执行是完全独立的，我们无法做到从线程或CPU的实现层面上让运行在两个不同线程上面的程序直接进行数据交互，于是便有了内存共享数据。</p>
-<p><strong>内存共享数据：</strong></p>
-<p>由于线程是进程中的执行单元，所以它们在执行时对数据或者对象的访问最终得到的内存地址是一样的，也就是说它们运行的时候内存是共享的。而这就成了线程间进行通信的前提，线程A中的Alice希望给线程B中的Bob发一个消息，很简单。Alice把消息放在某个内存里面，Bob在执行的时候，去看就行了。</p>
-<p>是不是很熟悉？没错，在我们开发的时候，其实很多时候就无形的在使用线程间通信，或者说，我们在多线程的环境下，对某一个数据进行了修改，其实就已经进行了线程通信了，因为这个线程对数据的操控的结果已经对其他线程可见了，也就是说其他的线程已经收到发送信息线程所传达的信息了。</p>
-<p><strong>原子性的线程通信与同步：</strong></p>
-<p>线程间的同步策略，实际上是依赖于一些原子性的数据修改完成的，而数据修改本质就是线程通信，那么也就是说原子性的线程间通信为线程间的同步提供了实现上的可行性。这里我不打算讲原子性的具体语义，我们只需要记住原子操作是一旦发生就会执行完的，这个过程中是不会被其它的任务中断的。</p>
-<p>比如说synchronized关键字：线程并不是真正持有锁的，而是线程通过原子操作的CAS将synchronized修饰的对象的对象头里面的锁的信息修改了。当其他的线程尝试去获取锁(修改数据)的时候，发现锁的信息已经被修改了，那么就是有线程持有了锁嘛，所以它才等待，等待持有锁的线程释放锁。</p>
-<p>同样Lock的内部实现也是通过原子性的CAS操作去修改AQS里面的status关键字来通知其他线程已有线程持有这个锁，你们排队等待吧。</p>
-<p><strong>同步与线程通信：</strong></p>
-<p>JAVA里面实现同步的方式非常多，synchronized , Lock , wait/notify .....</p>
-<p>那么同步到底是解决的是什么问题呢：并发执行的时候多个线程对数据修改导致的数据冲突的问题。举个例子，对于一个初始值i = 0, 线程A中的Alice , B中的Bob同时执行了i++ , 那么 i 的值是多少？这个显然是不确定的，因为i++不是原子性的，它实际上为三步：</p>
-<ul>
-<li>CPU读取 i 的值</li>
-<li>CPU计算 i 的值</li>
-<li>CPU写入 i 的值</li>
-</ul>
-<p>如果上述操作运气好的话，就是2。运气不好，在线程A计算 i 完成后，时间片不够，切换了线程，轮到线程B执行，那么在这种情况下得到的结果就是1。</p>
-<p>回到之前提到的观点：多线程情况下对公共数据的修改其实就是在进行线程通信。也就是说，同步解决的问题，实际上就是多线程通信中数据冲突的问题。注意，这里的多线程通信一定不是原子性的，这个道理很简单，如果所有的通信都是原子性的，那么就不会存在数据冲突了，因为虽然宏观上线程是并发执行的，但是对于数据的修改本质还是串行执行的，而原子性又保证了线程在持有时间片的那段时间内，一定会将共享变量修改成它(这个修改数据的线程)想要的结果，换句话说，就是这个线程一定可以发出正确的消息。</p>
-<p>那么回到这里的话题：同步策略解决了多线程的通信数据冲突的问题，同步策略的实现依赖于原子性的多线程通信。也就是说多线程通信数据冲突的解决本质上依赖于多线程中原子性的数据通信。</p>
-<h4>线程的可控性和阻塞队列：</h4>
-<p>了解过JAVA Thread类的同学都知道，线程类的构造方法接受一个Runnable接口(或者重新run方法)，通过调用线程的start让其执行，但是这个线程的执行是不可控的。可能有人就会反驳了，这明明是可控的呀，比如我可以通过Object.wait()让其阻塞，或者通过Thread.sleep让其睡眠。但是注意，这种情况下这个线程即便是又被唤醒了它也会继续执行它Runable中的代码。也就是说，线程在被初始化的那一刻，它的执行行为就被确定了，而在这种场景下，线程是昙花一现的。</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//创建一个线程执行简单任务的示例</span></span><br><span class="line">Thread t = <span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        doSomething();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>为了不让线程执行结束，我们肯定需要寻找一些其他的解决方案，而最简单的方法，就是实现一个死循环。实习如下：</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Thread t = <span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">   		<span class="hljs-keyword">while</span>(<span class="hljs-keyword">true</span>)&#123;</span><br><span class="line">        	doSomething();            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>在这种情况下，我们成功的拦截了线程，防止其执行到结束，并且从一开始，一直到进程结束，这个线程都会一直运行，也就是说，通过死循环这种方法，我们成功的捕获住了线程。但是这肯定不够，因为我们虽然捕获了线程，但是并不能让他运行别的任务，但是这也很简单，因为这个时候线程已经局部可控了，实现如下。</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Queue&lt;Runnable&gt; mTasks = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">Thread t = <span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">while</span>(<span class="hljs-keyword">true</span>)&#123;</span><br><span class="line">		<span class="hljs-keyword">if</span> (mTasks.isEmpty()) <span class="hljs-keyword">continue</span>;   </span><br><span class="line">		Runnable task = mTasks.remove();</span><br><span class="line">		task.run();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>这样我们的线程就完全被我们捕获并控制了，线程不断轮询mTask中的Runnable对象，如果有就取出来执行，如果没有的话，就continue，（注意，上述代码是纯在线程安全的，别学我这样写）。</p>
-<p>但是这种实现还是又一个很大的问题，就是写死循环太吃CPU了，我们做了很多的没有必要的性能消耗，于是对于哪些并没有任务的操作，我们可以引入等待通知机制，来降低CPU没有意义的死循环。</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">Queue&lt;Runnable&gt; mTasks = <span class="hljs-keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line"><span class="hljs-keyword">final</span> Object lock = <span class="hljs-keyword">new</span> Object();</span><br><span class="line">Thread t1 = <span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">while</span> (<span class="hljs-keyword">true</span>) &#123;</span><br><span class="line">            Runnable task = <span class="hljs-keyword">null</span>;</span><br><span class="line">            <span class="hljs-keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                task = mTasks.poll();</span><br><span class="line">                <span class="hljs-keyword">if</span> (task == <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">                    <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">                        lock.wait();</span><br><span class="line">                    &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="hljs-keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            task.run();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">Thread t2 = <span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        Runnable r = <span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">                doSomething();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="hljs-keyword">synchronized</span> (lock) &#123;</span><br><span class="line">            mTasks.add(r);</span><br><span class="line">            lock.notify();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>这种情况我们就基本实现了对线程的捕获以及控制，不过好在JAVA给我们提供了阻塞队列BlockingQueue这一数据结构，上面的代码我们可以实现得更加清爽。</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">BlockingQueue&lt;Runnable&gt; mTasks = <span class="hljs-keyword">new</span> LinkedBlockingQueue&lt;&gt;();</span><br><span class="line">Thread t1 = <span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">while</span> (<span class="hljs-keyword">true</span>) &#123;</span><br><span class="line">            Runnable task;</span><br><span class="line">            <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">                task = mTasks.take();</span><br><span class="line">                task.run();</span><br><span class="line">            &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">Thread t2 = <span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        Runnable r = <span class="hljs-keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="hljs-meta">@Override</span></span><br><span class="line">            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">                doSomething();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            mTasks.put(r);</span><br><span class="line">        &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>好了，经过上面的代码我们就成功的弄出来了一个可控制的线程了，那么回到我们的标题。线程的可控性与阻塞队列总是有密不可分的关系，我们甚至可以断言，线程的可控性就需要通过阻塞队列来实现，但是其实我想说的是，阻塞是一种优化策略，队列是一种缓存机制，捕获线程的根本条件是写在线程里面的死循环，而通过加入队列和等待通知机制实现的阻塞队列手段，是为了优化性能并解决同步问题的一种手段。</p>
-<p>另外必须强调的一点，这里一直所说的死循环主要是是用于捕获线程的，不要和阻塞队列里面的死循环搞混了。因为这里是手动实现的阻塞队列，所以我干脆把获取task和执行task写在一起了。我知道稍微有一点经验的同学一定知道，阻塞队列在被唤醒后肯定会重新去拿元素，那么肯定得写在一个循环里面；同理，作为处理任务的线程，也应该需要有一个循环去依次拿去队列中的所有元素。但是其实这两个循环如果写在一起的话，是可以通过continue去掉一层的。我之所以这么写一个是增加位置内容的可读性，使文章便于理解，二是淡化阻塞队列这一整体数据结构的概念，让大家更能了解捕获住线程的核心，而不是去死磕阻塞队列的设计原理。</p>
-
         </div>
         
         
+        
+        <hr style="height:1px;margin:1rem 0">
+        <div class="level is-mobile is-flex">
+            <div class="level-start">
+                
+                <div class="level-item is-size-7 is-uppercase">
+                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
+                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/Handler/">Handler</a>,&nbsp;<a class="has-link-grey -link" href="/tags/多线程/">多线程</a>,&nbsp;<a class="has-link-grey -link" href="/tags/总结归纳/">总结归纳</a>
+                </div>
+                
+            </div>
+            <div class="level-start">
+                <div class="level-item">
+                    <a class="button is-size-7 is-light" href="/2019/09/28/从多线程到Handler/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
         
         
     </div>
@@ -278,48 +239,26 @@
 
         <div class="content">
             <p>这是一篇回忆暑期时间管理的文章，本来打算是用作综合实践课程用的，不过可能用不上了，干脆就收录到这里吧。</p>
-<p>&lt;!-- more --&gt;</p>
-<h3>TO-DO task is not a shcedule task</h3>
-<p><img src="/assets/img/summer/1.jpg?raw=true" alt></p>
-<p>你最终因为leetCode某道题卡了太久，导致下午至晚上一直在做，所以你后面的事情都没有做完. 你非常不情愿的给自己打上了11分的低分, 抱怨第一次尝试就没有及格.</p>
-<p>你很快发现这个问题是显著又普遍的，因为大多数时间是无法确切的, 所以你难预测道明天会发生的突发事件.于是翻看了知乎,查阅了各种大佬的成功案例 , 发现原来是自己太不自律了, 明明todo-list都著名了不能超时做leetCode但是还是深陷其中不能自拔, 于是你在今天的todoList上把不要超时几个字写的更大,并在睡觉之前把这几个字又默念了几遍.</p>
-<p>第二天,前面看书你都非常严格的遵守了, 但是唯一的问题是leetCode还是没有在限定的时间内想出解法 , 于是你非常不情愿的准备切换至下一个任务(尽管现在的问题还未得到解决)，并且尝试在本子上记录下现在自己的思路，保留一波现场.但是这样做并没有任何用.</p>
-<p>到了第三天, 你尝试回到昨天的现场解决那个还没被填上的坑. 当你翻回昨天的那一页的时候 , 你朝着作业本上那一堆自己也看不懂的公式摇了摇头, 想了想今天有限的作业时间, 默默的将作业本翻到了下一页.</p>
-<p>第四天,你大刀阔斧的开始休整自己的todo-list , 删掉了自己的运动 , 压缩了自己的阅读.再来一个弹性日程安排 , 把各种详细的task划分到一起 , 然后 , 你的todo-list 变成了这样.<img src="/assets/img/summer/2.jpg?raw=true" alt></p>
-<p>然后,很快你就发现了新的问题 ,  你发现你和平时做着同样的事情 ,  todo-list并没有给你带来任何作用. 因为对于一个又不玩游戏, 假期闲的要死的你来说, 你的日常就是这样的. 不仅如此, 你也再也无法对今天的任务进行评估和打分,除了吃饭的两分稳稳到手外, 其他都是大大的问号. 于是你开始回忆你昨天做了哪些事情, 然而你发现 , 你似乎确实做了很多事情 , 但是始终有一种空虚感 , 因为说不清楚你到底干了什么...</p>
-<p>另外,你开始逐渐意识到,你在一些琐事上面花了非常多的时间:</p>
-<p>比如你花了55分钟吃饭，中午花了1个半小时睡觉，但是你睡午觉的大多数时间是用来躺在床上玩手机的, 又比如, 你明明是早上7点就起床了, 本来计划8点抵达图书馆, 但是当你到达图书馆的时候, 你手机上面的时间8 后面 已经四十好几了.</p>
-<p>你告诉自己, 我应该严格管理我的时间分配 , 让我的每一段时间都过的有价值.</p>
-<p>转眼道到了开学，你把你的todo-list改成了这样 (详细估算各种事情了时间的花费, 计算出了明天大致的空闲时间,并给自己提供了一些时间来解决意外情况 , 同时将你的一天化为了很多时间段 , 并且不对详细的时间段指明确切的任务)</p>
-<p><img src="/assets/img/summer/3.jpg?raw=true" alt></p>
-<p><em>即使是忙碌的周四,我们也有至少7个半小时的时间用于自有安排</em></p>
-<p>忙碌的一天终于结束了, 但是你却丝毫没有一丝惬意 , 你觉得你早上一大早跑去图书馆却在那一小时无所事事, 因为才刚开学, 虽然有课 但是 却没有作业, 于是你在早上那一个小时简单的看了一下go语言的官方文档 , 但是到了晚上你质问自己为什么要去看现在并用不到的东西 , 你便开始后悔 , 为什么我那一个小时不用来记一记单词.</p>
-<p>照着这份todo-list 你坚持了几天 感觉每天都过的非常的充实. 但是 , 很快你又发现了新的问题: <strong>效率</strong> , 你恍然大悟 , 你似乎明白了为什么感觉每天做了很多事情却似乎又觉得没有什么收获 , 你似乎也明白了为什么暑假天天做这么多事情却还是每天觉得很空虚.</p>
-<p>你从操作系统系统老师那里得知了并发切换CPU状态会消耗资源.你学以致用 , 发现 , 你每天这样频繁的切换自己的任务不就是处于一个高并发的状态吗?</p>
-<p>于是你又回想起了你暑假的某一个下午...</p>
-<h3>Focus on one thing</h3>
-<p>8月的某一天上午 , 你在图书馆 , simply repeat what you did yesterday. 突然接到了家住郫县亲戚的电话. 于是你心想给自己放个假也不错, 就背着电脑驱车前往.</p>
-<p>但是亲戚家里实在是太无聊了, 你便拿出了电脑, 继续看 &lt;&lt;java多线程核心技术&gt;&gt;. 很快你看书犯困的老毛病就又犯了, 于是你打算小憩一会.</p>
-<p>2个小时过去了...</p>
-<p>你睁眼一看 , 已经下午三点了, 我天 , 怎么睡了这么久? 你慌了, 觉得自己虚度了光阴.</p>
-<p>于是你非常懊悔, 关掉了手机 , 掏出了ipad , 打开了电脑. 定位到了pdf第53页, 一遍做笔记一边啃.</p>
-<p>5个小时过去了...</p>
-<p>你离开了亲戚家回到了学校 . 你又打开了电脑, 掏出ipad , 继续啃&lt;&lt;java多线程核心技术&gt;&gt;...</p>
-<p>3个小时过去了...</p>
-<p>你长舒一口气 , 终于把第三章看完了.</p>
-<p>什么! 把第三章都看完了! 你才缓过神来. 你注意了一下书的目录 , 你居然看到了第199页, 你感觉难以置信 , 又看了看你的ipad , 发现你做了31页的笔记!</p>
-<h3>Core task and Non-core task</h3>
-<p>你回到了现实. 意志坚定, 思考片刻 , 参照java的线程池 , 给自己设计了两个todo-list, 一个core-todo-list , 用于缓存要做长期要做且要做很久任务, 一个non-core-todo-list 用于缓存短期要做且能短时间就昨晚的任务.</p>
-<p><img src="/assets/img/summer/4.jpg?raw=true" alt></p>
-<p><img src="/assets/img/summer/5.jpg?raw=true" alt></p>
-<p>回到现在,屏幕前的你终于在第1777个字处结束了自己的回忆. 你思考了一下,觉得这个文案写的还算可以,打算将他交给你的组长审阅. 但是跳跃的思维又让你想到了昨天, 你为了准备后面实习的面试 , 从昨天早上到深夜11点都在写一篇技术博客.</p>
-<p>你感叹那篇仅仅一小时就能读完的7477字的源码分析竟然写了整整一天, 你也感慨自己居然就用了一天就把它写出来了.</p>
-<p>你又满意了打开了自己的blog , 对着那篇文章浏览了一遍, 你觉的无比充实 .对于读者, 那7477个字可能显得普通还缺乏文采甚至略微晦涩, 但是对于你来说,  那是无尽的财富, 因为你已不再迷失方向.</p>
-<p>-----不愿透露姓名但乐于分享自己经历的吃瓜群众</p>
-
         </div>
         
         
+        
+        <hr style="height:1px;margin:1rem 0">
+        <div class="level is-mobile is-flex">
+            <div class="level-start">
+                
+                <div class="level-item is-size-7 is-uppercase">
+                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
+                    <a class="has-link-grey -link" href="/tags/you/">you</a>
+                </div>
+                
+            </div>
+            <div class="level-start">
+                <div class="level-item">
+                    <a class="button is-size-7 is-light" href="/2019/09/22/寄夏予你/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
         
         
     </div>

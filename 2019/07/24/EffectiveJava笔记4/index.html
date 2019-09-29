@@ -7,19 +7,19 @@
 
 
 
-    <meta name="description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 16、在公共类中使用访问方法而不是公共属性 关键字：public类，访问方法，public属性 在JAVA里面，对于那些需要对外提供某些属性的类。比较建议的一种写法是对外提供访问方法(getter和setter)而不直接将这些属性设置为public的。曾经有人问过我这个问题，为什么要这么">
+    <meta name="description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _">
 <meta name="keywords" content="JAVA">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EffectiveJava笔记[四]">
 <meta property="og:url" content="https://pigrange.github.io/2019/07/24/EffectiveJava笔记4/index.html">
 <meta property="og:site_name" content="Pigrange&#39;s Blog">
-<meta property="og:description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 16、在公共类中使用访问方法而不是公共属性 关键字：public类，访问方法，public属性 在JAVA里面，对于那些需要对外提供某些属性的类。比较建议的一种写法是对外提供访问方法(getter和setter)而不直接将这些属性设置为public的。曾经有人问过我这个问题，为什么要这么">
+<meta property="og:description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava4.jpg">
 <meta property="og:updated_time" content="2019-09-18T11:19:53.474Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EffectiveJava笔记[四]">
-<meta name="twitter:description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _  &amp;lt;!-- more --&amp;gt; 16、在公共类中使用访问方法而不是公共属性 关键字：public类，访问方法，public属性 在JAVA里面，对于那些需要对外提供某些属性的类。比较建议的一种写法是对外提供访问方法(getter和setter)而不直接将这些属性设置为public的。曾经有人问过我这个问题，为什么要这么">
+<meta name="twitter:description" content="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _">
 <meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/EffectiveJava4.jpg">
 
 
@@ -168,14 +168,14 @@
 
         <div class="content">
             <blockquote>
-<h3>EffectiveJAVA的读书笔记[四]  _ <em>(:з)∠)</em> _</h3>
-</blockquote>
-<p>&lt;!-- more --&gt;</p>
-<h3>16、在公共类中使用访问方法而不是公共属性</h3>
-<p><strong>关键字：</strong><code>public类</code>，<code>访问方法</code>，<code>public属性</code></p>
+<h3 id="EffectiveJAVA的读书笔记-四-з-∠"><a href="#EffectiveJAVA的读书笔记-四-з-∠" class="headerlink" title="EffectiveJAVA的读书笔记[四]  _ (:з)∠) _"></a>EffectiveJAVA的读书笔记[四]  _ <em>(:з)∠)</em> _</h3></blockquote>
+<a id="more"></a>
+
+<h3 id="16、在公共类中使用访问方法而不是公共属性"><a href="#16、在公共类中使用访问方法而不是公共属性" class="headerlink" title="16、在公共类中使用访问方法而不是公共属性"></a>16、在公共类中使用访问方法而不是公共属性</h3><p><strong>关键字：</strong><code>public类</code>，<code>访问方法</code>，<code>public属性</code></p>
 <p>在<code>JAVA</code>里面，对于那些需要对外提供某些属性的类。比较建议的一种写法是对外提供访问方法(<code>getter</code>和<code>setter</code>)而不直接将这些属性设置为<code>public</code>的。曾经有人问过我这个问题，为什么要这么做，我并不知道，只觉得这是封装思想的一种体现。</p>
 <p>如下（例子源于书上）:</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//不建议这样写</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> x;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//建议这样写</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> x;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> y;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getX</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setX</span><span class="hljs-params">(<span class="hljs-keyword">double</span> x)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.x = x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getY</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setY</span><span class="hljs-params">(<span class="hljs-keyword">double</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.y = y;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//不建议这样写</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> x;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">//建议这样写</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> x;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">double</span> y;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getX</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setX</span><span class="hljs-params">(<span class="hljs-keyword">double</span> x)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.x = x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> <span class="hljs-title">getY</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setY</span><span class="hljs-params">(<span class="hljs-keyword">double</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.y = y;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><strong>理解：</strong></p>
 <ul>
 <li>这其实是类和成员可访问性最小化的一个体现。外界通过唯一<code>public</code>的<code>API</code>来获取数据。类本身将其具体的实现隐藏，这样内部的实现无论怎么改只要返回给外界他们期望的值即可。相对的，如果直接将属性提供给外界的话，那么在一个成型的代码系统中，这个属性就几乎没有再修改的余地了。</li>
@@ -185,8 +185,7 @@
 <li>如果一个类是包级私有的或者是一个私有的内部类，这样写是被允许的。理由很简单，它们对外提供的属性的作用范围太小了，并不会出现上面提到的那种问题。而且这样写的可读性更强，不是吗？(手动斜眼)</li>
 </ul>
 <hr>
-<h3>17、最小化可变性</h3>
-<p><strong>关键字：</strong><code>可变性</code></p>
+<h3 id="17、最小化可变性"><a href="#17、最小化可变性" class="headerlink" title="17、最小化可变性"></a>17、最小化可变性</h3><p><strong>关键字：</strong><code>可变性</code></p>
 <p>首先我们给不可变的类一个基本的定义：</p>
 <ul>
 <li><strong>不提供任何修改对象状态的方法</strong></li>
@@ -197,14 +196,11 @@
 </ul>
 <p><strong>理解：</strong></p>
 <ul>
-<li>
-<p>在创建的一开始它的状态就被确定了，状态在它存在的整个生命周期均不会发生任何改变。</p>
+<li><p>在创建的一开始它的状态就被确定了，状态在它存在的整个生命周期均不会发生任何改变。</p>
 </li>
-<li>
-<p>线程安全的，不需要线程同步。因为不可变的对象的所有属性都是只读的，它并不会因为多线程的同时访问而出现同步问题。</p>
+<li><p>线程安全的，不需要线程同步。因为不可变的对象的所有属性都是只读的，它并不会因为多线程的同时访问而出现同步问题。</p>
 </li>
-<li>
-<p>可以自由的分享，也没有必要创建很多个副本或者考虑防御性拷贝。</p>
+<li><p>可以自由的分享，也没有必要创建很多个副本或者考虑防御性拷贝。</p>
 </li>
 </ul>
 <p><strong>缺点：</strong></p>
@@ -212,8 +208,7 @@
 <p><strong>总结：</strong></p>
 <p>除非有很好的理由能够说明一个类应该是可变的，否则尽量将其设置为不可变的。</p>
 <hr>
-<h3>18、组合由于继承</h3>
-<p><strong>关键词：</strong><code>组合</code> ，<code>继承</code></p>
+<h3 id="18、组合由于继承"><a href="#18、组合由于继承" class="headerlink" title="18、组合由于继承"></a>18、组合由于继承</h3><p><strong>关键词：</strong><code>组合</code> ，<code>继承</code></p>
 <p>跨越包级的继承很危险(对类来说)的。</p>
 <ul>
 <li><strong>破坏了封装的思想</strong>：子类有可能会依赖父类的一些实现细节，但是父类改变后，可能会导致子类无法使用。</li>
@@ -236,25 +231,21 @@
 <li>包装类中不适合使用回调，因为某一些设置回调的方法对象会将自我的引用返回出来，但是被包装的对象是并不知道它的外界存在一个包装器，所以它仍然会返回一个自身的引用。</li>
 </ul>
 <p><strong>总结：</strong></p>
-<p>适合使用继承的情况：只有子类真的是父类的子类型的情况下才适合使用继承。即两者中存在&quot;B is A&quot;的关系，才应该让B继承A。</p>
+<p>适合使用继承的情况：只有子类真的是父类的子类型的情况下才适合使用继承。即两者中存在”B is A”的关系，才应该让B继承A。</p>
 <hr>
-<h3>19、要么设计继承并提供文档说明，要么就禁用继承</h3>
-<p>如题，字面意思。</p>
+<h3 id="19、要么设计继承并提供文档说明，要么就禁用继承"><a href="#19、要么设计继承并提供文档说明，要么就禁用继承" class="headerlink" title="19、要么设计继承并提供文档说明，要么就禁用继承"></a>19、要么设计继承并提供文档说明，要么就禁用继承</h3><p>如题，字面意思。</p>
 <p><strong>可继承的类：</strong></p>
 <ul>
-<li>
-<p><strong>如果一个类是可以被继承的话，那么我们应该提供详细的文档说明</strong></p>
+<li><p><strong>如果一个类是可以被继承的话，那么我们应该提供详细的文档说明</strong></p>
 <ul>
 <li>详细描述重写某一个方法会带来的影响。</li>
 <li>应当说明可重写方法的自用性</li>
 <li>应当详细的列出任何可能调用可重写方法的情况</li>
 </ul>
 </li>
-<li>
-<p><strong>测试一个为继承而设计的类的唯一方法是编写子类进行测试</strong></p>
+<li><p><strong>测试一个为继承而设计的类的唯一方法是编写子类进行测试</strong></p>
 </li>
-<li>
-<p><strong>构造方法里面不能直接或间接地调用可重写的方法</strong></p>
+<li><p><strong>构造方法里面不能直接或间接地调用可重写的方法</strong></p>
 </li>
 </ul>
 <p><strong>禁用继承：</strong></p>
@@ -267,22 +258,18 @@
 <li>如果不得不继承一个没有提供详细文档的类，最好的方法是不调用任何可重写的方法（消除父类自用可重写方法的可能性）。</li>
 </ul>
 <hr>
-<h3>20、接口优于抽象类</h3>
-<p><strong>关键字：</strong> <code>接口</code>，<code>抽象类</code></p>
+<h3 id="20、接口优于抽象类"><a href="#20、接口优于抽象类" class="headerlink" title="20、接口优于抽象类"></a>20、接口优于抽象类</h3><p><strong>关键字：</strong> <code>接口</code>，<code>抽象类</code></p>
 <p><code>JAVA</code>对于抽象类只允许单一继承，而对于接口来说可以多实现。</p>
 <p><strong>理解：</strong></p>
-<p>JAVA对类的继承的结构是垂直的，也就是说一个类继承了它的父类，那么它就一定满足&quot;A is B&quot;的描述，也就是说，它的根源是被确定了的。</p>
-<p>但是接口只是一种实现，它对外表述的是&quot;A can be B&quot;，这表示A是多变的，它强调了A是具有某一些行为是符合它被作为B的要求，所以它应该是有多种实现的。</p>
+<p>JAVA对类的继承的结构是垂直的，也就是说一个类继承了它的父类，那么它就一定满足”A is B”的描述，也就是说，它的根源是被确定了的。</p>
+<p>但是接口只是一种实现，它对外表述的是”A can be B”，这表示A是多变的，它强调了A是具有某一些行为是符合它被作为B的要求，所以它应该是有多种实现的。</p>
 <ul>
 <li>抽象类过分的强调了层级关系，这对于我们并不能准确定义某一些类的层次。比如说一个程序员也可能是一个作家，但是如果使用抽象类我们就无法给它一个精确的定义。</li>
 <li>实现了接口的类可以很方便的实现其他接口以更新功能，但是如果是实现了抽象类，那么就会比较麻烦。</li>
 <li>接口是定义<code>mixin</code>（混合类型）的理想选择，它保证了一个类除了提供自身类型以外，还能够提供某些可以选择的行为。</li>
 </ul>
 <hr>
-<p><strong>相关链接：</strong>
-<a href="https://www.jianshu.com/p/f0e618bd7022" target="_blank" rel="noopener">EffectiveJava笔记[一]</a>
-<a href="https://www.jianshu.com/p/89bf716aec06" target="_blank" rel="noopener">EffectiveJava笔记[二]</a>
-<a href="https://www.jianshu.com/p/bcded2445a44" target="_blank" rel="noopener">EffectiveJava笔记[三]</a></p>
+<p><strong>相关链接：</strong><br><a href="https://www.jianshu.com/p/f0e618bd7022" target="_blank" rel="noopener">EffectiveJava笔记[一]</a><br><a href="https://www.jianshu.com/p/89bf716aec06" target="_blank" rel="noopener">EffectiveJava笔记[二]</a><br><a href="https://www.jianshu.com/p/bcded2445a44" target="_blank" rel="noopener">EffectiveJava笔记[三]</a></p>
 
         </div>
         
@@ -424,27 +411,27 @@
                 目录
             </h3>
             <ul class="menu-list"><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#EffectiveJAVA的读书笔记-四-з-∠">
         <span class="has-mr-6">1</span>
         <span>EffectiveJAVA的读书笔记[四]  _ (:з)∠) _</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#16、在公共类中使用访问方法而不是公共属性">
         <span class="has-mr-6">2</span>
         <span>16、在公共类中使用访问方法而不是公共属性</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#17、最小化可变性">
         <span class="has-mr-6">3</span>
         <span>17、最小化可变性</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#18、组合由于继承">
         <span class="has-mr-6">4</span>
         <span>18、组合由于继承</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#19、要么设计继承并提供文档说明，要么就禁用继承">
         <span class="has-mr-6">5</span>
         <span>19、要么设计继承并提供文档说明，要么就禁用继承</span>
         </a></li><li>
-        <a class="is-flex" href="#undefined">
+        <a class="is-flex" href="#20、接口优于抽象类">
         <span class="has-mr-6">6</span>
         <span>20、接口优于抽象类</span>
         </a></li></ul>

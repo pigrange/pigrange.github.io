@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+<title>Android消息机制 - Pigrange&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="之前沉迷源码无法自拔，这个系列咕咕咕了好久了，其实开发艺术探索这方面没有看的很详细，因为之前看过Handler相关的源码的，对消息机制自认为还算比较熟悉，所以就没有特别的按照书中的内容讲，而是结合了自己的一下想法分析了一波。">
+<meta name="keywords" content="Android,Review">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android消息机制">
+<meta property="og:url" content="https://pigrange.github.io/2019/09/29/Android消息机制/index.html">
+<meta property="og:site_name" content="Pigrange&#39;s Blog">
+<meta property="og:description" content="之前沉迷源码无法自拔，这个系列咕咕咕了好久了，其实开发艺术探索这方面没有看的很详细，因为之前看过Handler相关的源码的，对消息机制自认为还算比较熟悉，所以就没有特别的按照书中的内容讲，而是结合了自己的一下想法分析了一波。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.png">
+<meta property="og:updated_time" content="2019-09-29T07:33:20.098Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android消息机制">
+<meta name="twitter:description" content="之前沉迷源码无法自拔，这个系列咕咕咕了好久了，其实开发艺术探索这方面没有看的很详细，因为之前看过Handler相关的源码的，对消息机制自认为还算比较熟悉，所以就没有特别的按照书中的内容讲，而是结合了自己的一下想法分析了一波。">
+<meta name="twitter:image" content="https://pigrange.github.io/assets/gallery/thumbnails/ExploreAndroid.png">
+
+
+
+
+
+
+
+<link rel="icon" href="/assets/img/logo.jpg">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/assets/img/logo.jpg" alt="Android消息机制" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/tags">标签</a>
+                
+                <a class="navbar-item" href="/about">关于我</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-10-tablet is-8-desktop is-8-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                    Android消息机制
+                    
+        </h1>
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-09-29T07:27:00.000Z"><i class="far fa-calendar-alt">&nbsp;</i>2019-09-29</time>
+                
+                <time class="level-item has-text-grey is-hidden-mobile" datetime="2019-09-29T07:33:20.098Z"><i class="far fa-calendar-check">&nbsp;</i>2019-09-29</time>
+                
+                
+                <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/读书笔记/">读书笔记</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/categories/读书笔记/开发艺术探索/">开发艺术探索</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    21 分钟 读完 (大约 3194 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+
+        <div class="content">
+            <p>之前沉迷源码无法自拔，这个系列咕咕咕了好久了，其实开发艺术探索这方面没有看的很详细，因为之前看过Handler相关的源码的，对消息机制自认为还算比较熟悉，所以就没有特别的按照书中的内容讲，而是结合了自己的一下想法分析了一波。</p>
+<a id="more"></a>
+
+<h3 id="Android消息机制："><a href="#Android消息机制：" class="headerlink" title="Android消息机制："></a>Android消息机制：</h3><p>Android的消息机制：Handler的运行机制。</p>
+<ul>
+<li><strong>本质</strong>：MessageQueue和Looper协作运行的机制。</li>
+</ul>
+<p><strong>成员：</strong></p>
+<ul>
+<li>Hanlder: 消息机制的上层接口，用于在开发过程中很方便的进行线程之间的切换。<ul>
+<li>注意：更新UI仅仅是Handler的一个使用场景，这并不代表Handler就是用来更新UI的。</li>
+</ul>
+</li>
+<li>MessageQueue : 由Message组成的单链表数据结构，本质是一种阻塞队列。</li>
+<li>Looper :  消息事件的直接消费者。(因为实际上获取Meesage的是Looper，然后再由Looer分发给指定的Handler)</li>
+<li>ThreadLoacl：对Thread的ThreadMaps的一层封装，让不同的线程能够通过很方便的方式存放不同的数据。</li>
+</ul>
+<p><strong>补充</strong></p>
+<ul>
+<li>Looper和MessageQueue两者构成了一个最基本的生产者消费者模型。</li>
+<li>Handler 在整个消息机制中并不是核心，核心是有Looper和MeesageQueue构成的生产者消费者模型，给运行在主线程上的程序提供了事件驱动的基础。但是由于运行在主线程上的woker有很多种类别，所以Looper并不会真正的消耗事件，而是接收事件后统一分发给不同worker对应的Handler。<ul>
+<li>Looper是事件的直接消费者，它对事件的消费本质上是对事件的分发</li>
+<li>Handler是各个worker程序的代理，是事件的真正消费者</li>
+<li>Handler也可以不和运行的worker程序绑定，这种情况下，它只会用于线程切换。</li>
+</ul>
+</li>
+</ul>
+<p><strong>强调：</strong></p>
+<p>这里谈一个概念问题，我觉得这个很有必要要说清楚，因为在深入理解的时候，容易死磕一些思想从而把最基本的原则忘记了。<strong>消息机制的设计目的：</strong>本质就是一种跨线程执行任务的解决方案。如果我们只看Looper和MessageQueue的话，那么它的设计就是一个典型的生产者消费者模型，但是有一个问题，就是我们对<strong>消费</strong>这个词的理解。因为Looper是这个模型的消费者，而这个场景又很特殊，因为Handler的引入导致Looper的作用被模糊化了，所以我们很难清晰的定义整个消息机制中各个组件的职能，想必这也是为什么大多数将消息机制的文章都不会提及生产者消费者这个模型。所以这里我描述Looper为事件的直接消费者，而Handler和其对应的组件才是真正事件的处理者，如果还是对Looper感觉模棱两可的话，那就记住一点，Looper对事件的接收是导致任务在线程中切换的直接原因。Looper消费了这个事件，那么任务就成功实现了线程间切换，而实现了线程的切换，也就是实现了任务的跨线程执行。</p>
+<p>虽然这个观点实际上是有误的(因为本质上线程切换是共享内存实现的)，但是这样能让我们很好的理解Android的消息处理机制。</p>
+<h3 id="Android的消息机制概述："><a href="#Android的消息机制概述：" class="headerlink" title="Android的消息机制概述："></a>Android的消息机制概述：</h3><p>Handler的直接作用(对于开发者) ：将一个任务切换到指定的线程中去执行。注意：这个能力是Looper提供的。</p>
+<p>非主线程更新UI的问题：ViewRootImpl在requestLayout方法中会首先检查当前的线程是否是UI线程。如果不是UI线程的话，直接就抛异常了。</p>
+<p><strong>注意：</strong>UI线程在大多数情况下是等于主线程的，但是这个也不是绝对的，查看ViewRootImpl的实现我们可以看到ViewRootImpl所指向的mThread实际上是ViewRootImpl被创建的时运行的线程。亲测在UI线程中new 出来的View并通过WindowManager.addView实现的View是可以完全在子线程中正常运行的。</p>
+<p>Android中Handler的主要作用：解决子线程中无法更新UI的问题。</p>
+<p>单线程控制UI的原因：UI的改变操作不是原子性的，多线程并发控制UI容易出现同步问题。如果加锁解决的话，性能甚至不一定有单线程好，因为反而会有线程阻塞来降低效率。（这也是生产者模式相对于等待通知机制的一种优势，因为通过引入缓存机制，协调了生产者消费者之间任务速度不平衡的问题）</p>
+<h4 id="Handler的创建方式："><a href="#Handler的创建方式：" class="headerlink" title="Handler的创建方式："></a><strong>Handler的创建方式</strong>：</h4><p>先归纳一下，三种方式，两个作用。</p>
+<h5 id="切换线程："><a href="#切换线程：" class="headerlink" title="切换线程："></a><strong>切换线程：</strong></h5><figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//绑定当前创建线程的Looper</span></span><br><span class="line"><span class="hljs-keyword">val</span> handler = Handler()</span><br><span class="line"><span class="hljs-comment">//或</span></span><br><span class="line"><span class="hljs-comment">//绑定指定的looper</span></span><br><span class="line"><span class="hljs-keyword">val</span> handler = Handler(looper)</span><br></pre></td></tr></table></figure>
+
+<p>Handler和持有Handler的对象之间的耦合度是比较低的，因为Handler并不会持有外部对象的引用。这种情况下一般是通过Handler的post Runnable来实现切换线程运行方法实现的。</p>
+<p><strong>补充：</strong>这种情况是不会因为消息机制的原因导致内存泄漏的。因为和Activity(这里就用Activity做例子，下面一样)相关操作的代码一定是写在Activity里面的，那么我们就可以不必担心Activity的在销毁后还存在引用没有被GC的情况。所以这种方法的主要作用就是用来切换线程。</p>
+<h5 id="代理Activity接受异步的消息"><a href="#代理Activity接受异步的消息" class="headerlink" title="代理Activity接受异步的消息:"></a><strong>代理Activity接受异步的消息:</strong></h5><p>首先我们分析一下Hanlder的运行过程。前面说了，Looper的其实只会分发这个消息，并不会处理这个消息。那么消息由谁处理呢？没错就是那些运行在此线程中的工作对象(在Android通常是四大组件)，但是Looper并不知道这个消息的接受者是哪个工作对象，因为这个Message是Activity里的Hander发送的，所以Looper只会把这个消息返回给Handler，让Handler来决定如何处理这个事情。这里有两种情况：</p>
+<ul>
+<li>如果Hanlder从Message那里拿到的消息是一个Runnable，那么就是上面描述的切换线程。Handler直接执行这个Runnable ，并且之后的事情，就和他没有关系了。这种情况由于Handler并不持有Activity的引用。所以Handler和Activity解耦的。</li>
+<li>如果Handler拿到的是消息，那么它就必须作为消息的传递者来通知Activity。那么这种情况下Handler一定是直接或间接的持有Activity的引用的。那么如何通知呢？很简单，直接访问Activity的数据或执行方法或者通过Activity传递过来的回调接口间接的访问Activity的数据或执行方法，但是它们本质是一样的，实现如下：</li>
+</ul>
+<p>实现1：</p>
+<figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> callback = <span class="hljs-keyword">object</span> : Handler.Callback &#123;</span><br><span class="line">    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleMessage</span><span class="hljs-params">(msg: <span class="hljs-type">Message</span>?)</span></span>: <span class="hljs-built_in">Boolean</span> &#123;</span><br><span class="line">        doSomeThing()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="hljs-keyword">val</span> handler = Handler(callback)</span><br></pre></td></tr></table></figure>
+
+<p>实现2：</p>
+<figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> handler = <span class="hljs-keyword">object</span> : Handler() &#123;</span><br><span class="line">    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleMessage</span><span class="hljs-params">(msg: <span class="hljs-type">Message</span>?)</span></span> &#123;</span><br><span class="line">        doSomething()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="内存泄漏："><a href="#内存泄漏：" class="headerlink" title="内存泄漏："></a>内存泄漏：</h4><p><strong>注意：</strong>上面两种实现都有内存泄漏的风险。因为这里的Handler代理了Activity接受了消息，而它又直接或间接的持有Activity的引用，代理的方式使得Handler会被传递到其他执行耗时任务的对象里去，而这些对象正在别的线程里面执行耗时任务，那么如果这个时候Activity被终止了的话，由于Handler只持有Activity引用的关系，Activity不会被正常GC.</p>
+<h3 id="Handler消息机制分析："><a href="#Handler消息机制分析：" class="headerlink" title="Handler消息机制分析："></a>Handler消息机制分析：</h3><h4 id="ThreadLoacl"><a href="#ThreadLoacl" class="headerlink" title="ThreadLoacl:"></a>ThreadLoacl:</h4><p>线程内部的数据存储类，可以实现在不同的线程里面存储不同的信息。消息机制种主要用于存放Looper，<strong>注意：</strong>一个线程可以存放多个ThreadLocal，但是一个ThreadLoacl只能存放一个数据。</p>
+<h5 id="ThreadLocal的使用方式："><a href="#ThreadLocal的使用方式：" class="headerlink" title="ThreadLocal的使用方式："></a><strong>ThreadLocal的使用方式：</strong></h5><p>创建：</p>
+<figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">val</span> threadLocal = ThreadLocal&lt;Data&gt;()</span><br></pre></td></tr></table></figure>
+
+<p>存数据：</p>
+<figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threadLocal.<span class="hljs-keyword">set</span>(<span class="hljs-keyword">data</span>)</span><br></pre></td></tr></table></figure>
+
+<p>取数据：</p>
+<figure class="highlight kotlin hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threadLocal.<span class="hljs-keyword">get</span>()</span><br></pre></td></tr></table></figure>
+
+<h5 id="ThreadLoacl原理分析："><a href="#ThreadLoacl原理分析：" class="headerlink" title="ThreadLoacl原理分析："></a>ThreadLoacl原理分析：</h5><p>不具体讲，康康get和set的实现就行了。</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">//获取元素</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> T <span class="hljs-title">get</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="hljs-keyword">if</span> (map != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        ThreadLocalMap.Entry e = map.getEntry(<span class="hljs-keyword">this</span>);</span><br><span class="line">        <span class="hljs-keyword">if</span> (e != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-meta">@SuppressWarnings</span>(<span class="hljs-string">"unchecked"</span>)</span><br><span class="line">            T result = (T)e.value;</span><br><span class="line">            <span class="hljs-keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> setInitialValue();</span><br><span class="line">&#125;</span><br><span class="line"><span class="hljs-comment">//存放元素</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">set</span><span class="hljs-params">(T value)</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="hljs-keyword">if</span> (map != <span class="hljs-keyword">null</span>)</span><br><span class="line">        map.set(<span class="hljs-keyword">this</span>, value);</span><br><span class="line">    <span class="hljs-keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ThreadLocal实际上是面向用户的一层接口，和消息机制中Handler的地位相似，实际上数据是通过线程对象里面存放的名为ThreadLoaclMap的map进行存放的。所以保证不同线程不同数据的本质原因还是因为<code>Thread.currentThread()</code>在不同的线程调用下返回的结果是不相同的。</p>
+<h3 id="消息队列的工作原理："><a href="#消息队列的工作原理：" class="headerlink" title="消息队列的工作原理："></a>消息队列的工作原理：</h3><p>前面我也说了消息队列本质就是一个生产者消费者模式，所以这里我并不打算从源码的角度分析Looper的具体实现和MessageQueue如何构成的阻塞队列，这里我用一个简单的例子跟随源码康康大致的运行流程，然后再强调几点需要注意的地方就行了。</p>
+<h4 id="工作原理："><a href="#工作原理：" class="headerlink" title="工作原理："></a>工作原理：</h4><h5 id="Handler-发送消息的过程："><a href="#Handler-发送消息的过程：" class="headerlink" title="Handler 发送消息的过程："></a>Handler 发送消息的过程：</h5><p>Handler#post</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">post</span><span class="hljs-params">(Runnable r)</span></span>&#123;</span><br><span class="line">    <span class="hljs-keyword">return</span>  sendMessageDelayed(getPostMessage(r), <span class="hljs-number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>getPostMessage方法主要是将传递进来的runnable封装成一个Message</p>
+<p>Handler#getPostMessage</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Message <span class="hljs-title">getPostMessage</span><span class="hljs-params">(Runnable r)</span> </span>&#123;</span><br><span class="line">    Message m = Message.obtain();</span><br><span class="line">    m.callback = r;</span><br><span class="line">    <span class="hljs-keyword">return</span> m;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Handler#sendMessageDelay</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMessageDelayed</span><span class="hljs-params">(Message msg, <span class="hljs-keyword">long</span> delayMillis)</span></span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (delayMillis &lt; <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        delayMillis = <span class="hljs-number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Handler#sendMessageAtTime</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">sendMessageAtTime</span><span class="hljs-params">(Message msg, <span class="hljs-keyword">long</span> uptimeMillis)</span> </span>&#123;</span><br><span class="line">    MessageQueue queue = mQueue;</span><br><span class="line">    <span class="hljs-keyword">if</span> (queue == <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        RuntimeException e = <span class="hljs-keyword">new</span> RuntimeException(</span><br><span class="line">            <span class="hljs-keyword">this</span> + <span class="hljs-string">" sendMessageAtTime() called with no mQueue"</span>);</span><br><span class="line">        Log.w(<span class="hljs-string">"Looper"</span>, e.getMessage(), e);</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> enqueueMessage(queue, msg, uptimeMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Handler#enqueueMessage</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">enqueueMessage</span><span class="hljs-params">(MessageQueue queue, Message msg, <span class="hljs-keyword">long</span> uptimeMillis)</span> </span>&#123;</span><br><span class="line">    msg.target = <span class="hljs-keyword">this</span>;</span><br><span class="line">    <span class="hljs-keyword">if</span> (mAsynchronous) &#123;</span><br><span class="line">        msg.setAsynchronous(<span class="hljs-keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-comment">//在这里讲消息放入消息队列</span></span><br><span class="line">    <span class="hljs-keyword">return</span> queue.enqueueMessage(msg, uptimeMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Looper-获取消息的过程"><a href="#Looper-获取消息的过程" class="headerlink" title="Looper 获取消息的过程"></a>Looper 获取消息的过程</h5><p>looper#loop</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">loop</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> Looper me = myLooper();</span><br><span class="line">    <span class="hljs-keyword">final</span> MessageQueue queue = me.mQueue;</span><br><span class="line">    <span class="hljs-comment">//...删掉一些代码</span></span><br><span class="line">    <span class="hljs-keyword">boolean</span> slowDeliveryDetected = <span class="hljs-keyword">false</span>;</span><br><span class="line">    <span class="hljs-keyword">for</span> (; ; ) &#123;</span><br><span class="line">        Message msg = queue.next(); <span class="hljs-comment">// might block</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (msg == <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            <span class="hljs-comment">//这个target就是Handler</span></span><br><span class="line">            <span class="hljs-comment">//这里就实现了Looper将消息分发给Handler</span></span><br><span class="line">            msg.target.dispatchMessage(msg);</span><br><span class="line">            dispatchEnd = needEndTime ? SystemClock.uptimeMillis() : <span class="hljs-number">0</span>;</span><br><span class="line">        &#125; <span class="hljs-keyword">finally</span> &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (traceTag != <span class="hljs-number">0</span>) &#123;</span><br><span class="line">                Trace.traceEnd(traceTag);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-comment">//...删掉一些代码</span></span><br><span class="line">        msg.recycleUnchecked();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，Looper.loop其实就是让Looper作为消费者去拿MessageQueue里面的message。通过queque.next()获取消息，注意<code>queue.next</code>方法会阻塞线程，并且一般情况下一定不会返回空。如果消息为空，那么looper直接返回，这个线程也就是失去了控制，直接运行到结束。</p>
+<p><strong>补充一下:</strong> queue.next返回null是让Looper结束死循环的唯一方式。而结束Looper面向开发者的API是Looer的quit方法，一旦quit方法被调用，MessageQueue的quit方法会被执行，从而清空自己的所有消息，使得next返null。(Looper的quit方法应该只能通过别的线程调用吧)。</p>
+<p>Handler#dispatchMessage</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">dispatchMessage</span><span class="hljs-params">(Message msg)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-comment">//这里的message.callback就是传递进来的runable</span></span><br><span class="line">    <span class="hljs-keyword">if</span> (msg.callback != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">        handleCallback(msg);</span><br><span class="line">    &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">        <span class="hljs-comment">//对应Handler的构造方法里面直接传CallBack的实现</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (mCallback != <span class="hljs-keyword">null</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (mCallback.handleMessage(msg)) &#123;</span><br><span class="line">                <span class="hljs-keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-comment">//对应Handler直接重写HandlerMessage的实现</span></span><br><span class="line">        handleMessage(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h4><h5 id="MessageQueue如何阻塞："><a href="#MessageQueue如何阻塞：" class="headerlink" title="MessageQueue如何阻塞："></a>MessageQueue如何阻塞：</h5><p>主要是两个native方法，我就简单描述一下，具体咋实现的我们不深究。</p>
+<p>MessageQueue#next</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function">Message <span class="hljs-title">next</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">final</span> <span class="hljs-keyword">long</span> ptr = mPtr;</span><br><span class="line">    <span class="hljs-keyword">if</span> (ptr == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">int</span> pendingIdleHandlerCount = -<span class="hljs-number">1</span>; <span class="hljs-comment">// -1 only during first iteration</span></span><br><span class="line">    <span class="hljs-keyword">int</span> nextPollTimeoutMillis = <span class="hljs-number">0</span>;</span><br><span class="line">    <span class="hljs-keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (nextPollTimeoutMillis != <span class="hljs-number">0</span>) &#123;</span><br><span class="line">            Binder.flushPendingCommands();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-comment">//这个方法会通过ptr的值和nextPollTimeoutMillis</span></span><br><span class="line">        <span class="hljs-comment">//的值来判断是否阻塞当前线程</span></span><br><span class="line">        <span class="hljs-comment">//我们可以把它当作待条件的wait方法</span></span><br><span class="line">        nativePollOnce(ptr, nextPollTimeoutMillis);</span><br><span class="line">        <span class="hljs-comment">//...省略其他的代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>MessageQueue#enqueueMessage</p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-function"><span class="hljs-keyword">boolean</span> <span class="hljs-title">enqueueMessage</span><span class="hljs-params">(Message msg, <span class="hljs-keyword">long</span> when)</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) &#123;</span><br><span class="line">        msg.markInUse();</span><br><span class="line">        msg.when = when;</span><br><span class="line">        Message p = mMessages;</span><br><span class="line"></span><br><span class="line">        <span class="hljs-comment">//...这里省略掉将消息入队列的代码</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (needWake) &#123;</span><br><span class="line">            <span class="hljs-comment">//这个方法用于唤醒Ptr指向的线程</span></span><br><span class="line">            <span class="hljs-comment">//我们可以把它当作条件motify方法</span></span><br><span class="line">            nativeWake(mPtr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+        
+        <ul class="post-copyright">
+            <li><strong>本文标题：</strong><a href="https://pigrange.github.io/2019/09/29/Android消息机制/">Android消息机制</a></li>
+            <li><strong>本文作者：</strong><a href="https://pigrange.github.io">John Pig</a></li>
+            <li><strong>本文链接：</strong><a href="https://pigrange.github.io/2019/09/29/Android消息机制/">https://pigrange.github.io/2019/09/29/Android消息机制/</a></li>
+            <li><strong>发布时间：</strong>2019-09-29</li>
+            <li><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+            </li>
+        </ul>
+        
+        
+        <hr style="height:1px;margin:1rem 0">
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <i class="fas fa-tags has-text-grey"></i>&nbsp;
+                    <a class="has-link-grey -link" href="/tags/Android/">Android</a>,&nbsp;<a class="has-link-grey -link" href="/tags/Review/">Review</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/09/28/从多线程到Handler/">
+                <span class="level-item">从多线程到Handler</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered" style="flex-shrink: 1">
+                <div>
+                    
+                        <figure class="image is-128x128 has-mb-6">
+                            <img class="is-rounded" src="/assets/img/favicon.jpg" alt="pigrange">
+                        </figure>
+                    
+                    
+                    <p class="is-size-4 is-block">
+                        pigrange
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        JohnPig
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>ChengDu China</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        14
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        10
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/pigrange" target="_blank">
+                关注我</a>
+        </div>
+        
+        
+    </div>
+</div>
+    
+        
+<div class="card widget column-left is-sticky" id="toc">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a class="is-flex" href="#Android消息机制：">
+        <span class="has-mr-6">1</span>
+        <span>Android消息机制：</span>
+        </a></li><li>
+        <a class="is-flex" href="#Android的消息机制概述：">
+        <span class="has-mr-6">2</span>
+        <span>Android的消息机制概述：</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Handler的创建方式：">
+        <span class="has-mr-6">2.1</span>
+        <span>Handler的创建方式：</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#切换线程：">
+        <span class="has-mr-6">2.1.1</span>
+        <span>切换线程：</span>
+        </a></li><li>
+        <a class="is-flex" href="#代理Activity接受异步的消息">
+        <span class="has-mr-6">2.1.2</span>
+        <span>代理Activity接受异步的消息:</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#内存泄漏：">
+        <span class="has-mr-6">2.2</span>
+        <span>内存泄漏：</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#Handler消息机制分析：">
+        <span class="has-mr-6">3</span>
+        <span>Handler消息机制分析：</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#ThreadLoacl">
+        <span class="has-mr-6">3.1</span>
+        <span>ThreadLoacl:</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#ThreadLocal的使用方式：">
+        <span class="has-mr-6">3.1.1</span>
+        <span>ThreadLocal的使用方式：</span>
+        </a></li><li>
+        <a class="is-flex" href="#ThreadLoacl原理分析：">
+        <span class="has-mr-6">3.1.2</span>
+        <span>ThreadLoacl原理分析：</span>
+        </a></li></ul></li></ul></li><li>
+        <a class="is-flex" href="#消息队列的工作原理：">
+        <span class="has-mr-6">4</span>
+        <span>消息队列的工作原理：</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#工作原理：">
+        <span class="has-mr-6">4.1</span>
+        <span>工作原理：</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#Handler-发送消息的过程：">
+        <span class="has-mr-6">4.1.1</span>
+        <span>Handler 发送消息的过程：</span>
+        </a></li><li>
+        <a class="is-flex" href="#Looper-获取消息的过程">
+        <span class="has-mr-6">4.1.2</span>
+        <span>Looper 获取消息的过程</span>
+        </a></li></ul></li><li>
+        <a class="is-flex" href="#补充：">
+        <span class="has-mr-6">4.2</span>
+        <span>补充：</span>
+        </a><ul class="menu-list"><li>
+        <a class="is-flex" href="#MessageQueue如何阻塞：">
+        <span class="has-mr-6">4.2.1</span>
+        <span>MessageQueue如何阻塞：</span>
+        </a></li></ul></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+        </div>
+    
+</div>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                    
+                    <img src="/assets/img/logo.jpg" alt="Android消息机制" height="28" style="margin-left: 0.5em">
+                    
+                </a>
+                <p class="is-size-7" style="padding-bottom: 0.5em">
+                    <span id="timeDate" class="is-size-7"></span>
+                    <span id="times" class="is-size-7"></span>
+                </p>
+                <p class="is-size-7">
+                    &copy; 2019 John Pig&nbsp;
+                    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>
+                    
+                </p>
+                <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+                <script>
+                    var now = new Date();
+                    function createtime() {
+                        var grt = new Date("7/24/2019 16:00:00");//此处修改你的建站时间或者网站上线时间 
+                        now.setTime(now.getTime() + 250);
+                        days = (now - grt) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+                        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+                        if (String(hnum).length == 1) { hnum = "0" + hnum; } minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+                        mnum = Math.floor(minutes); if (String(mnum).length == 1) { mnum = "0" + mnum; }
+                        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+                        snum = Math.round(seconds); if (String(snum).length == 1) { snum = "0" + snum; }
+                        document.getElementById("timeDate").innerHTML = "&nbsp;&nbsp" + "本站已安全运行 " + dnum + " 天 ";
+                        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+                    }
+                    setInterval("createtime()", 250);
+                </script>
+            </div>
+            <div class="level-end">
+                
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"mobile":{"show":false},"model":{"scale":0.7,"jsonPath":"/live2dw/assets/hijiki.model.json"},"log":false});</script></body>
+</html>
